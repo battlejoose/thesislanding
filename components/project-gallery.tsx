@@ -14,7 +14,7 @@ export default function ProjectGallery({motion}:{motion:boolean}){
     const controller=new AbortController();
     const tracked=projects.filter(project=>project.token);
     void Promise.all(tracked.map(async project=>{
-      const result=await fetchTokenStats(project.token!,controller.signal);
+      const result=await fetchTokenStats(project.token!,'solana',controller.signal);
       if(!result||controller.signal.aborted)return;
       setStats(current=>({...current,[project.id]:result}));
       engine.current?.setStats(project.id,result);

@@ -6,6 +6,8 @@ import { constructionTile } from './brooklyn-world';
 import { CAMERA_Z, hoverPose, pickObject, type Pickable, type Pointer } from './gallery-interaction';
 const TAU=Math.PI*2;
 export const palette={side:'#653c30',paper:'#f0e6cf',ink:'#302922',trim:'#b19a75'};
+// Placeholder builds sit back from the finished one: greyer paper, softer ink.
+export const mutedPalette={side:'#4a4643',paper:'#cdc9c0',ink:'#6d6963',trim:'#8f8a82'};
 function mesh(parent:T.Object3D,g:T.BufferGeometry,m:T.Material|T.Material[],x=0,y=0,z=0){const o=new T.Mesh(g,m);o.position.set(x,y,z);o.castShadow=true;o.receiveShadow=true;parent.add(o);return o;}
 function rounded(w:number,h:number,r:number){const s=new T.Shape(),x=-w/2,y=-h/2;s.moveTo(x+r,y);s.lineTo(x+w-r,y);s.quadraticCurveTo(x+w,y,x+w,y+r);s.lineTo(x+w,y+h-r);s.quadraticCurveTo(x+w,y+h,x+w-r,y+h);s.lineTo(x+r,y+h);s.quadraticCurveTo(x,y+h,x,y+h-r);s.lineTo(x,y+r);s.quadraticCurveTo(x,y,x+r,y);return s;}
 function slab(parent:T.Object3D,w:number,h:number,depth:number,color:string,metal=false){const geo=new T.ExtrudeGeometry(rounded(w,h,.12),{depth,bevelEnabled:true,bevelThickness:.05,bevelSize:.045,bevelSegments:2,steps:1,curveSegments:5});geo.translate(0,0,-depth/2);return mesh(parent,geo,new T.MeshStandardMaterial({color,roughness:metal?.36:.85,metalness:metal?.7:0}));}
@@ -22,7 +24,7 @@ function printed(parent:T.Object3D,texture:T.Texture,w:number,h:number,x:number,
 function label(parent:T.Object3D,font:Font,text:string,size:number,maxWidth:number,color:string,x:number,y:number,z:number,depth=.045){const geo=new TextGeometry(text,{font,size,depth,curveSegments:3,bevelEnabled:true,bevelThickness:.006,bevelSize:.003,bevelSegments:1});geo.computeBoundingBox();const width=geo.boundingBox!.max.x-geo.boundingBox!.min.x;const m=mesh(parent,geo,new T.MeshStandardMaterial({color,roughness:.52,metalness:.15}),x,y,z);if(width>maxWidth)m.scale.x=maxWidth/width;return m;}
 export interface Tile {scene:T.Scene;camera:T.PerspectiveCamera;group:T.Group;article:HTMLElement;project:Project;imageMaterial:T.MeshBasicMaterial;imageTexture:T.Texture;statusTexture:T.Texture;statusMaterial:T.MeshBasicMaterial;capLabel:T.Mesh|null;changeLabel:T.Mesh|null;animate:Array<(t:number)=>void>;hover:boolean;hoverProgress:number;baseY:number;bounds:T.Box3;}
 export function makeTile(article:HTMLElement,p:Project,index:number,font:Font,wake:()=>void):Tile{
-  const colors=palette,scene=new T.Scene(),camera=new T.PerspectiveCamera(46,1,.1,30);camera.position.set(0,.12,10.4);camera.lookAt(0,.12,0);
+  const colors=p.comingSoon?mutedPalette:palette,scene=new T.Scene(),camera=new T.PerspectiveCamera(46,1,.1,30);camera.position.set(0,.12,10.4);camera.lookAt(0,.12,0);
   scene.add(new T.HemisphereLight('#fff7e5','#5d625c',2.4));const light=new T.DirectionalLight('#ffe6ba',3);light.position.set(-3,5,6);scene.add(light);const rim=new T.DirectionalLight('#e1f3ed',1.9);rim.position.set(4,-1,2);scene.add(rim);
   const group=new T.Group();scene.add(group);const animate:Array<(t:number)=>void>=[];
   const face=slab(group,4.5,5.5,.1,colors.paper);face.position.z=.47;
@@ -31,7 +33,7 @@ export function makeTile(article:HTMLElement,p:Project,index:number,font:Font,wa
   for(const x of [-2.22,2.22])mesh(group,new T.BoxGeometry(.09,2.7,.17),railMat,x,1.27,.57);
   for(const y of [-.07,2.61])mesh(group,new T.BoxGeometry(4.52,.09,.17),railMat,0,y,.57);
   const imageTexture=p.comingSoon?blurredTexture(p.image,wake):new T.TextureLoader().load(p.image,()=>wake());imageTexture.colorSpace=T.SRGBColorSpace;
-  const imageMaterial=new T.MeshBasicMaterial({map:imageTexture});mesh(group,new T.PlaneGeometry(4.35,2.57),imageMaterial,0,1.27,.585).name='media-screen';
+  const imageMaterial=new T.MeshBasicMaterial({map:imageTexture,color:p.comingSoon?'#8f8f8f':'#ffffff'});mesh(group,new T.PlaneGeometry(4.35,2.57),imageMaterial,0,1.27,.585).name='media-screen';
   // All printed details sit on the model's face. Titles and caps are separately extruded.
   const info=canvasTexture(1024,610,ctx=>{
     ctx.fillStyle=colors.paper;ctx.fillRect(0,0,1024,610);ctx.fillStyle=colors.ink;
@@ -52,7 +54,7 @@ export function makeTile(article:HTMLElement,p:Project,index:number,font:Font,wa
   const symbol=canvasTexture(128,128,ctx=>{ctx.fillStyle=colors.ink;ctx.font='80px sans-serif';ctx.textAlign='center';ctx.fillText(p.icon,64,94);});printed(group,symbol,.5,.5,-1.67,-.51,.725).name='symbol-face';
   label(group,font,p.name,.265,3.2,colors.ink,-1.14,-.5,.63,.055);
   const capLabel=p.comingSoon?null:label(group,font,p.cap,.32,1.42,colors.ink,-2,-2.42,.64,.06);
-  const chip=canvasTexture(768,94,ctx=>{ctx.fillStyle='#dcec83';ctx.fillRect(0,0,768,94);ctx.fillStyle='#283628';ctx.font='27px sans-serif';ctx.fillText(p.category.toUpperCase(),25,61);if(p.featured){ctx.textAlign='right';ctx.fillText('↗ FEATURED',740,61);}});printed(group,chip,4.18,.51,0,2.24,.62).name='category-face';
+  const chip=canvasTexture(768,94,ctx=>{ctx.fillStyle=p.comingSoon?'#9a9d8c':'#dcec83';ctx.fillRect(0,0,768,94);ctx.fillStyle='#283628';ctx.font='27px sans-serif';ctx.fillText(p.category.toUpperCase(),25,61);if(p.featured){ctx.textAlign='right';ctx.fillText('↗ FEATURED',740,61);}});printed(group,chip,4.18,.51,0,2.24,.62).name='category-face';
   const makeStatus=(status:string)=>canvasTexture(768,80,ctx=>{ctx.fillStyle='#14271edf';ctx.fillRect(0,0,768,80);ctx.fillStyle='#eaf0df';ctx.font='26px sans-serif';ctx.fillText(status,24,53);ctx.textAlign='right';ctx.fillText('↗',740,53);});
   const statusTexture=makeStatus('COMING SOON');const statusMaterial=new T.MeshBasicMaterial({map:statusTexture,transparent:true});const statusFace=mesh(group,new T.PlaneGeometry(4.18,.435),statusMaterial,0,.232,.625);statusFace.name='status-face';statusFace.visible=!!p.comingSoon;
   // Every visible word is now extruded geometry, including the small captions.

@@ -218,7 +218,8 @@ h3 { font-size:17px; font-weight:600; margin:0; line-height:1.35; letter-spacing
 
 .project-card.is-coming-soon { cursor:default; }
 .project-card.is-coming-soon .project-media { display:block; position:relative; }
-.project-card.is-coming-soon .project-media img { filter:blur(9px) grayscale(1) contrast(.9) brightness(.72); transform:scale(1.06); }
+.project-card.is-coming-soon .project-media img { filter:blur(9px) grayscale(1) contrast(.85) brightness(.6); transform:scale(1.06); }
+.project-card.is-coming-soon .project-info { opacity:.72; }
 .project-card.is-coming-soon .project-media { overflow:hidden; }
 .project-card.is-coming-soon .play-prompt { letter-spacing:2.4px; text-transform:uppercase; }
 .models-ready .project-card.is-coming-soon .project-bottom { display:none; }

@@ -32,9 +32,11 @@ export default function Home() {
   return <div className="showcase" data-theme="brooklyn" data-motion={motion}>
     <SpatialTypography motion={motion}/><a className="skip-link" href="#projects">Skip to projects</a>
     <div className="page-shell">
+      {/* Header hidden for now. Restore by uncommenting:
       <header className="site-header">
         <a className="wordmark" href="#" aria-label="Thesis home"><img src="/thesis-logo.png" alt="Thesis" width={790} height={159}/></a>
       </header>
+      */}
       <main>
         <section className="intro" aria-labelledby="world-title">
           <div className="intro-copy" key={index}>
