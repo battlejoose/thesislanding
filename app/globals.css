@@ -222,3 +222,5 @@ h3 { font-size:17px; font-weight:600; margin:0; line-height:1.35; letter-spacing
 .project-card.is-coming-soon .project-media { overflow:hidden; }
 .project-card.is-coming-soon .play-prompt { letter-spacing:2.4px; text-transform:uppercase; }
 .models-ready .project-card.is-coming-soon .project-bottom { display:none; }
+
+.price-change[data-down=true] { color:#c8705f; }

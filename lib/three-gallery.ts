@@ -20,7 +20,7 @@ function blurredTexture(src:string,wake:()=>void){
 }
 function printed(parent:T.Object3D,texture:T.Texture,w:number,h:number,x:number,y:number,z:number){return mesh(parent,new T.PlaneGeometry(w,h),new T.MeshBasicMaterial({map:texture,transparent:true}),x,y,z);}
 function label(parent:T.Object3D,font:Font,text:string,size:number,maxWidth:number,color:string,x:number,y:number,z:number,depth=.045){const geo=new TextGeometry(text,{font,size,depth,curveSegments:3,bevelEnabled:true,bevelThickness:.006,bevelSize:.003,bevelSegments:1});geo.computeBoundingBox();const width=geo.boundingBox!.max.x-geo.boundingBox!.min.x;const m=mesh(parent,geo,new T.MeshStandardMaterial({color,roughness:.52,metalness:.15}),x,y,z);if(width>maxWidth)m.scale.x=maxWidth/width;return m;}
-export interface Tile {scene:T.Scene;camera:T.PerspectiveCamera;group:T.Group;article:HTMLElement;project:Project;imageMaterial:T.MeshBasicMaterial;imageTexture:T.Texture;statusTexture:T.Texture;statusMaterial:T.MeshBasicMaterial;animate:Array<(t:number)=>void>;hover:boolean;hoverProgress:number;baseY:number;bounds:T.Box3;}
+export interface Tile {scene:T.Scene;camera:T.PerspectiveCamera;group:T.Group;article:HTMLElement;project:Project;imageMaterial:T.MeshBasicMaterial;imageTexture:T.Texture;statusTexture:T.Texture;statusMaterial:T.MeshBasicMaterial;capLabel:T.Mesh|null;changeLabel:T.Mesh|null;animate:Array<(t:number)=>void>;hover:boolean;hoverProgress:number;baseY:number;bounds:T.Box3;}
 export function makeTile(article:HTMLElement,p:Project,index:number,font:Font,wake:()=>void):Tile{
   const colors=palette,scene=new T.Scene(),camera=new T.PerspectiveCamera(46,1,.1,30);camera.position.set(0,.12,10.4);camera.lookAt(0,.12,0);
   scene.add(new T.HemisphereLight('#fff7e5','#5d625c',2.4));const light=new T.DirectionalLight('#ffe6ba',3);light.position.set(-3,5,6);scene.add(light);const rim=new T.DirectionalLight('#e1f3ed',1.9);rim.position.set(4,-1,2);scene.add(rim);
@@ -51,7 +51,7 @@ export function makeTile(article:HTMLElement,p:Project,index:number,font:Font,wa
   const medallion=mesh(group,new T.CylinderGeometry(.32,.32,.11,12),new T.MeshStandardMaterial({color:p.color,roughness:.5,metalness:.2}),-1.67,-.51,.66);medallion.rotation.x=Math.PI/2;
   const symbol=canvasTexture(128,128,ctx=>{ctx.fillStyle=colors.ink;ctx.font='80px sans-serif';ctx.textAlign='center';ctx.fillText(p.icon,64,94);});printed(group,symbol,.5,.5,-1.67,-.51,.725).name='symbol-face';
   label(group,font,p.name,.265,3.2,colors.ink,-1.14,-.5,.63,.055);
-  if(!p.comingSoon)label(group,font,p.cap,.32,1.42,colors.ink,-2,-2.42,.64,.06);
+  const capLabel=p.comingSoon?null:label(group,font,p.cap,.32,1.42,colors.ink,-2,-2.42,.64,.06);
   const chip=canvasTexture(768,94,ctx=>{ctx.fillStyle='#dcec83';ctx.fillRect(0,0,768,94);ctx.fillStyle='#283628';ctx.font='27px sans-serif';ctx.fillText(p.category.toUpperCase(),25,61);if(p.featured){ctx.textAlign='right';ctx.fillText('↗ FEATURED',740,61);}});printed(group,chip,4.18,.51,0,2.24,.62).name='category-face';
   const makeStatus=(status:string)=>canvasTexture(768,80,ctx=>{ctx.fillStyle='#14271edf';ctx.fillRect(0,0,768,80);ctx.fillStyle='#eaf0df';ctx.font='26px sans-serif';ctx.fillText(status,24,53);ctx.textAlign='right';ctx.fillText('↗',740,53);});
   const statusTexture=makeStatus('COMING SOON');const statusMaterial=new T.MeshBasicMaterial({map:statusTexture,transparent:true});const statusFace=mesh(group,new T.PlaneGeometry(4.18,.435),statusMaterial,0,.232,.625);statusFace.name='status-face';statusFace.visible=!!p.comingSoon;
@@ -68,9 +68,10 @@ export function makeTile(article:HTMLElement,p:Project,index:number,font:Font,wa
   for(const word of words){if((lineText+word).length>38){label(group,font,lineText.trim(),.155,4.0,colors.ink,-2,-1.11-lineIndex*.24,.63,.019);lineText=word+' ';lineIndex++;}else lineText+=word+' ';}
   if(lineText)label(group,font,lineText.trim(),.155,4.0,colors.ink,-2,-1.11-lineIndex*.24,.63,.019);
   mesh(group,new T.BoxGeometry(4.03,.008,.016),railMat,0,-1.72,.64);
+  let changeLabel:T.Mesh|null=null;
   if(!p.comingSoon){
     label(group,font,'MARKET CAP',.10,2,colors.ink,-2,-2.02,.64,.024);
-    label(group,font,p.change,.155,1.05,'#51734b',-.28,-2.40,.66,.03);
+    changeLabel=label(group,font,p.change,.155,1.05,'#51734b',-.28,-2.40,.66,.03);
     label(group,font,'24h',.095,.6,colors.ink,-.28,-2.62,.64,.019);
     for(const x of [1.23,1.78])mesh(group,new T.TorusGeometry(.175,.007,4,24),markMaterial,x,-2.29,.66);
     for(const angle of [-Math.PI/4,Math.PI/4])mesh(group,new T.BoxGeometry(.21,.022,.028),markMaterial,1.23,-2.29,.67).rotation.z=angle;
@@ -86,7 +87,14 @@ export function makeTile(article:HTMLElement,p:Project,index:number,font:Font,wa
   const shadowTex=canvasTexture(128,128,ctx=>{const grad=ctx.createRadialGradient(64,64,10,64,64,64);grad.addColorStop(0,'#0008');grad.addColorStop(1,'#0000');ctx.fillStyle=grad;ctx.fillRect(0,0,128,128);});const shadow=printed(scene,shadowTex,6.4,7.5,.2,-.26,-1.1);shadow.castShadow=false;shadow.name='drop-shadow';(shadow.material as T.Material).depthWrite=false;
   const bounds=new T.Box3(new T.Vector3(-2.43,-2.95,-1.66),new T.Vector3(2.43,3.72,.77));
   const baseY=.13;group.rotation.set(.09,baseY,0);
-  return {scene,camera,group,article,project:p,imageMaterial,imageTexture,statusTexture,statusMaterial,animate,hover:false,hoverProgress:0,baseY,bounds};
+  return {scene,camera,group,article,project:p,imageMaterial,imageTexture,statusTexture,statusMaterial,capLabel,changeLabel,animate,hover:false,hoverProgress:0,baseY,bounds};
+}
+function retext(target:T.Mesh,font:Font,text:string,size:number,maxWidth:number,depth:number){
+  target.geometry.dispose();
+  const geometry=new TextGeometry(text,{font,size,depth,curveSegments:3,bevelEnabled:true,bevelThickness:.006,bevelSize:.003,bevelSegments:1});
+  geometry.computeBoundingBox();
+  const width=geometry.boundingBox!.max.x-geometry.boundingBox!.min.x;
+  target.geometry=geometry;target.scale.x=width>maxWidth?maxWidth/width:1;
 }
 export async function createGallery(container:HTMLDivElement,articles:HTMLElement[],projects:Project[],onReady:()=>void){
   const font=await new FontLoader().loadAsync('/fonts/helvetiker.json');
@@ -175,5 +183,15 @@ export async function createGallery(container:HTMLDivElement,articles:HTMLElemen
   const changes=new MutationObserver(wake);articles.forEach(a=>changes.observe(a,{childList:true,subtree:true}));
   const contextLost=(event:Event)=>{event.preventDefault();container.dispatchEvent(new CustomEvent('gallery-error'));};renderer.domElement.addEventListener('webglcontextlost',contextLost);
   resize();render(performance.now());onReady();
-  return {setMotion(value:boolean){motion=value;wake();},dispose(){disposed=true;cancelAnimationFrame(frame);cleanups.forEach(f=>f());observer.disconnect();changes.disconnect();window.removeEventListener('scroll',wake);window.removeEventListener('resize',resize);document.removeEventListener('visibilitychange',wake);renderer.domElement.removeEventListener('webglcontextlost',contextLost);const geometries=new Set<T.BufferGeometry>(),materials=new Set<T.Material>(),textures=new Set<T.Texture>();tiles.forEach(tile=>{textures.add(tile.imageTexture);textures.add(tile.statusTexture);tile.scene.traverse(o=>{const m=o as T.Mesh;if(m.geometry)geometries.add(m.geometry);if(m.material)(Array.isArray(m.material)?m.material:[m.material]).forEach(mat=>{materials.add(mat);for(const value of Object.values(mat))if(value instanceof T.Texture)textures.add(value);});});});geometries.forEach(g=>g.dispose());materials.forEach(m=>m.dispose());textures.forEach(t=>t.dispose());renderer.dispose();renderer.forceContextLoss();renderer.domElement.remove();}};
+  return {setMotion(value:boolean){motion=value;wake();},
+    setStats(id:string,stats:{cap:string;change:string;up:boolean}){
+      const tile=tiles.find(t=>t.project.id===id);if(!tile)return;
+      if(tile.capLabel)retext(tile.capLabel,font,stats.cap,.32,1.42,.06);
+      if(tile.changeLabel){
+        retext(tile.changeLabel,font,stats.change,.155,1.05,.03);
+        (tile.changeLabel.material as T.MeshStandardMaterial).color.set(stats.up?'#51734b':'#9c4a3c');
+      }
+      wake();
+    },
+    dispose(){disposed=true;cancelAnimationFrame(frame);cleanups.forEach(f=>f());observer.disconnect();changes.disconnect();window.removeEventListener('scroll',wake);window.removeEventListener('resize',resize);document.removeEventListener('visibilitychange',wake);renderer.domElement.removeEventListener('webglcontextlost',contextLost);const geometries=new Set<T.BufferGeometry>(),materials=new Set<T.Material>(),textures=new Set<T.Texture>();tiles.forEach(tile=>{textures.add(tile.imageTexture);textures.add(tile.statusTexture);tile.scene.traverse(o=>{const m=o as T.Mesh;if(m.geometry)geometries.add(m.geometry);if(m.material)(Array.isArray(m.material)?m.material:[m.material]).forEach(mat=>{materials.add(mat);for(const value of Object.values(mat))if(value instanceof T.Texture)textures.add(value);});});});geometries.forEach(g=>g.dispose());materials.forEach(m=>m.dispose());textures.forEach(t=>t.dispose());renderer.dispose();renderer.forceContextLoss();renderer.domElement.remove();}};
 }
