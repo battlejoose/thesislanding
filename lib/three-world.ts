@@ -1,6 +1,7 @@
 import * as T from 'three';
 import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
 import type { Theme } from './projects';
+import { makeWorld } from './theme-worlds';
 
 const TAU = Math.PI * 2;
 function seeded() { let seed = 76123; return () => { seed = seed * 16807 % 2147483647; return (seed - 1) / 2147483646; }; }
@@ -170,23 +171,23 @@ export function createWorld(container:HTMLDivElement,theme:Theme,onReady:()=>voi
   renderer.domElement.setAttribute('aria-label',`${theme} interactive 3D scene`);
   container.appendChild(renderer.domElement);
   const scene=new T.Scene(),camera=new T.PerspectiveCamera(40,1,.1,50);
-  camera.position.set(6.7,3.5,9.3);camera.lookAt(0,.3,0);
+  camera.position.set(6.7,3.5,9.3);camera.lookAt(0,.3,0);if(theme==='space'){camera.position.set(0,0,15);camera.lookAt(0,0,0);}
   scene.add(new T.HemisphereLight(theme==='roots'?'#e4f2c9':'#f9e1bd',theme==='roots'?'#3b574c':'#424649',2.5));
   const sun=new T.DirectionalLight('#ffdda3',4);sun.position.set(-3,7,5);sun.castShadow=!mobile;sun.shadow.mapSize.set(1024,1024);sun.shadow.camera.left=-5;sun.shadow.camera.right=5;sun.shadow.camera.top=6;sun.shadow.camera.bottom=-5;sun.shadow.normalBias=.05;scene.add(sun);
   const rim=new T.DirectionalLight(theme==='roots'?'#b9e8d7':theme==='brooklyn'?'#9dcdda':'#f58c4a',3);rim.position.set(4,2,-4);scene.add(rim);
   const world=new T.Group();world.rotation.y=-.35;scene.add(world);
   const animate:Array<(t:number)=>void>=[],random=seeded();
-  if(theme==='roots')roots(world,animate,random);else if(theme==='brooklyn')brooklyn(world,animate,random);else steampunk(world,animate,random);
+  if(theme==='roots')roots(world,animate,random);else if(theme==='brooklyn')brooklyn(world,animate,random);else {const extra=makeWorld(theme);world.add(extra.group);animate.push(...extra.animate);}
   const ground=new T.Mesh(new T.CircleGeometry(4.3,64),new T.ShadowMaterial({opacity:.16}));ground.rotation.x=-Math.PI/2;ground.position.y=-2.7;ground.receiveShadow=true;scene.add(ground);
   const orbit=new T.Mesh(new T.TorusGeometry(3.2,.007,4,100),new T.MeshBasicMaterial({color:theme==='roots'?'#b7d893':theme==='brooklyn'?'#dcef7a':'#d3a264',transparent:true,opacity:.23}));orbit.rotation.x=Math.PI/2;orbit.position.y=-2.35;scene.add(orbit);
   const dotCount=mobile?65:120,positions=new Float32Array(dotCount*3);
   for(let i=0;i<dotCount;i++){positions[i*3]=(random()-.5)*9;positions[i*3+1]=(random()-.5)*6;positions[i*3+2]=(random()-.5)*6;}
   const pg=new T.BufferGeometry();pg.setAttribute('position',new T.BufferAttribute(positions,3));
-  const pm=new T.ShaderMaterial({uniforms:{time:{value:0},density:{value:renderer.getPixelRatio()},tint:{value:new T.Color(theme==='roots'?'#e6f6b1':'#ffcf8b')}},vertexShader:`uniform float time; uniform float density;varying float a;void main(){vec3 p=position;p.y=mod(p.y+3.+time*.09,6.)-3.;p.x+=sin(time*.4+position.z)*.09;vec4 mv=modelViewMatrix*vec4(p,1.);gl_Position=projectionMatrix*mv;gl_PointSize=clamp(25.*density/-mv.z,1.,5.);a=.25+.5*(sin(time+position.x*3.)*.5+.5);}`,fragmentShader:`uniform vec3 tint;varying float a;void main(){float d=length(gl_PointCoord-.5);gl_FragColor=vec4(tint,(1.-smoothstep(.05,.5,d))*a);}`,transparent:true,depthWrite:false,blending:T.AdditiveBlending});scene.add(new T.Points(pg,pm));
+  const pm=new T.ShaderMaterial({uniforms:{time:{value:0},density:{value:renderer.getPixelRatio()},tint:{value:new T.Color(theme==='roots'?'#e6f6b1':theme==='space'?'#b7d8ff':theme==='volcanic'?'#ff864f':'#ffcf8b')}},vertexShader:`uniform float time; uniform float density;varying float a;void main(){vec3 p=position;p.y=mod(p.y+3.+time*.09,6.)-3.;p.x+=sin(time*.4+position.z)*.09;vec4 mv=modelViewMatrix*vec4(p,1.);gl_Position=projectionMatrix*mv;gl_PointSize=clamp(25.*density/-mv.z,1.,5.);a=.25+.5*(sin(time+position.x*3.)*.5+.5);}`,fragmentShader:`uniform vec3 tint;varying float a;void main(){float d=length(gl_PointCoord-.5);gl_FragColor=vec4(tint,(1.-smoothstep(.05,.5,d))*a);}`,transparent:true,depthWrite:false,blending:T.AdditiveBlending});scene.add(new T.Points(pg,pm));
   let frame=0,elapsed=0,last=0,motion=true,visible=true,disposed=false,targetY=-.35,targetX=0,dragging=false,downX=0,downY=0,baseY=0,baseX=0;
-  function render(now:number){frame=0;if(disposed||!visible||document.hidden)return;const dt=Math.min((now-last)/1000,.04);last=now;if(motion){elapsed+=dt;if(!dragging)targetY+=dt*.075;}world.rotation.y+=(targetY-world.rotation.y)*.075;world.rotation.x+=(targetX-world.rotation.x)*.075;animate.forEach(fn=>fn(elapsed));pm.uniforms.time.value=elapsed;renderer.render(scene,camera);if(motion||dragging||Math.abs(world.rotation.y-targetY)>.001||Math.abs(world.rotation.x-targetX)>.001)frame=requestAnimationFrame(render);}
+  function render(now:number){frame=0;if(disposed||!visible||document.hidden)return;const dt=Math.min((now-last)/1000,.04);last=now;if(motion){elapsed+=dt;if(!dragging)targetY+=dt*(theme==='space'?.006:theme==='steampunk'?0:.075);}world.rotation.y+=(targetY-world.rotation.y)*.075;world.rotation.x+=(targetX-world.rotation.x)*.075;animate.forEach(fn=>fn(elapsed));pm.uniforms.time.value=elapsed;renderer.render(scene,camera);if(motion||dragging||Math.abs(world.rotation.y-targetY)>.001||Math.abs(world.rotation.x-targetX)>.001)frame=requestAnimationFrame(render);}
   function wake(){cancelAnimationFrame(frame);frame=requestAnimationFrame(render);}
-  function resize(){const w=container.clientWidth,h=container.clientHeight;if(!w||!h)return;camera.aspect=w/h;camera.fov=w/h<1.2?48:40;camera.updateProjectionMatrix();renderer.setSize(w,h,false);wake();}
+  function resize(){const w=container.clientWidth,h=container.clientHeight;if(!w||!h)return;camera.aspect=w/h;camera.fov=theme==='space'?54:w/h<1.2?48:40;camera.updateProjectionMatrix();renderer.setSize(w,h,false);wake();}
   const ro=new ResizeObserver(resize);ro.observe(container);
   const io=new IntersectionObserver(([e])=>{visible=e.isIntersecting;if(visible)wake();else cancelAnimationFrame(frame);});io.observe(container);
   const down=(e:PointerEvent)=>{dragging=true;downX=e.clientX;downY=e.clientY;baseY=targetY;baseX=targetX;if(e.pointerType==='mouse')container.setPointerCapture(e.pointerId);container.classList.add('is-dragging');wake();};
@@ -197,3 +198,5 @@ export function createWorld(container:HTMLDivElement,theme:Theme,onReady:()=>voi
   resize();animate.forEach(fn=>fn(0));renderer.render(scene,camera);onReady();
   return {setMotion(value:boolean){motion=value;wake();},rotate(direction:number){targetY+=direction*.35;wake();},dispose(){disposed=true;cancelAnimationFrame(frame);ro.disconnect();io.disconnect();document.removeEventListener('visibilitychange',wake);container.removeEventListener('pointerdown',down);container.removeEventListener('pointermove',move);container.removeEventListener('pointerup',up);container.removeEventListener('pointercancel',up);container.removeEventListener('lostpointercapture',up);renderer.domElement.removeEventListener('webglcontextlost',lost);const geometries=new Set<T.BufferGeometry>(),materials=new Set<T.Material>(),textures=new Set<T.Texture>();scene.traverse(o=>{const m=o as T.Mesh;if(m.geometry)geometries.add(m.geometry);if(m.material)(Array.isArray(m.material)?m.material:[m.material]).forEach(mat=>{materials.add(mat);for(const value of Object.values(mat))if(value instanceof T.Texture)textures.add(value);});});geometries.forEach(g=>g.dispose());materials.forEach(m=>m.dispose());textures.forEach(t=>t.dispose());renderer.dispose();renderer.forceContextLoss();renderer.domElement.remove();}};
 }
+
+export { roots, brooklyn, steampunk, gear };

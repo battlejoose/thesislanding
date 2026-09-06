@@ -1,4 +1,4 @@
-export type Theme = 'roots' | 'brooklyn' | 'steampunk';
+export type Theme = 'roots' | 'brooklyn' | 'steampunk' | 'volcanic' | 'space';
 export interface Project {
   id: string; name: string; ticker: string; category: string; description: string;
   cap: string; change: string; image: string; video: string; icon: string;

@@ -11,11 +11,15 @@ From this directory:
 - `npm run build`
 - `npx tsc --noEmit`
 
-## Three worlds
+## Five worlds
 
 - **Roots**: a floating moss island, modeled trunk and branches, tapered hanging roots, instanced canopy, saplings, drifting leaves, and fireflies.
 - **Brooklyn**: a brick diorama with windows, fire escapes, graffiti, street lamps, a rooftop billboard, and water tower; project tiles become newsprint.
-- **Steampunk**: an armillary with rotating nested rings, meshing-style toothed gears, copper columns, and warm illuminated details; tiles become brass-framed panels.
+- **Steampunk**: an expansive workshop with an armillary, wall-sized moving gears, pressure boilers, pipes, benches, instrument shelves, gauges, hanging lamps, and drifting steam; tiles become brass-framed panels.
+- **Volcanic**: an erupting basalt volcano with flowing lava and airborne embers; project housings have glowing magma seams and rock edges.
+- **Space**: a full-screen volumetric nebula with 4,200 colored cloud particles, 2,400 stars with diffraction glints, and 28 moving meteors; project housings become illuminated spacecraft panels.
+
+The project wheel uses as many columns as the viewport allows. Native page scrolling drives consistent cylindrical curvature and depth across rows. All tiles share one resting orientation. Hovering zooms a project toward the viewer to approximately 150% of its resting projected size and holds its tilt steady; leaves, gears, gauges, lava, and other internal animations continue. Keyboard focus also enlarges the object.
 
 Drag a scene to orbit. Focus the scene and use arrow keys to rotate by keyboard. The ambient motion button pauses animation. The selected world and motion preference are remembered on this device. System reduced-motion preferences are respected. Mobile vertical page scrolling is preserved.
 
@@ -27,13 +31,13 @@ Click a project image or title to load and play its muted video preview. Click a
 
 ## Physical 3D project tiles
 
-Each project is also a real Three.js object: a thick beveled housing, modeled sidewalls, an inset screen, raised text geometry for its name and market cap, and printed details on the front surface. Roots adds vines, hanging roots, foliage, and falling leaves. Brooklyn adds individual bricks, a folded newspaper corner, graffiti, a cornice, and a water tower. Steampunk adds pipes, rivets, rotating gears, and a moving gauge.
+Each project is also a real Three.js object: a thick beveled housing, modeled sidewalls, an inset screen, extruded text geometry for all visible names, captions, categories, market caps, changes, and playback labels. The page headings, interface labels, and theme controls are also rendered with Three.js text and panel geometry. Roots adds vines, hanging roots, foliage, and falling leaves. Brooklyn adds individual bricks, a folded newspaper corner, graffiti, a cornice, and a water tower. Steampunk adds pipes, rivets, rotating gears, and a moving gauge.
 
-All six objects share one WebGL renderer using scissored viewports; only visible objects render. A separate renderer handles the hero world. Selecting a project feeds its HTML video into a VideoTexture on the object. The semantic HTML beneath the scene supplies keyboard interaction, accessible content, and a readable fallback if WebGL is unavailable.
+All six objects share one WebGL renderer using scissored viewports; only visible objects render. A separate renderer handles the hero world, and one shared lightweight renderer handles page typography and theme control geometry. These are three total WebGL contexts, never one context per card. Selecting a project feeds its HTML video into a VideoTexture on the object. The semantic HTML beneath the scene supplies keyboard interaction, accessible content, and a readable fallback if WebGL is unavailable.
 
 ## Performance
 
-Three.js is dynamically imported after the readable interface renders. The scenes use instanced foliage, bricks, and windows, merged root geometry, modest meshes, no postprocessing, a device pixel ratio capped at 1.5 (1.25 on narrow screens), and no mobile shadows. The animation loop sleeps when the scene is offscreen or the document is hidden. GPU geometries, materials, textures, and the renderer are disposed when switching worlds. Videos are local, muted, and fetched only on selection. Local WebP posters avoid remote image requests; lower-row images are lazy loaded. Fonts are hosted locally. The static artwork remains available if WebGL is unavailable.
+Three.js is dynamically imported after the readable interface renders. The scenes use instanced foliage, bricks, and windows, merged root geometry, modest meshes, no postprocessing, a device pixel ratio capped at 1.5 (1.25 on narrow screens), and no mobile shadows. The animation loop sleeps when the scene is offscreen or the document is hidden. GPU geometries, materials, textures, and the renderer are disposed when switching worlds. Videos are local, muted, and fetched only on selection. Local WebP posters avoid remote image requests; lower-row images are lazy loaded. Fonts are hosted locally. Readable semantic HTML remains available if WebGL or the 3D font fails; the original three worlds also have artwork fallbacks.
 
 ## Assets
 
