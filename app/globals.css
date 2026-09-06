@@ -21,8 +21,8 @@ button:disabled { cursor:default; }
 .showcase[data-theme=brooklyn] { --background:#24272b; --foreground:#f0ecdf; --accent:#e9fe6b; --paper:#ede7d8; --ink:#282823; --paper-muted:#6c6c61; --card-radius:2px; --heading:'Barlow Condensed',Impact,sans-serif; --muted:#333735; background:radial-gradient(ellipse at 90% 12%,#965f4933,transparent 50%),var(--background); }
 .page-shell { max-width:1440px; padding:0 64px; margin:auto; position:relative; }
 .site-header { min-height:96px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:9px; padding:18px 0; text-align:center; border-bottom:1px solid var(--border); }
-.wordmark { display:flex; align-items:center; gap:10px; font-size:28px; font-weight:600; letter-spacing:-1.6px; }
-.brand-symbol { width:32px; height:32px; display:block; color:var(--foreground); margin-right:2px; }
+.wordmark { display:flex; align-items:center; }
+.wordmark img { display:block; height:30px; width:auto; }
 .brand-period { font-size:12px; align-self:flex-start; margin-top:4px; letter-spacing:0; margin-left:-5px; }
 .intro { position:relative; padding:47px 0 0; }
 .intro-copy { position:relative; z-index:2; max-width:510px; animation:arrive .6s ease both; pointer-events:none; text-align:center; margin-inline:auto; }
@@ -63,12 +63,6 @@ h3 { font-size:17px; font-weight:600; margin:0; line-height:1.35; letter-spacing
 .social-links { display:flex; gap:6px; margin-left:auto; }
 .social-links button { width:30px; height:30px; display:grid; place-items:center; border:1px solid #1b2b2025; background:transparent; border-radius:50%; font-size:14px; color:var(--ink); transition:background .2s; }
 .social-links button:hover { background:#233e2615; }
-.collection-end { display:flex; align-items:center; justify-content:center; gap:15px; color:#a9b69f; margin:38px 0 42px; font-family:'Instrument Serif',serif; font-size:20px; }
-.collection-end span { display:block; width:45px; height:1px; background:var(--border); }
-.collection-end svg { color:var(--accent); }
-footer { border-top:1px solid var(--border); padding:25px 0 30px; display:flex; gap:22px; align-items:center; color:#9aa991; font-size:12px; }
-.footer-brand { font-size:22px; letter-spacing:-1px; color:var(--foreground); font-weight:600; }
-.demo-note { margin-left:auto; font-size:12px; }
 .skip-link { position:fixed; top:-100px; left:15px; z-index:100; padding:12px 20px; background:var(--accent); color:var(--background); border-radius:5px; }
 .skip-link:focus { top:15px; }
 [data-theme=brooklyn] h1 { text-transform:uppercase; font-size:74px; letter-spacing:-1px; line-height:.96; }
@@ -80,8 +74,8 @@ footer { border-top:1px solid var(--border); padding:25px 0 30px; display:flex; 
 @keyframes arrive { from { opacity:0; transform:translateY(12px); } to { opacity:1; transform:translateY(0); } }
 @media(min-width:1500px) { .page-shell { padding:0 64px; } .intro { padding-top:58px; } .world-scene { height:380px; } }
 @media(max-width:1100px) { .page-shell { padding:0 36px; } .project-grid { gap:18px; } .project-info { padding:16px; } .project-description { min-height:42px; } h1 { font-size:68px; } }
-@media(max-width:800px) { .page-shell { padding:0 24px; } .project-grid { grid-template-columns:repeat(2,minmax(0,1fr)); } .site-header { min-height:83px; } h1 { font-size:64px; } .world-scene { right:-24px; width:70%; opacity:.65; } .intro-copy { max-width:430px; }   .demo-note { max-width:145px; text-align:right; } }
-@media(max-width:520px) { .page-shell { padding:0 20px; } .site-header { min-height:104px; gap:10px; padding:16px 0; } .wordmark { font-size:25px; width:100%; justify-content:center; } .brand-symbol { width:27px; height:27px; } .intro { padding-top:32px; } h1 { font-size:61px; margin:18px 0; } [data-theme=brooklyn] h1 { font-size:60px; } .eyebrow { font-size:12px; letter-spacing:1px; }  .world-scene { width:86%; right:-20px; height:310px; top:3px; opacity:.38; } .scene-caption { display:none; }    .project-grid { grid-template-columns:1fr; gap:23px; } .project-info { padding:20px; } .project-description { min-height:0; font-size:14px; } .project-media { aspect-ratio:1.8; } .social-links button { width:36px; height:36px; } .collection-end { font-size:18px; gap:10px; } .collection-end span { width:18px; } footer { flex-wrap:wrap; gap:12px; } footer>span:nth-child(2) { margin-left:auto; } .demo-note { max-width:none; text-align:left; margin:0; width:100%; } }
+@media(max-width:800px) { .page-shell { padding:0 24px; } .project-grid { grid-template-columns:repeat(2,minmax(0,1fr)); } .site-header { min-height:83px; } h1 { font-size:64px; } .world-scene { right:-24px; width:70%; opacity:.65; } .intro-copy { max-width:430px; }    }
+@media(max-width:520px) { .page-shell { padding:0 20px; } .site-header { min-height:104px; gap:10px; padding:16px 0; } .wordmark { justify-content:center; } .wordmark img { height:25px; } .intro { padding-top:32px; } h1 { font-size:61px; margin:18px 0; } [data-theme=brooklyn] h1 { font-size:60px; } .eyebrow { font-size:12px; letter-spacing:1px; }  .world-scene { width:86%; right:-20px; height:310px; top:3px; opacity:.38; } .scene-caption { display:none; }    .project-grid { grid-template-columns:1fr; gap:23px; } .project-info { padding:20px; } .project-description { min-height:0; font-size:14px; } .project-media { aspect-ratio:1.8; } .social-links button { width:36px; height:36px; }      }
 @media(prefers-reduced-motion:reduce) { html { scroll-behavior:auto; } *,*::before,*::after { animation-duration:.01ms!important; animation-iteration-count:1!important; transition-duration:.01ms!important; } }
 /* The world is actual lit geometry in a perspective camera, with a draggable orbit. */
 .site-header { position:relative;z-index:5; }
@@ -139,7 +133,7 @@ footer { border-top:1px solid var(--border); padding:25px 0 30px; display:flex; 
 @keyframes spin {to {transform:rotate(360deg);}}
 @media(min-width:801px) { .intro-copy{max-width:39%;} }
 @media(max-width:1100px) { .change-period {display:none;} .project-bottom {gap:7px;}.social-links {gap:5px;}.social-links button {width:29px;height:29px;} }
-@media(max-width:520px) { .project-description{min-height:0;}.social-links button,.social-links a{width:36px;height:36px;}.change-period{display:inline;}.newspaper-masthead{font-size:13px;}.demo-note{font-size:11px;} }/* Six solid, individually modeled project objects share this one WebGL surface. */
+@media(max-width:520px) { .project-description{min-height:0;}.social-links button,.social-links a{width:36px;height:36px;}.change-period{display:inline;}.newspaper-masthead{font-size:13px;} }/* Six solid, individually modeled project objects share this one WebGL surface. */
 .project-gallery { position:relative;isolation:isolate; }
 .gallery-canvas { position:fixed;inset:0;pointer-events:none;z-index:1; }
 .gallery-canvas canvas { display:block;width:100%;height:100%; }
@@ -170,15 +164,14 @@ footer { border-top:1px solid var(--border); padding:25px 0 30px; display:flex; 
 @media(max-width:1100px){.project-gallery .project-grid{gap:6px 10px;}.project-gallery .project-card{min-height:0;}.models-ready .social-links{gap:5px;padding-right:0;}}
 @media(max-width:800px){.project-gallery .project-grid{gap:6px 12px;}}
 @media(max-width:520px){.project-gallery .project-grid{gap:0;}.project-gallery .project-card{aspect-ratio:.765;}.models-ready .social-links{gap:13px;padding-right:4%;}.models-ready .social-links button{width:39px;height:39px;}}
-@media(max-width:800px){.wordmark{font-size:25px;}}
+@media(max-width:800px){.wordmark img{height:26px;}}
 @media(max-width:620px){.site-header{padding:15px 0;gap:10px;}}
 .spatial-typography{position:fixed;inset:0;pointer-events:none;z-index:20;}
 .spatial-typography canvas{display:block;width:100%;height:100%;}
 [data-spatial-text]{display:inline-block;}
 [data-typography-ready=true] [data-spatial-text]{color:transparent!important;text-shadow:none!important;}
-.collection-end em{font-style:normal;}
 .scene-ui [data-spatial-text]{display:inline-block;}
-@media(max-width:520px){.demo-note [data-spatial-text]{font-size:10px;}.collection-end em{font-size:16px;}}
+@media(max-width:520px){}
 .mobile-wheel-controls{display:none;}
 @media(max-width:600px){
  .project-gallery .project-grid{display:block;position:relative;height:min(660px,85svh);min-height:480px;touch-action:pan-x;outline:none;}

@@ -1,6 +1,5 @@
 'use client';
 import { useEffect, useState } from 'react';
-import { Sprout } from 'lucide-react';
 import WorldScene from '@/components/world-scene';
 import ProjectGallery from '@/components/project-gallery';
 import SpatialTypography from '@/components/spatial-typography';
@@ -34,7 +33,7 @@ export default function Home() {
     <SpatialTypography motion={motion}/><a className="skip-link" href="#projects">Skip to projects</a>
     <div className="page-shell">
       <header className="site-header">
-        <a className="wordmark" href="#" aria-label="Thesis home"><img className="brand-symbol" src="/logo-t.svg" alt="" width={32} height={32}/><span data-spatial-text>thesis.</span></a>
+        <a className="wordmark" href="#" aria-label="Thesis home"><img src="/thesis-logo.png" alt="Thesis" width={790} height={159}/></a>
       </header>
       <main>
         <section className="intro" aria-labelledby="world-title">
@@ -46,10 +45,8 @@ export default function Home() {
         </section>
         <section id="projects" className="projects-section" aria-label="Builds">
           <ProjectGallery motion={motion}/>
-          <p className="collection-end"><span/><em data-spatial-text data-spatial-tone="muted">Big things start with a little curiosity.</em><Sprout size={16}/><span/></p>
         </section>
       </main>
-      <footer><a className="footer-brand" href="#"><span data-spatial-text>thesis.</span></a><span data-spatial-text data-spatial-tone="muted">A different world. The same possibilities.</span><span className="demo-note"><span data-spatial-text data-spatial-tone="muted">Illustrative figures</span></span></footer>
     </div>
   </div>;
 }
