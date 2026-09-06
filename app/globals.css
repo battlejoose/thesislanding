@@ -242,20 +242,29 @@ footer { border-top:1px solid var(--border); padding:25px 0 30px; display:flex; 
 .mobile-wheel-controls{display:none!important;}
 .models-ready .project-media{inset:7% 7% auto;width:86%;height:48%;}
 .models-ready .project-info{inset:51% 7% 7%;width:86%;}
-.models-ready .project-card:hover{z-index:10;}
-.models-ready .project-card:hover::before{content:'';position:absolute;inset:-24%;pointer-events:auto;z-index:-1;}
-.models-ready .project-card:hover .project-media{transform:scale(1.5);transform-origin:50% 90%;}
-.models-ready .project-card:hover .project-info{transform:scale(1.5);transform-origin:50% -2.5%;}
-.models-ready .project-media,.models-ready .project-info{transition:transform .4s cubic-bezier(.2,.7,.3,1);}
+/* Picking follows the rendered model; invisible DOM boxes never grow on hover. */
+.models-ready .project-card,.models-ready .project-card *{pointer-events:none!important;}
+.models-ready .project-card[data-hovered=true]{z-index:10;}
+.models-ready .project-card::before{display:none!important;}
+.models-ready .project-media,.models-ready .project-info{transform:none!important;transition:none;}
 .project-gallery .project-grid:focus-visible{outline:1px dashed var(--accent);outline-offset:8px;}
 @media(max-width:760px){.project-gallery .project-grid{grid-template-columns:repeat(auto-fit,minmax(min(100%,265px),1fr));gap:18px 14px;}}
 @media(max-width:600px){.project-gallery .project-grid{grid-template-columns:1fr;gap:12px;}.models-ready .project-card.is-selected::after{bottom:1%;}}
 /* Full-room environments envelop the physical collection. */
-.showcase[data-theme=steampunk] .world-scene,.showcase[data-theme=space] .world-scene{position:fixed;inset:0;width:100vw;height:100vh;margin:0;z-index:0;opacity:.86;pointer-events:auto;}
-.showcase[data-theme=steampunk] .scene-ui,.showcase[data-theme=space] .scene-ui{display:none;}
+.showcase[data-theme=brooklyn] .world-scene,.showcase[data-theme=steampunk] .world-scene,.showcase[data-theme=space] .world-scene{position:fixed;inset:0;width:100vw;height:100vh;margin:0;z-index:0;opacity:.86;pointer-events:auto;}
+.showcase[data-theme=brooklyn] .scene-ui,.showcase[data-theme=steampunk] .scene-ui,.showcase[data-theme=space] .scene-ui{display:none;}
 .showcase[data-theme=steampunk] .intro-copy,.showcase[data-theme=space] .intro-copy{filter:drop-shadow(0 3px 10px #0009);}
 .showcase[data-theme=steampunk] .intro-foot,.showcase[data-theme=space] .intro-foot{background:linear-gradient(90deg,#16120ee0,#16120e40,transparent);}
 .showcase[data-theme=steampunk] .site-header,.showcase[data-theme=space] .site-header{background:linear-gradient(180deg,#10121ca0,transparent);}
 .showcase[data-theme=steampunk] .collection-header,.showcase[data-theme=space] .collection-header{position:relative;z-index:2;}
 .showcase[data-theme=steampunk] footer,.showcase[data-theme=space] footer{position:relative;z-index:2;}
-@media(max-width:600px){.showcase[data-theme=steampunk] .world-scene,.showcase[data-theme=space] .world-scene{width:100vw;height:100svh;inset:0;margin:0;}.showcase[data-theme=steampunk] .intro-foot,.showcase[data-theme=space] .intro-foot{margin-top:35px;}}
+@media(max-width:600px){.showcase[data-theme=brooklyn] .world-scene,.showcase[data-theme=steampunk] .world-scene,.showcase[data-theme=space] .world-scene{width:100vw;height:100svh;inset:0;margin:0;}.showcase[data-theme=steampunk] .intro-foot,.showcase[data-theme=space] .intro-foot{margin-top:35px;}}
+
+.showcase[data-theme=brooklyn]{--background:#1d293a;--accent:#f3c574;--foreground:#f6ebd9;background:#1d293a;}
+.showcase[data-theme=brooklyn] .world-scene{opacity:1;pointer-events:none;}
+.showcase[data-theme=brooklyn] .world-scene::after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,#1422339c,transparent 70%),linear-gradient(180deg,#13213225,transparent 42%,#12203155);pointer-events:none;}
+.showcase[data-theme=brooklyn] .site-header,.showcase[data-theme=brooklyn] .intro-foot,.showcase[data-theme=brooklyn] .collection-header,.showcase[data-theme=brooklyn] footer{position:relative;z-index:2;}
+.showcase[data-theme=brooklyn] .site-header{background:linear-gradient(180deg,#14223599,transparent);}
+.showcase[data-theme=brooklyn] .intro-copy{filter:drop-shadow(0 3px 12px #101a29);}
+.showcase[data-theme=brooklyn] .collection-header{margin-bottom:40px;}
+.showcase[data-theme=brooklyn] .project-gallery .project-grid{row-gap:46px;}

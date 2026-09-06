@@ -4,6 +4,8 @@ import { TextGeometry } from 'three/addons/geometries/TextGeometry.js';
 import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
 import type { Project, Theme } from './projects';
 import { addTileWorldDetails } from './theme-worlds';
+import { constructionTile } from './brooklyn-world';
+import { CAMERA_Z, hoverPose, pickObject, type Pickable, type Pointer } from './gallery-interaction';
 const TAU=Math.PI*2;
 export const palette={volcanic:{side:'#262124',paper:'#393034',ink:'#ffdaab',trim:'#fa682d'},space:{side:'#242540',paper:'#303850',ink:'#d4efff',trim:'#6bbcea'},roots:{side:'#453826',paper:'#e7ebd4',ink:'#273c2c',trim:'#789052'},brooklyn:{side:'#653c30',paper:'#f0e6cf',ink:'#302922',trim:'#b19a75'},steampunk:{side:'#343130',paper:'#dfcaa2',ink:'#49351f',trim:'#c29656'}};
 function mesh(parent:T.Object3D,g:T.BufferGeometry,m:T.Material|T.Material[],x=0,y=0,z=0){const o=new T.Mesh(g,m);o.position.set(x,y,z);o.castShadow=true;o.receiveShadow=true;parent.add(o);return o;}
@@ -14,12 +16,12 @@ function printed(parent:T.Object3D,texture:T.Texture,w:number,h:number,x:number,
 function label(parent:T.Object3D,font:Font,text:string,size:number,maxWidth:number,color:string,x:number,y:number,z:number,depth=.045){const geo=new TextGeometry(text,{font,size,depth,curveSegments:3,bevelEnabled:true,bevelThickness:.006,bevelSize:.003,bevelSegments:1});geo.computeBoundingBox();const width=geo.boundingBox!.max.x-geo.boundingBox!.min.x;const m=mesh(parent,geo,new T.MeshStandardMaterial({color,roughness:.52,metalness:.15}),x,y,z);if(width>maxWidth)m.scale.x=maxWidth/width;return m;}
 function line(points:number[][],radius:number){return new T.TubeGeometry(new T.CatmullRomCurve3(points.map(p=>new T.Vector3(...p))),18,radius,5,false);}
 function cog(parent:T.Object3D,x:number,y:number,z:number,r:number,material:T.Material){const g=new T.Group();g.position.set(x,y,z);parent.add(g);const s=new T.Shape();for(let i=0;i<=64;i++){const a=i/64*TAU,rr=r*(i%4===1||i%4===2?1:.84);if(i===0)s.moveTo(Math.cos(a)*rr,Math.sin(a)*rr);else s.lineTo(Math.cos(a)*rr,Math.sin(a)*rr);}const hole=new T.Path();hole.absarc(0,0,r*.51,0,TAU,true);s.holes.push(hole);mesh(g,new T.ExtrudeGeometry(s,{depth:.1,bevelEnabled:false,curveSegments:16}),material);mesh(g,new T.TorusGeometry(r*.18,.035,5,12),material,0,0,.06);for(let i=0;i<3;i++){const b=mesh(g,new T.BoxGeometry(r*1.3,.045,.08),material,0,0,.06);b.rotation.z=i*Math.PI/3;}return g;}
-export interface Tile {scene:T.Scene;camera:T.PerspectiveCamera;group:T.Group;article:HTMLElement;project:Project;imageMaterial:T.MeshBasicMaterial;imageTexture:T.Texture;videoTexture:T.VideoTexture|null;video:HTMLVideoElement|null;statusTexture:T.Texture;statusMaterial:T.MeshBasicMaterial;status:string;statusLabel:T.Mesh;animate:Array<(t:number)=>void>;hover:boolean;rx:number;ry:number;baseY:number;}
+export interface Tile {scene:T.Scene;camera:T.PerspectiveCamera;group:T.Group;article:HTMLElement;project:Project;imageMaterial:T.MeshBasicMaterial;imageTexture:T.Texture;videoTexture:T.VideoTexture|null;video:HTMLVideoElement|null;statusTexture:T.Texture;statusMaterial:T.MeshBasicMaterial;status:string;statusLabel:T.Mesh;animate:Array<(t:number)=>void>;hover:boolean;hoverProgress:number;baseY:number;bounds:T.Box3;}
 export function makeTile(article:HTMLElement,p:Project,index:number,theme:Theme,font:Font,wake:()=>void):Tile{
   const colors=palette[theme],scene=new T.Scene(),camera=new T.PerspectiveCamera(46,1,.1,30);camera.position.set(0,.12,10.4);camera.lookAt(0,.12,0);
   scene.add(new T.HemisphereLight('#fff7e5','#5d625c',2.4));const light=new T.DirectionalLight('#ffe6ba',3);light.position.set(-3,5,6);scene.add(light);const rim=new T.DirectionalLight('#e1f3ed',1.9);rim.position.set(4,-1,2);scene.add(rim);
   const group=new T.Group();scene.add(group);const animate:Array<(t:number)=>void>=[];
-  const board=slab(group,4.8,5.8,theme==='steampunk'?1.06:1.12,colors.side,theme==='steampunk');board.position.z=-.15;
+  if(theme!=='brooklyn'){const board=slab(group,4.8,5.8,theme==='steampunk'?1.06:1.12,colors.side,theme==='steampunk');board.position.z=-.15;}
   const face=slab(group,4.5,5.5,.1,colors.paper);face.position.z=.47;
   // Four raised rails make the screen visibly inset in a solid front frame.
   const railMat=new T.MeshStandardMaterial({color:colors.trim,roughness:theme==='steampunk'?.34:.8,metalness:theme==='steampunk'?.65:0});
@@ -86,18 +88,9 @@ export function makeTile(article:HTMLElement,p:Project,index:number,theme:Theme,
     for(let i=0;i<64;i++){const side=i%2?1:-1;dummy.position.set(side*(1.8+rnd()*.8),2.45+rnd()*.65,.12+rnd()*.5);dummy.rotation.set(rnd(),rnd(),rnd());const scale=.12+rnd()*.15;dummy.scale.set(scale*1.4,scale*.48,scale);dummy.updateMatrix();foliage.setMatrixAt(i,dummy.matrix);c.setHSL(.19+rnd()*.1,.3+rnd()*.25,.25+rnd()*.2);foliage.setColorAt(i,c);}group.add(foliage);
     const leaves=new T.InstancedMesh(new T.SphereGeometry(1,5,3),new T.MeshStandardMaterial({color:'#c9db8b'}),5);group.add(leaves);const origins=Array.from({length:5},()=>[(rnd()-.5)*5.2,rnd()*6-3,rnd()*.5+.6,rnd()*TAU]);animate.push(t=>{foliage.rotation.z=Math.sin(t*.7+index)*.008;origins.forEach(([x,y,z,p],i)=>{dummy.position.set(x+Math.sin(t*.3+p)*.1,((y+3.4-t*.12)%6.8+6.8)%6.8-3.4,z);dummy.rotation.set(t*.4+p,t*.2+p,p);dummy.scale.set(.07,.14,.015);dummy.updateMatrix();leaves.setMatrixAt(i,dummy.matrix);});leaves.instanceMatrix.needsUpdate=true;});
   }else if(theme==='brooklyn'){
-    const bricks=new T.InstancedMesh(new T.BoxGeometry(.46,.22,.18),new T.MeshStandardMaterial({roughness:.92}),96);let n=0;
-    const c=new T.Color();
-    for(let row=0;row<24;row++)for(const side of [-1,1]){dummy.position.set(side*2.36,-2.65+row*.235,.38+(row%2)*.02);dummy.rotation.set(0,0,0);dummy.scale.set(.55,1,1);dummy.updateMatrix();bricks.setMatrixAt(n,dummy.matrix);c.set(['#a25e43','#b17151','#8b4837'][row%3]);bricks.setColorAt(n++,c);}
-    for(const y of [-2.87,2.87])for(let col=0;col<10;col++){dummy.position.set(-2.14+col*.475,y,.38);dummy.scale.set(1,1,1);dummy.updateMatrix();bricks.setMatrixAt(n,dummy.matrix);bricks.setColorAt(n++,new T.Color(col%2?'#92523b':'#ad6b4f'));}bricks.count=n;group.add(bricks);
-    // A heavy masonry rear and a folded, thin newspaper face make the materials distinct.
-    const paperGeo=new T.PlaneGeometry(.4,.36,6,6);const pos=paperGeo.attributes.position;for(let i=0;i<pos.count;i++){const x=pos.getX(i),y=pos.getY(i);pos.setZ(i,Math.max(0,x+y)*.6);}paperGeo.computeVertexNormals();mesh(group,paperGeo,new T.MeshStandardMaterial({color:colors.paper,side:T.DoubleSide}),2.02,-2.61,.63);
-    const metal=new T.MeshStandardMaterial({color:'#363e3a',roughness:.7});
-    mesh(group,new T.BoxGeometry(5.07,.13,1),metal,0,3.01,-.1);
-    for(const x of [1.39,1.86])mesh(group,new T.CylinderGeometry(.028,.028,.35,5),metal,x,3.21,-.06);
-    mesh(group,new T.CylinderGeometry(.36,.36,.5,16),new T.MeshStandardMaterial({color:'#9c7750',roughness:.9}),1.63,3.6,-.07);mesh(group,new T.ConeGeometry(.4,.17,16),metal,1.63,3.94,-.07);
-    const tag=canvasTexture(512,128,ctx=>{ctx.fillStyle='#ddef7b';ctx.fillRect(0,0,512,128);ctx.fillStyle='#303a29';ctx.font='900 71px sans-serif';ctx.textAlign='center';ctx.fillText(p.ticker,256,90);});const graffiti=printed(group,tag,1.28,.35,-1.32,2.91,.6);graffiti.rotation.z=.07;
-    animate.push(t=>{graffiti.rotation.z=.07+Math.sin(t*.8+index)*.012;});
+    constructionTile(group,animate,index);
+    label(group,font,'SITE / 0'+(index+1),.13,1.7,'#e9bd69',.12,3.13,.62,.035);
+    label(group,font,p.ticker,.20,1.8,colors.ink,-1.96,-2.63,.68,.045);
   }else if(theme==='steampunk'){
     const brass=new T.MeshStandardMaterial({color:'#d1a56a',metalness:.75,roughness:.31});const copper=new T.MeshStandardMaterial({color:'#966440',metalness:.7,roughness:.4});
     for(const x of [-2.38,2.38])mesh(group,new T.CylinderGeometry(.065,.065,5.5,10),copper,x,0,.58);
@@ -112,33 +105,94 @@ export function makeTile(article:HTMLElement,p:Project,index:number,theme:Theme,
   }
   addTileWorldDetails(group,theme,animate,index);
   const shadowTex=canvasTexture(128,128,ctx=>{const grad=ctx.createRadialGradient(64,64,10,64,64,64);grad.addColorStop(0,'#0008');grad.addColorStop(1,'#0000');ctx.fillStyle=grad;ctx.fillRect(0,0,128,128);});const shadow=printed(scene,shadowTex,6.4,7.5,.2,-.26,-1.1);shadow.castShadow=false;shadow.name='drop-shadow';(shadow.material as T.Material).depthWrite=false;
+  const bounds=new T.Box3(new T.Vector3(-2.43,-2.95,theme==='brooklyn'?-1.66:-.76),new T.Vector3(2.43,theme==='brooklyn'?3.72:2.95,.77));
   const baseY=.13;group.rotation.set(.09,baseY,0);
-  return {scene,camera,group,article,project:p,imageMaterial,imageTexture,videoTexture:null,video:null,statusTexture,statusMaterial,status:'',statusLabel,animate,hover:false,rx:0,ry:0,baseY};
+  return {scene,camera,group,article,project:p,imageMaterial,imageTexture,videoTexture:null,video:null,statusTexture,statusMaterial,status:'',statusLabel,animate,hover:false,hoverProgress:0,baseY,bounds};
 }
 export async function createGallery(container:HTMLDivElement,articles:HTMLElement[],projects:Project[],theme:Theme,onReady:()=>void){
   const font=await new FontLoader().loadAsync('/fonts/helvetiker.json');
   const renderer=new T.WebGLRenderer({alpha:true,antialias:true,powerPreference:'low-power'});renderer.setPixelRatio(Math.min(window.devicePixelRatio,window.innerWidth<650?1.1:1.4));renderer.outputColorSpace=T.SRGBColorSpace;renderer.toneMapping=T.ACESFilmicToneMapping;renderer.toneMappingExposure=1.2;renderer.setClearColor(0,0);renderer.autoClear=false;container.appendChild(renderer.domElement);
   let frame=0,elapsed=0,last=0,motion=true,disposed=false;const tiles:Tile[]=[];const cleanups:Array<()=>void>=[];
-  function wake(){if(disposed)return;cancelAnimationFrame(frame);frame=requestAnimationFrame(render);}
-  articles.forEach((article,index)=>{const tile=makeTile(article,projects[index],index,theme,font,wake);tiles.push(tile);if(article.matches(':hover'))tile.hover=true;const enter=(e:Event)=>{if('pointerType' in e&&(e as PointerEvent).pointerType!=='mouse')return;tile.hover=true;wake();};const leave=()=>{tile.hover=false;tile.rx=tile.ry=0;wake();};const move=(e:PointerEvent)=>{if(e.pointerType!=='mouse')return;const r=article.getBoundingClientRect();tile.ry=((e.clientX-r.left)/r.width-.5)*.36;tile.rx=-((e.clientY-r.top)/r.height-.5)*.24;wake();};article.addEventListener('pointerenter',enter);article.addEventListener('pointerleave',leave);article.addEventListener('pointermove',move);article.addEventListener('focusin',enter);article.addEventListener('focusout',leave);cleanups.push(()=>{article.removeEventListener('pointerenter',enter);article.removeEventListener('pointerleave',leave);article.removeEventListener('pointermove',move);article.removeEventListener('focusin',enter);article.removeEventListener('focusout',leave);});});
+  function wake(){if(disposed||frame)return;frame=requestAnimationFrame(render);}
+  articles.forEach((article,index)=>tiles.push(makeTile(article,projects[index],index,theme,font,wake)));
+  let pointer:Pointer|null=null, active=-1, keyboard=-1;
+  let views:(Pickable|null)[]=tiles.map(()=>null);
+  const blocked=(target:EventTarget|null)=>target instanceof Element && !!target.closest('button,a,[role="tab"],[data-slot="tooltip-content"]') && !target.closest('[data-project-id]');
+  const move=(event:PointerEvent)=>{
+    if(event.pointerType!=='mouse'){pointer=null;active=keyboard=-1;wake();return;}
+    keyboard=-1;pointer=blocked(event.target)?null:{x:event.clientX,y:event.clientY};wake();
+  };
+  const clearPointer=()=>{pointer=null;active=-1;wake();};
+  const focus=()=>{
+    const focused=document.activeElement;
+    keyboard=focused instanceof HTMLElement&&focused.matches(':focus-visible')?tiles.findIndex(tile=>tile.article.contains(focused)):-1;
+    wake();
+  };
+  const exitFocus=()=>queueMicrotask(focus);
+  const select=(event:MouseEvent)=>{
+    // Native keyboard and programmatic activation keep their existing semantics.
+    if(event.detail===0||blocked(event.target))return;
+    const hit=pickObject({x:event.clientX,y:event.clientY},views,active);if(!hit)return;
+    event.preventDefault();event.stopImmediatePropagation();
+    const article=tiles[hit.index].article;
+    const social=hit.point.y < -1.98 && hit.point.y > -2.61 && hit.point.x > .99;
+    const control=social?article.querySelectorAll<HTMLElement>('.social-links a,.social-links button')[hit.point.x>1.5?1:0]:article.querySelector<HTMLElement>('.project-media');
+    control?.click();
+  };
+  const down=(event:PointerEvent)=>{
+    if(blocked(event.target))return;
+    if(pickObject({x:event.clientX,y:event.clientY},views,active))event.stopPropagation();
+  };
+  document.addEventListener('pointermove',move,{passive:true});
+  document.documentElement.addEventListener('pointerleave',clearPointer);
+  window.addEventListener('blur',clearPointer);
+  document.addEventListener('pointerdown',down,true);
+  document.addEventListener('click',select,true);
+  document.addEventListener('focusin',focus);document.addEventListener('focusout',exitFocus);
+  cleanups.push(()=>{
+    document.removeEventListener('pointermove',move);document.documentElement.removeEventListener('pointerleave',clearPointer);window.removeEventListener('blur',clearPointer);
+    document.removeEventListener('pointerdown',down,true);document.removeEventListener('click',select,true);
+    document.removeEventListener('focusin',focus);document.removeEventListener('focusout',exitFocus);
+    document.body.style.removeProperty('cursor');
+    tiles.forEach(tile=>delete tile.article.dataset.hovered);
+  });
   let visibleCount=0;
   function render(now:number){frame=0;if(disposed||document.hidden)return;const dt=Math.min((now-last)/1000,.04);last=now;if(motion)elapsed+=dt;const width=window.innerWidth,height=window.innerHeight;const rects=tiles.map(t=>t.article.getBoundingClientRect());renderer.setScissorTest(false);renderer.clear();renderer.setScissorTest(true);visibleCount=0;let activeVideo=false,settling=false;
-    const order=tiles.map((tile,index)=>({tile,index})).sort((a,b)=>Number(a.tile.hover)-Number(b.tile.hover));order.forEach(({tile,index})=>{const r=rects[index];tile.article.dataset.wheelActive='true';tile.article.inert=false;const shadow=tile.scene.getObjectByName('drop-shadow');if(shadow)shadow.visible=true;
-      if(r.bottom<0||r.top>height||r.right<0||r.left>width)return;visibleCount++;
+    views=tiles.map((tile,index)=>{
+      const r=rects[index];
+      if(r.bottom < -r.height*.4 || r.top > height+r.height*.4)return null;
+      const angle=T.MathUtils.clamp((r.top+r.height/2-height*.58)/(height*.88),-1.1,1.1);
+      const expansion=1.7,bend=(Math.sin(angle)*height*.88-(r.top+r.height/2-height*.58))*.7;
+      const viewport={left:r.left-r.width*(expansion-1)/2,top:r.top-r.height*(expansion-1)/2+bend,width:r.width*expansion,height:r.height*expansion};
+      tile.camera.aspect=r.width/r.height;tile.camera.zoom=1/expansion;tile.camera.updateProjectionMatrix();
+      return {group:tile.group,camera:tile.camera,viewport,bounds:tile.bounds};
+    });
+    active=keyboard>=0?keyboard:(pickObject(pointer,views,active)?.index??-1);
+    document.body.style.cursor=active>=0?'pointer':'';
+    tiles.forEach((tile,index)=>{tile.hover=index===active;tile.article.dataset.hovered=String(tile.hover);});
+    const order=tiles.map((tile,index)=>({tile,index})).sort((a,b)=>Number(a.tile.hover)-Number(b.tile.hover));order.forEach(({tile,index})=>{
+      const r=rects[index],view=views[index];if(!view)return;
+      tile.article.dataset.wheelActive='true';tile.article.inert=false;visibleCount++;
       const video=tile.article.querySelector('video');if(video!==tile.video){tile.videoTexture?.dispose();tile.videoTexture=null;tile.video=video;if(video){tile.videoTexture=new T.VideoTexture(video);tile.videoTexture.colorSpace=T.SRGBColorSpace;}}
       const videoReady=tile.video&&tile.video.readyState>=2&&!tile.video.error&&tile.article.dataset.videoError!=='true';tile.imageMaterial.map=videoReady?tile.videoTexture:tile.imageTexture;
       if(tile.video&&!tile.video.paused)activeVideo=true;
       const state=tile.article.dataset.videoError==='true'?'↻ PREVIEW UNAVAILABLE · RETRY':tile.article.dataset.busy==='true'?'◌ OPENING A NEW PERSPECTIVE':videoReady?'Ⅱ PLAYING PREVIEW · TAP TO STOP':'▷ DISCOVER '+tile.project.name.toUpperCase();
       if(state!==tile.status){tile.status=state;tile.statusLabel.geometry.dispose();const text=state.replace('↻','RETRY').replace('◌','...').replace('Ⅱ','II').replace('▷','PLAY').replace('·','/');const geometry=new TextGeometry(text,{font,size:.115,depth:.024,curveSegments:2,bevelEnabled:false});geometry.computeBoundingBox();tile.statusLabel.geometry=geometry;tile.statusLabel.scale.x=Math.min(1,3.96/(geometry.boundingBox!.max.x-geometry.boundingBox!.min.x));}
 
-      const scrollAngle=T.MathUtils.clamp((r.top+r.height/2-height*.58)/(height*.88),-1.1,1.1);const tx=tile.hover?0:scrollAngle*.88,ty=tile.hover?0:tile.baseY;
-      const selected=tile.article.dataset.selected==='true';const restZ=-(1-Math.cos(scrollAngle))*4.8;const z=tile.hover?2.2:selected?.32:restZ;
-      if(Math.abs(tile.group.rotation.x-tx)>.001||Math.abs(tile.group.rotation.y-ty)>.001||Math.abs(tile.group.position.z-z)>.001)settling=true;
-      tile.group.rotation.x+=(tx-tile.group.rotation.x)*.1;tile.group.rotation.y+=(ty-tile.group.rotation.y)*.1;tile.group.position.z+=(z-tile.group.position.z)*.1;tile.group.position.y=0;tile.animate.forEach(fn=>fn(elapsed));
-      const targetScale=tile.hover?1.5*(10.4-2.2)/(10.4-restZ):1;const scale=tile.group.scale.x+(targetScale-tile.group.scale.x)*.1;tile.group.scale.setScalar(scale);tile.camera.position.set(0,.12,10.4);tile.camera.lookAt(0,.12,0);
-      const expansion=1.85;const expanded={left:r.left-r.width*(expansion-1)/2,top:r.top-r.height*(expansion-1)/2,width:r.width*expansion,height:r.height*expansion};
-      const centerY=r.top+r.height/2;const bendOffset=Math.sin(scrollAngle)*height*.88-(centerY-height*.58);expanded.top+=bendOffset*.7;
-      tile.camera.aspect=r.width/r.height;tile.camera.zoom=1/expansion;tile.camera.updateProjectionMatrix();renderer.setViewport(expanded.left,height-expanded.top-expanded.height,expanded.width,expanded.height);const right=expanded.left+expanded.width,bottom=expanded.top+expanded.height;renderer.setScissor(Math.max(0,expanded.left),Math.max(0,height-bottom),Math.max(0,Math.min(right,width)-Math.max(0,expanded.left)),Math.max(0,Math.min(bottom,height)-Math.max(0,expanded.top)));if(tile.hover)renderer.clearDepth();renderer.render(tile.scene,tile.camera);
+      const scrollAngle=T.MathUtils.clamp((r.top+r.height/2-height*.58)/(height*.88),-1.1,1.1);
+      const ease=1-Math.exp(-dt*13),target=tile.hover?1:0;
+      tile.hoverProgress+=(target-tile.hoverProgress)*ease;
+      if(Math.abs(target-tile.hoverProgress)<.0001)tile.hoverProgress=target;
+      const progress=tile.hoverProgress,restZ=-(1-Math.cos(scrollAngle))*4.8;
+      const pose=hoverPose(restZ,progress);
+      const tx=scrollAngle*.88*(1-progress),ty=tile.baseY*(1-progress);
+      if(Math.abs(target-progress)>.0001||Math.abs(tile.group.rotation.x-tx)>.001)settling=true;
+      tile.group.rotation.set(tx,ty,0);tile.group.position.set(0,0,pose.z);tile.group.scale.setScalar(pose.scale);
+      tile.animate.forEach(fn=>fn(elapsed));tile.camera.position.set(0,.12,CAMERA_Z);tile.camera.lookAt(0,.12,0);
+      const expanded=view.viewport,right=expanded.left+expanded.width,bottom=expanded.top+expanded.height;
+      renderer.setViewport(expanded.left,height-expanded.top-expanded.height,expanded.width,expanded.height);
+      renderer.setScissor(Math.max(0,expanded.left),Math.max(0,height-bottom),Math.max(0,Math.min(right,width)-Math.max(0,expanded.left)),Math.max(0,Math.min(bottom,height)-Math.max(0,expanded.top)));
+      renderer.clearDepth();renderer.render(tile.scene,tile.camera);
     });
     if(visibleCount&&(motion||activeVideo||settling))frame=requestAnimationFrame(render);
   }

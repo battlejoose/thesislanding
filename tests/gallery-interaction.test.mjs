@@ -1,0 +1,60 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import * as T from 'three';
+import {CAMERA_Z,FACE_Z,hoverPose,pickObject} from '../lib/gallery-interaction.ts';
+import {brooklynCity,constructionTile} from '../lib/brooklyn-world.ts';
+
+function view(left=100,top=80) {
+  const camera=new T.PerspectiveCamera(46,400/520,.1,30);camera.position.set(0,.12,CAMERA_Z);camera.lookAt(0,.12,0);camera.updateProjectionMatrix();
+  return {camera,group:new T.Group(),viewport:{left,top,width:400,height:520},bounds:new T.Box3(new T.Vector3(-2.43,-2.95,-.76),new T.Vector3(2.43,2.95,.77))};
+}
+function project(v,x,y,z=.65){const point=new T.Vector3(x,y,z);v.group.updateMatrixWorld();v.camera.updateMatrixWorld();point.applyMatrix4(v.group.matrixWorld).project(v.camera);return {x:v.viewport.left+(point.x+1)*v.viewport.width/2,y:v.viewport.top+(1-point.y)*v.viewport.height/2};}
+
+test('hover adds exactly 20% apparent size, without overshoot or reversed movement',()=>{
+  for(const rest of [0,-.8,-2.6]){
+    let previous=1;
+    for(let i=0;i<=100;i++){
+      const progress=i/100,{z,scale}=hoverPose(rest,progress);
+      const apparent=scale*(CAMERA_Z-rest-FACE_Z)/(CAMERA_Z-z-scale*FACE_Z);
+      assert.ok(Math.abs(apparent-(1+.2*progress))<1e-12);
+      assert.ok(apparent>=previous-1e-12 && apparent<=1.2+1e-12);previous=apparent;
+    }
+    assert.deepEqual(hoverPose(rest,0),{z:rest,scale:1});
+  }
+});
+test('only the visible 3D object activates; empty DOM-card corners do not',()=>{
+  const v=view();assert.equal(pickObject(project(v,0,0),[v])?.index,0);
+  assert.equal(pickObject({x:102,y:82},[v]),null);
+  assert.equal(pickObject(null,[v],0),null);
+});
+test('picking tracks camera zoom, scroll curvature, depth and responsive viewports',()=>{
+  for(const top of [-120,80,700])for(const rotation of [-.75,0,.75]){
+    const v=view(60,top);v.group.rotation.set(rotation,.13,0);v.group.position.z=-2;
+    v.camera.zoom=1/1.7;v.camera.updateProjectionMatrix();
+    const hit=pickObject(project(v,1,1),[v]);assert.equal(hit?.index,0);
+    assert.ok(hit.point.x>0 && hit.point.y>0);
+  }
+});
+test('leaving an enlarged tile releases it immediately and permits the next tile',()=>{
+  const a=view(),b=view(520);const pose=hoverPose(0,1);a.group.position.z=pose.z;a.group.scale.setScalar(pose.scale);
+  assert.equal(pickObject(project(a,0,0),[a,b],0)?.index,0);
+  assert.equal(pickObject(project(b,0,0),[a,b],0)?.index,1);
+  assert.equal(pickObject({x:1100,y:20},[a,b],0),null);
+});
+test('foreground object owns overlaps; no alternating hover from DOM mouseleave events',()=>{
+  const a=view(),b=view(200),p={x:360,y:340};
+  for(let i=0;i<50;i++)assert.equal(pickObject(p,[a,b],0)?.index,0);
+  assert.equal(pickObject(p,[a,b],1)?.index,1);
+});
+test('Brooklyn architecture has valid geometry and keeps animating independently of tilt',()=>{
+  const tile=new T.Group(),animations=[];constructionTile(tile,animations,2);
+  tile.rotation.set(0,0,0);const before=tile.children.map(o=>o.position.y);
+  animations.forEach(fn=>fn(3));assert.deepEqual(tile.rotation.toArray(),[0,0,0,'XYZ']);
+  assert.ok(tile.children.some((o,i)=>o.position.y!==before[i]));
+  let seed=76123;const random=()=>{seed=seed*16807%2147483647;return(seed-1)/2147483646;};
+  const city=new T.Group(),cityAnimations=[];brooklynCity(city,cityAnimations,random);cityAnimations.forEach(fn=>fn(20));
+  for(const root of [tile,city])root.traverse(o=>{
+    if(o.geometry){for(const value of o.geometry.attributes.position.array)assert.ok(Number.isFinite(value));}
+    if(o.isInstancedMesh)assert.ok(o.count<=o.instanceMatrix.count);
+  });
+});

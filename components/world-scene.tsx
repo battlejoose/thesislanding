@@ -16,7 +16,7 @@ export default function WorldScene({theme,motion}:{theme:Theme;motion:boolean}){
   },[theme]);
   return <div className="scene-stage" data-ready={ready} data-motion={motion}>
     {!ready&&<div className="scene-reveal">{theme!=="volcanic"&&theme!=="space"&&<img src={`/art/${theme}.webp`} alt="" width={1280} height={853}/>} {!failed&&<span className="scene-loading"><i/><i/><i/></span>}</div>}
-    <div ref={host} className="three-host" tabIndex={0} role="img" aria-label={`${theme} 3D world. Drag to rotate, or use left and right arrow keys.`} onKeyDown={e=>{if(e.key==='ArrowLeft'||e.key==='ArrowRight'){e.preventDefault();engine.current?.rotate(e.key==='ArrowRight'?1:-1);}}}/>
+    <div ref={host} className="three-host" tabIndex={theme==='brooklyn'?-1:0} role="img" aria-label={theme==='brooklyn'?'Brooklyn cityscape with working cranes, rooftop water towers and moving traffic.':`${theme} 3D world. Drag to rotate, or use left and right arrow keys.`} onKeyDown={e=>{if(e.key==='ArrowLeft'||e.key==='ArrowRight'){e.preventDefault();engine.current?.rotate(e.key==='ArrowRight'?1:-1);}}}/>
     <div className="scene-ui"><span><Box size={13}/><span data-spatial-text data-spatial-tone='accent'>{failed?'STILL WORLD':'A LIVING 3D WORLD'}</span></span>{!failed&&<span><MoveHorizontal size={16}/><span data-spatial-text data-spatial-tone="muted">Drag to explore</span></span>}</div>
   </div>;
 }

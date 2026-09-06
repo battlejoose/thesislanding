@@ -10,7 +10,7 @@ const worlds = {
   volcanic: { label: 'Volcanic', eyebrow: 'FORGED IN FIRE', title: 'Raw energy.', emphasis: 'New worlds.', copy: 'Ideas with the power to reshape everything.', icon: Flame, chapter: '04 / FIRE & FORM' },
   space: { label: 'Space', eyebrow: 'BEYOND THE HORIZON', title: 'Think bigger.', emphasis: 'Go further.', copy: 'Discover the projects reaching for the next frontier.', icon: Orbit, chapter: '05 / THE COSMIC FRONTIER' },
   roots: { label: 'Roots', eyebrow: 'GROUNDED IN POSSIBILITY', title: 'Good ideas.', emphasis: 'Deep roots.', copy: 'Discover the projects planting the seeds of what comes next.', icon: Sprout, chapter: '01 / THE LIVING WORLD' },
-  brooklyn: { label: 'Brooklyn', eyebrow: 'INDEPENDENT SPIRIT. COLLECTIVE ENERGY.', title: 'The next wave.', emphasis: 'From the block.', copy: 'A new generation of projects. Built with ambition. Owned by the community.', icon: Building2, chapter: '02 / THE CITY EDITION' },
+  brooklyn: { label: 'Brooklyn', eyebrow: 'BROOKLYN / BUILT TOGETHER', title: 'From the ground.', emphasis: 'To the skyline.', copy: 'A new generation of projects. Built with ambition. Owned by the community.', icon: Building2, chapter: '02 / THE CITY EDITION' },
   steampunk: { label: 'Steampunk', eyebrow: 'INGENUITY IN MOTION', title: 'Bright minds.', emphasis: 'Great machines.', copy: 'Extraordinary projects powering a world of new possibilities.', icon: Cog, chapter: '03 / THE AGE OF INVENTION' },
 };
 
