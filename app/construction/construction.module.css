@@ -1,0 +1,40 @@
+.construction {
+  min-height: 100svh;
+  isolation: isolate;
+  overflow-x: clip;
+}
+
+.collection {
+  position: relative;
+  min-height: 100svh;
+  padding: calc(clamp(44px, 8vh, 96px) + env(safe-area-inset-top)) clamp(16px, 4vw, 76px) max(16vh, 80px);
+}
+
+/* Edition-specific spacing keeps the original Brooklyn page untouched. */
+.construction .collection :global(.project-grid) {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 310px), 1fr));
+  gap: 48px 28px;
+}
+
+.construction :global(.world-scene)::after {
+  background: linear-gradient(180deg, #14223318, transparent 42%, #12203138);
+}
+
+@media (max-width: 760px) {
+  .construction .collection :global(.project-grid) {
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 265px), 1fr));
+    gap: 32px 14px;
+  }
+}
+
+@media (max-width: 600px) {
+  .collection {
+    padding-inline: max(12px, env(safe-area-inset-left)) max(12px, env(safe-area-inset-right));
+    padding-top: calc(48px + env(safe-area-inset-top));
+  }
+
+  .construction .collection :global(.project-grid) {
+    grid-template-columns: 1fr;
+    row-gap: 24px;
+  }
+}

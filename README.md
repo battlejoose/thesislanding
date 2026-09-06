@@ -11,6 +11,11 @@ The application lives directly in the `thesislanding` repository root. Run these
 - `npm run build`
 - `npx tsc --noEmit`
 
+## Editions
+
+- `/` preserves the original five-world showcase, including the Brooklyn theme, heading, and theme selector.
+- `/construction` is the separate **Construction** edition: only the animated Brooklyn cityscape and project buildings. It retains the responsive scrolling wheel, 20% hover zoom, video previews, and keyboard controls. Its layout styles and selection state are separate from the original page, and it respects system reduced-motion preferences. It does not load the extra page-typography renderer.
+
 ## Five worlds
 
 - **Roots**: a floating moss island, modeled trunk and branches, tapered hanging roots, instanced canopy, saplings, drifting leaves, and fireflies.
