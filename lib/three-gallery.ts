@@ -98,10 +98,10 @@ function retext(target:T.Mesh,font:Font,text:string,size:number,maxWidth:number,
   const width=geometry.boundingBox!.max.x-geometry.boundingBox!.min.x;
   target.geometry=geometry;target.scale.x=width>maxWidth?maxWidth/width:1;
 }
-export async function createGallery(container:HTMLDivElement,articles:HTMLElement[],projects:Project[],onReady:()=>void){
+export async function createGallery(container:HTMLDivElement,articles:HTMLElement[],projects:Project[],onReady:()=>void,onHover?:(id:string|null)=>void){
   const font=await new FontLoader().loadAsync('/fonts/helvetiker.json');
   const renderer=new T.WebGLRenderer({alpha:true,antialias:true,powerPreference:'low-power'});renderer.setPixelRatio(Math.min(window.devicePixelRatio,window.innerWidth<650?1.1:1.4));renderer.outputColorSpace=T.SRGBColorSpace;renderer.toneMapping=T.ACESFilmicToneMapping;renderer.toneMappingExposure=1.2;renderer.setClearColor(0,0);renderer.autoClear=false;container.appendChild(renderer.domElement);
-  let frame=0,elapsed=0,last=0,motion=true,disposed=false;const tiles:Tile[]=[];const cleanups:Array<()=>void>=[];
+  let frame=0,elapsed=0,last=0,motion=true,disposed=false,hovered:string|null=null;const tiles:Tile[]=[];const cleanups:Array<()=>void>=[];
   function wake(){if(disposed||frame)return;frame=requestAnimationFrame(render);}
   articles.forEach((article,index)=>tiles.push(makeTile(article,projects[index],index,font,wake)));
   let pointer:Pointer|null=null, active=-1, keyboard=-1;
@@ -159,6 +159,8 @@ export async function createGallery(container:HTMLDivElement,articles:HTMLElemen
     active=keyboard>=0?keyboard:(pickObject(pointer,views,active)?.index??-1);
     document.body.style.cursor=active>=0?'pointer':'';
     tiles.forEach((tile,index)=>{tile.hover=index===active;tile.article.dataset.hovered=String(tile.hover);});
+    const overId=active>=0?tiles[active].project.id:null;
+    if(overId!==hovered){hovered=overId;onHover?.(overId);}
     const order=tiles.map((tile,index)=>({tile,index})).sort((a,b)=>Number(a.tile.hover)-Number(b.tile.hover));order.forEach(({tile,index})=>{
       const r=rects[index],view=views[index];if(!view)return;
       tile.article.dataset.wheelActive='true';tile.article.inert=false;visibleCount++;

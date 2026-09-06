@@ -225,3 +225,33 @@ h3 { font-size:17px; font-weight:600; margin:0; line-height:1.35; letter-spacing
 .models-ready .project-card.is-coming-soon .project-bottom { display:none; }
 
 .price-change[data-down=true] { color:#c8705f; }
+
+/* Loading screen. Covers the page while the three WebGL subsystems build, so
+   the plain fallback markup underneath is never seen mid-assembly. */
+.boot-splash { position:fixed; inset:0; z-index:60; display:grid; place-items:center;
+  background:radial-gradient(ellipse at 90% 12%,#965f4933,transparent 50%),var(--background);
+  transition:opacity .5s ease; }
+.boot-splash[data-fading=true] { opacity:0; pointer-events:none; }
+.boot-inner { width:min(330px,72vw); display:flex; flex-direction:column; align-items:center; gap:20px; }
+.boot-logo { width:100%; height:auto; display:block; }
+.boot-rail { width:100%; height:2px; background:#ffffff1f; overflow:hidden; }
+.boot-rail span { display:block; height:100%; background:var(--accent); transition:width .45s ease; }
+.boot-caption { margin:0; width:100%; display:flex; justify-content:space-between; gap:12px;
+  font-size:11px; letter-spacing:2.2px; text-transform:uppercase; color:#9fb0c4; }
+.boot-percent { color:var(--accent); font-variant-numeric:tabular-nums; }
+html[data-booting=true], html[data-booting=true] body { overflow:hidden; }
+@media(prefers-reduced-motion:reduce){ .boot-splash,.boot-rail span { transition:none; } }
+
+/* Dialogue box that answers a hover over a build, in the spirit of a game HUD. */
+.lore-box { position:fixed; left:50%; bottom:26px; transform:translateX(-50%); z-index:40;
+  width:min(620px,calc(100vw - 40px)); padding:16px 20px 18px; pointer-events:none;
+  background:#0f1a29ee; border:1px solid var(--accent); border-radius:3px;
+  box-shadow:0 0 0 1px #0f1a2988, 0 18px 44px #0008; animation:lore-in .16s ease both; }
+.lore-heading { margin:0 0 9px; font-size:10px; letter-spacing:2.6px; text-transform:uppercase; color:var(--accent); }
+.lore-line { margin:0 0 7px; font-size:13.5px; line-height:1.55; color:#e7eef7; }
+.lore-line:last-of-type { margin-bottom:0; }
+.lore-caret { display:inline-block; width:7px; height:14px; background:var(--accent); vertical-align:-2px; animation:lore-blink .9s steps(1) infinite; }
+@keyframes lore-in { from { opacity:0; transform:translate(-50%,7px); } to { opacity:1; transform:translate(-50%,0); } }
+@keyframes lore-blink { 0%,50% { opacity:1; } 50.01%,100% { opacity:0; } }
+@media(max-width:640px){ .lore-box { bottom:14px; padding:13px 15px 15px; } .lore-line { font-size:12.5px; } }
+@media(prefers-reduced-motion:reduce){ .lore-box { animation:none; } .lore-caret { animation:none; } }

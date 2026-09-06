@@ -1,7 +1,10 @@
 'use client';
 import { useEffect, useRef } from 'react';
-export default function SpatialTypography({motion}:{motion:boolean}){
+export default function SpatialTypography({motion,onReady}:{motion:boolean;onReady?:()=>void}){
   const host=useRef<HTMLDivElement>(null),motionRef=useRef(motion);
+  const reported=useRef(false);
+  // rebuild() runs on every DOM mutation; boot only wants the first one.
+  const report=()=>{if(reported.current)return;reported.current=true;onReady?.();};
   useEffect(()=>{motionRef.current=motion;},[motion]);
   useEffect(()=>{
     const container=host.current;if(!container)return;let disposed=false;let cleanup=()=>{};
@@ -23,7 +26,7 @@ export default function SpatialTypography({motion}:{motion:boolean}){
           const mesh=new T.Mesh(geometry,[face,side]);mesh.userData.originalWidth=geometry.boundingBox!.max.x-geometry.boundingBox!.min.x;mesh.userData.originalHeight=geometry.boundingBox!.max.y-geometry.boundingBox!.min.y;mesh.userData.bottom=geometry.boundingBox!.min.y;scene.add(mesh);objects.push({element,mesh,heading,offset:i*.09});
         });
         document.querySelectorAll<HTMLElement>('[data-spatial-panel]').forEach(element=>{const shape=new T.Shape();shape.moveTo(-.3,-.5);shape.lineTo(.3,-.5);shape.quadraticCurveTo(.5,-.5,.5,-.3);shape.lineTo(.5,.3);shape.quadraticCurveTo(.5,.5,.3,.5);shape.lineTo(-.3,.5);shape.quadraticCurveTo(-.5,.5,-.5,.3);shape.lineTo(-.5,-.3);shape.quadraticCurveTo(-.5,-.5,-.3,-.5);const geometry=new T.ExtrudeGeometry(shape,{depth:4,bevelEnabled:false,curveSegments:8});const active=element.hasAttribute('data-active');const baseColor=active?accent:rootStyle.getPropertyValue('--muted').trim()||bg;const mesh=new T.Mesh(geometry,new T.MeshStandardMaterial({color:baseColor,metalness:.35,roughness:.45}));scene.add(mesh);objects.push({element,mesh,heading:false,offset:0,panel:true});});
-        root.setAttribute('data-typography-ready','true');start=performance.now();wake();
+        root.setAttribute('data-typography-ready','true');start=performance.now();wake();report();
       }
       function queue(){cancelAnimationFrame(rebuildFrame);rebuildFrame=requestAnimationFrame(rebuild);}
       function render(now:number){frame=0;if(disposed||document.hidden)return;const t=(now-start)/1000;const height=window.innerHeight;
@@ -36,8 +39,8 @@ export default function SpatialTypography({motion}:{motion:boolean}){
       const ro=new ResizeObserver(resize);ro.observe(document.documentElement);window.addEventListener('scroll',wake,{passive:true});window.addEventListener('resize',resize);document.addEventListener('visibilitychange',wake);
       const lost=(e:Event)=>{e.preventDefault();document.querySelector('.showcase')?.removeAttribute('data-typography-ready');cancelAnimationFrame(frame);};renderer.domElement.addEventListener('webglcontextlost',lost);
       resize();rebuild();cleanup=()=>{cancelAnimationFrame(frame);cancelAnimationFrame(rebuildFrame);observer.disconnect();ro.disconnect();window.removeEventListener('scroll',wake);window.removeEventListener('resize',resize);document.removeEventListener('visibilitychange',wake);renderer.domElement.removeEventListener('webglcontextlost',lost);disposeObjects();renderer.dispose();renderer.forceContextLoss();renderer.domElement.remove();document.querySelector('.showcase')?.removeAttribute('data-typography-ready');};
-    }).catch(()=>{document.querySelector('.showcase')?.removeAttribute('data-typography-ready');});
+    }).catch(()=>{document.querySelector('.showcase')?.removeAttribute('data-typography-ready');report();});
     return()=>{disposed=true;cleanup();};
-  },[]);
+  },[onReady]);
   return <div ref={host} className="spatial-typography" aria-hidden="true"/>;
 }

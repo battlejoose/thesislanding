@@ -10,13 +10,13 @@ function CommunityLink({url,kind,name}:{url:string|null;kind:'X'|'Telegram';name
   if(url)return <a href={url} target="_blank" rel="noopener noreferrer" aria-label={`${name} on ${kind}`}>{icon}</a>;
   return <Tooltip><TooltipTrigger className="unconfigured-link" aria-disabled="true" aria-label={`${name}: ${kind} link not added`}>{icon}</TooltipTrigger><TooltipContent>{kind} link not added for this build.</TooltipContent></Tooltip>;
 }
-export default function ProjectCard({project:p,index,stats}:{project:Project;index:number;stats?:TokenStats}) {
+export default function ProjectCard({project:p,index,stats,onHover}:{project:Project;index:number;stats?:TokenStats;onHover?:(id:string|null)=>void}) {
   const card=useRef<HTMLElement>(null);
   const [imageError,setImageError]=useState(false);
-  return <article ref={card} data-project-id={p.id} data-coming-soon={p.comingSoon?'true':undefined} className={`project-card${p.comingSoon?' is-coming-soon':''}`} style={{'--order':index} as CSSProperties}>
+  return <article ref={card} data-project-id={p.id} data-coming-soon={p.comingSoon?'true':undefined} className={`project-card${p.comingSoon?' is-coming-soon':''}`} style={{'--order':index} as CSSProperties} onPointerEnter={onHover?()=>onHover(p.id):undefined} onPointerLeave={onHover?()=>onHover(null):undefined}>
     <div className="newspaper-masthead"><span>THE {p.ticker} JOURNAL</span><span>NO. 0{index+1}</span></div>
     <div className="project-media">
-      <img src={imageError?'/art/brooklyn.webp':p.image} onError={()=>setImageError(true)} alt={p.comingSoon?'':p.description} width={720} height={405} loading={index>0?'lazy':'eager'} decoding="async"/>
+      <img src={imageError?'/art/brooklyn.webp':p.image} onError={()=>setImageError(true)} alt={p.comingSoon?'':p.description} width={720} height={405} loading={p.featured?'eager':'lazy'} decoding="async"/>
       <span className="media-shade"/>
       <span className="category-chip">{p.category}</span>{p.featured&&<span className="featured-chip">↗ Featured</span>}
       {p.comingSoon&&<span className="play-prompt"><span>Coming soon</span></span>}
