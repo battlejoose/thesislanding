@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import * as T from 'three';
-import {CAMERA_Z,FACE_Z,hoverPose,pickObject} from '../lib/gallery-interaction.ts';
+import {CAMERA_Z,FACE_Z,cursorTiltTarget,hoverPose,pickObject} from '../lib/gallery-interaction.ts';
 import {brooklynCity,constructionTile} from '../lib/brooklyn-world.ts';
 
 function view(left=100,top=80) {
@@ -45,6 +45,30 @@ test('foreground object owns overlaps; no alternating hover from DOM mouseleave 
   const a=view(),b=view(200),p={x:360,y:340};
   for(let i=0;i<50;i++)assert.equal(pickObject(p,[a,b],0)?.index,0);
   assert.equal(pickObject(p,[a,b],1)?.index,1);
+});
+
+test('Construction tiles are 10% smaller at rest and on hover, with matching picking',()=>{
+  for(const progress of [0,.5,1]){
+    const v=view(),pose=hoverPose(-.8,progress);
+    v.group.rotation.set(.35*(1-progress),.13,0);v.group.position.z=pose.z;v.group.scale.setScalar(pose.scale);
+    const originalLeft=project(v,-2,0),originalRight=project(v,2,0);
+    v.camera.zoom=.9;v.camera.updateProjectionMatrix();
+    const smallerLeft=project(v,-2,0),smallerRight=project(v,2,0);
+    assert.ok(Math.abs((smallerRight.x-smallerLeft.x)/(originalRight.x-originalLeft.x)-.9)<1e-12);
+    assert.equal(pickObject(project(v,1.8,1),[v])?.index,0);
+    assert.equal(pickObject(project(v,2.8,1),[v]),null);
+  }
+});
+
+test('cursor tilt follows both axes, stays subtle, and resets without a mouse',()=>{
+  const left=cursorTiltTarget({x:0,y:300},1200,600),right=cursorTiltTarget({x:1200,y:300},1200,600);
+  const top=cursorTiltTarget({x:600,y:0},1200,600),bottom=cursorTiltTarget({x:600,y:600},1200,600);
+  assert.ok(left.y<0 && right.y>0 && top.x>0 && bottom.x<0);
+  assert.deepEqual(cursorTiltTarget(null,1200,600),{x:0,y:0});
+  const extreme=cursorTiltTarget({x:9000,y:-9000},1200,600);
+  assert.ok(Math.abs(extreme.x)<=.08 && Math.abs(extreme.y)<=.16);
+  // The same additive offset applies regardless of each row's wheel rotation.
+  for(const wheel of [-.9,0,.9])assert.ok(Math.abs((wheel+right.x)-wheel)<1e-12);
 });
 test('Brooklyn architecture has valid geometry and keeps animating independently of tilt',()=>{
   const tile=new T.Group(),animations=[];constructionTile(tile,animations,2);

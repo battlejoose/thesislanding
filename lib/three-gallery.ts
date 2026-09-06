@@ -5,7 +5,7 @@ import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
 import type { Project, Theme } from './projects';
 import { addTileWorldDetails } from './theme-worlds';
 import { constructionTile } from './brooklyn-world';
-import { CAMERA_Z, hoverPose, pickObject, type Pickable, type Pointer } from './gallery-interaction';
+import { CAMERA_Z, cursorTiltTarget, hoverPose, pickObject, type Pickable, type Pointer } from './gallery-interaction';
 const TAU=Math.PI*2;
 export const palette={volcanic:{side:'#262124',paper:'#393034',ink:'#ffdaab',trim:'#fa682d'},space:{side:'#242540',paper:'#303850',ink:'#d4efff',trim:'#6bbcea'},roots:{side:'#453826',paper:'#e7ebd4',ink:'#273c2c',trim:'#789052'},brooklyn:{side:'#653c30',paper:'#f0e6cf',ink:'#302922',trim:'#b19a75'},steampunk:{side:'#343130',paper:'#dfcaa2',ink:'#49351f',trim:'#c29656'}};
 function mesh(parent:T.Object3D,g:T.BufferGeometry,m:T.Material|T.Material[],x=0,y=0,z=0){const o=new T.Mesh(g,m);o.position.set(x,y,z);o.castShadow=true;o.receiveShadow=true;parent.add(o);return o;}
@@ -109,13 +109,14 @@ export function makeTile(article:HTMLElement,p:Project,index:number,theme:Theme,
   const baseY=.13;group.rotation.set(.09,baseY,0);
   return {scene,camera,group,article,project:p,imageMaterial,imageTexture,videoTexture:null,video:null,statusTexture,statusMaterial,status:'',statusLabel,animate,hover:false,hoverProgress:0,baseY,bounds};
 }
-export async function createGallery(container:HTMLDivElement,articles:HTMLElement[],projects:Project[],theme:Theme,onReady:()=>void){
+export async function createGallery(container:HTMLDivElement,articles:HTMLElement[],projects:Project[],theme:Theme,onReady:()=>void,{displayScale=1,cursorTilt=false}:{displayScale?:number;cursorTilt?:boolean}={}){
   const font=await new FontLoader().loadAsync('/fonts/helvetiker.json');
   const renderer=new T.WebGLRenderer({alpha:true,antialias:true,powerPreference:'low-power'});renderer.setPixelRatio(Math.min(window.devicePixelRatio,window.innerWidth<650?1.1:1.4));renderer.outputColorSpace=T.SRGBColorSpace;renderer.toneMapping=T.ACESFilmicToneMapping;renderer.toneMappingExposure=1.2;renderer.setClearColor(0,0);renderer.autoClear=false;container.appendChild(renderer.domElement);
   let frame=0,elapsed=0,last=0,motion=true,disposed=false;const tiles:Tile[]=[];const cleanups:Array<()=>void>=[];
   function wake(){if(disposed||frame)return;frame=requestAnimationFrame(render);}
   articles.forEach((article,index)=>tiles.push(makeTile(article,projects[index],index,theme,font,wake)));
   let pointer:Pointer|null=null, active=-1, keyboard=-1;
+  let cursorX=0,cursorY=0;
   let views:(Pickable|null)[]=tiles.map(()=>null);
   const blocked=(target:EventTarget|null)=>target instanceof Element && !!target.closest('button,a,[role="tab"],[data-slot="tooltip-content"]') && !target.closest('[data-project-id]');
   const move=(event:PointerEvent)=>{
@@ -140,6 +141,7 @@ export async function createGallery(container:HTMLDivElement,articles:HTMLElemen
     control?.click();
   };
   const down=(event:PointerEvent)=>{
+    if(event.pointerType!=='mouse'){pointer=null;active=keyboard=-1;wake();}
     if(blocked(event.target))return;
     if(pickObject({x:event.clientX,y:event.clientY},views,active))event.stopPropagation();
   };
@@ -158,13 +160,17 @@ export async function createGallery(container:HTMLDivElement,articles:HTMLElemen
   });
   let visibleCount=0;
   function render(now:number){frame=0;if(disposed||document.hidden)return;const dt=Math.min((now-last)/1000,.04);last=now;if(motion)elapsed+=dt;const width=window.innerWidth,height=window.innerHeight;const rects=tiles.map(t=>t.article.getBoundingClientRect());renderer.setScissorTest(false);renderer.clear();renderer.setScissorTest(true);visibleCount=0;let activeVideo=false,settling=false;
+    const cursorTarget=cursorTiltTarget(cursorTilt&&motion?pointer:null,width,height);
+    const cursorEase=1-Math.exp(-dt*8);
+    cursorX+=(cursorTarget.x-cursorX)*cursorEase;cursorY+=(cursorTarget.y-cursorY)*cursorEase;
+    if(Math.abs(cursorTarget.x-cursorX)>.0001||Math.abs(cursorTarget.y-cursorY)>.0001)settling=true;
     views=tiles.map((tile,index)=>{
       const r=rects[index];
       if(r.bottom < -r.height*.4 || r.top > height+r.height*.4)return null;
       const angle=T.MathUtils.clamp((r.top+r.height/2-height*.58)/(height*.88),-1.1,1.1);
       const expansion=1.7,bend=(Math.sin(angle)*height*.88-(r.top+r.height/2-height*.58))*.7;
       const viewport={left:r.left-r.width*(expansion-1)/2,top:r.top-r.height*(expansion-1)/2+bend,width:r.width*expansion,height:r.height*expansion};
-      tile.camera.aspect=r.width/r.height;tile.camera.zoom=1/expansion;tile.camera.updateProjectionMatrix();
+      tile.camera.aspect=r.width/r.height;tile.camera.zoom=displayScale/expansion;tile.camera.updateProjectionMatrix();
       return {group:tile.group,camera:tile.camera,viewport,bounds:tile.bounds};
     });
     active=keyboard>=0?keyboard:(pickObject(pointer,views,active)?.index??-1);
@@ -185,7 +191,7 @@ export async function createGallery(container:HTMLDivElement,articles:HTMLElemen
       if(Math.abs(target-tile.hoverProgress)<.0001)tile.hoverProgress=target;
       const progress=tile.hoverProgress,restZ=-(1-Math.cos(scrollAngle))*4.8;
       const pose=hoverPose(restZ,progress);
-      const tx=scrollAngle*.88*(1-progress),ty=tile.baseY*(1-progress);
+      const tx=scrollAngle*.88*(1-progress)+cursorX,ty=tile.baseY*(1-progress)+cursorY;
       if(Math.abs(target-progress)>.0001||Math.abs(tile.group.rotation.x-tx)>.001)settling=true;
       tile.group.rotation.set(tx,ty,0);tile.group.position.set(0,0,pose.z);tile.group.scale.setScalar(pose.scale);
       tile.animate.forEach(fn=>fn(elapsed));tile.camera.position.set(0,.12,CAMERA_Z);tile.camera.lookAt(0,.12,0);

@@ -14,7 +14,7 @@ The application lives directly in the `thesislanding` repository root. Run these
 ## Editions
 
 - `/` preserves the original five-world showcase, including the Brooklyn theme, heading, and theme selector.
-- `/construction` is the separate **Construction** edition: only the animated Brooklyn cityscape and project buildings. It retains the responsive scrolling wheel, 20% hover zoom, video previews, and keyboard controls. Its layout styles and selection state are separate from the original page, and it respects system reduced-motion preferences. It does not load the extra page-typography renderer.
+- `/construction` is the separate **Construction** edition: only the animated Brooklyn cityscape and project buildings. Its tiles render 10% smaller and share a gently eased cursor-following tilt layered over the responsive scrolling wheel. It retains the 20% hover zoom, video previews, and keyboard controls. Its layout styles and selection state are separate from the original page, and it respects system reduced-motion preferences. Cursor tilt returns to neutral when the mouse leaves and is disabled for touch and reduced motion. It does not load the extra page-typography renderer.
 
 ## Five worlds
 

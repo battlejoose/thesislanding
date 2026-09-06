@@ -20,6 +20,10 @@
   background: linear-gradient(180deg, #14223318, transparent 42%, #12203138);
 }
 
+.construction :global(.project-gallery:not(.models-ready) .project-card) {
+  transform: scale(var(--project-display-scale, 1));
+}
+
 @media (max-width: 760px) {
   .construction .collection :global(.project-grid) {
     grid-template-columns: repeat(auto-fit, minmax(min(100%, 265px), 1fr));

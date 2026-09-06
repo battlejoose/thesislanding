@@ -25,6 +25,8 @@ export default function Construction() {
       <main className={styles.collection} aria-label="Construction project collection">
         <ProjectGallery
           theme="brooklyn"
+          displayScale={0.9}
+          cursorTilt
           motion={motion}
           selected={selected}
           onSelect={id => setSelected(current => current === id ? null : id)}
