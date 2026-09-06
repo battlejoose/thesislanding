@@ -86,6 +86,21 @@ export function makeTile(article:HTMLElement,p:Project,index:number,font:Font,wa
   if(p.comingSoon)label(group,font,'COMING SOON',.12,3.9,'#e7efdc',-1.96,.19,.665,.024);
   constructionTile(group,animate,index);
   label(group,font,'SITE / 0'+(index+1),.13,1.7,'#e9bd69',.12,3.13,.62,.035);
+  // A live site keeps a beacon burning, so the running build reads at a glance.
+  if(!p.comingSoon){
+    const glass=new T.MeshStandardMaterial({color:'#ff7a55',emissive:'#ff2d12',emissiveIntensity:2.2,roughness:.35});
+    const beacon=mesh(group,new T.SphereGeometry(.115,14,12),glass,-1.95,3.13,.66);
+    const halo=new T.Mesh(new T.SphereGeometry(.24,14,12),new T.MeshBasicMaterial({color:'#ff7043',transparent:true,opacity:.2,depthWrite:false}));
+    halo.position.copy(beacon.position);halo.castShadow=false;group.add(halo);
+    mesh(group,new T.CylinderGeometry(.055,.075,.12,10),railMat,-1.95,3.02,.66);
+    label(group,font,'LIVE',.1,.9,'#ffb59c',-1.78,3.07,.66,.022);
+    animate.push(t=>{
+      const pulse=(Math.sin(t*3.2)+1)/2;
+      glass.emissiveIntensity=.35+pulse*3.3;
+      halo.scale.setScalar(.8+pulse*.75);
+      (halo.material as T.MeshBasicMaterial).opacity=.05+pulse*.28;
+    });
+  }
   const shadowTex=canvasTexture(128,128,ctx=>{const grad=ctx.createRadialGradient(64,64,10,64,64,64);grad.addColorStop(0,'#0008');grad.addColorStop(1,'#0000');ctx.fillStyle=grad;ctx.fillRect(0,0,128,128);});const shadow=printed(scene,shadowTex,6.4,7.5,.2,-.26,-1.1);shadow.castShadow=false;shadow.name='drop-shadow';(shadow.material as T.Material).depthWrite=false;
   const bounds=new T.Box3(new T.Vector3(-2.43,-2.95,-1.66),new T.Vector3(2.43,3.72,.77));
   const baseY=.13;group.rotation.set(.09,baseY,0);

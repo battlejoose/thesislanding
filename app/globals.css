@@ -255,3 +255,12 @@ html[data-booting=true], html[data-booting=true] body { overflow:hidden; }
 @keyframes lore-blink { 0%,50% { opacity:1; } 50.01%,100% { opacity:0; } }
 @media(max-width:640px){ .lore-box { bottom:14px; padding:13px 15px 15px; } .lore-line { font-size:12.5px; } }
 @media(prefers-reduced-motion:reduce){ .lore-box { animation:none; } .lore-caret { animation:none; } }
+
+.live-dot { display:inline-block; width:7px; height:7px; margin-right:7px; border-radius:50%;
+  background:#ff3d18; box-shadow:0 0 0 0 #ff3d18aa; animation:live-pulse 1.6s ease-out infinite; }
+@keyframes live-pulse {
+  0% { opacity:1; box-shadow:0 0 0 0 #ff3d18aa; }
+  70% { opacity:.55; box-shadow:0 0 0 7px #ff3d1800; }
+  100% { opacity:1; box-shadow:0 0 0 0 #ff3d1800; }
+}
+@media(prefers-reduced-motion:reduce){ .live-dot { animation:none; } }

@@ -14,7 +14,7 @@ export default function ProjectCard({project:p,index,stats,onHover}:{project:Pro
   const card=useRef<HTMLElement>(null);
   const [imageError,setImageError]=useState(false);
   return <article ref={card} data-project-id={p.id} data-coming-soon={p.comingSoon?'true':undefined} className={`project-card${p.comingSoon?' is-coming-soon':''}`} style={{'--order':index} as CSSProperties} onPointerEnter={onHover?()=>onHover(p.id):undefined} onPointerLeave={onHover?()=>onHover(null):undefined}>
-    <div className="newspaper-masthead"><span>THE {p.ticker} JOURNAL</span><span>NO. 0{index+1}</span></div>
+    <div className="newspaper-masthead"><span>{!p.comingSoon&&<i className="live-dot" aria-hidden="true"/>}THE {p.ticker} JOURNAL</span><span>{p.comingSoon?`NO. 0${index+1}`:'LIVE'}</span></div>
     <div className="project-media">
       <img src={imageError?'/art/brooklyn.webp':p.image} onError={()=>setImageError(true)} alt={p.comingSoon?'':p.description} width={720} height={405} loading={p.featured?'eager':'lazy'} decoding="async"/>
       <span className="media-shade"/>
