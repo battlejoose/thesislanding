@@ -51,11 +51,11 @@ export async function fetchTokenProject(address:string,signal:AbortSignal):Promi
   }finally{clearTimeout(timeout);signal.removeEventListener('abort',cancel);}
 }
 
-export async function prepareTokenProject(address:string,signal:AbortSignal):Promise<Project> {
+export async function prepareTokenProject(address:string,signal:AbortSignal,overrides:Partial<Project>={}):Promise<Project> {
   signal.throwIfAborted();
-  // The image URL is known from the address; start it alongside the metadata.
-  const src=`/api/tokens/${address}/image`,image=loadTokenImage(src);
-  const project=await fetchTokenProject(address,signal);
+  // Start the configured artwork alongside metadata, before waiting for either.
+  const src=overrides.image??`/api/tokens/${address}/image`,image=loadTokenImage(src);
+  const project={...await fetchTokenProject(address,signal),...overrides};
   if(project.imageAvailable!==false)await (project.image===src?image:loadTokenImage(project.image));
   signal.throwIfAborted();
   return project;

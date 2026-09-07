@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {loadTokenImage,prepareTokenProject} from '../lib/token-client.ts';
-import {INITIAL_CONSTRUCTION_PROJECTS} from '../lib/construction-projects.ts';
+import {CONSTRUCTION_OVERRIDES,INITIAL_CONSTRUCTION_PROJECTS} from '../lib/construction-projects.ts';
 
 function fakeImages() {
   const original=globalThis.Image,created=[];
@@ -16,10 +16,28 @@ const tick=()=>new Promise(resolve=>setImmediate(resolve));
 const metadata=address=>({id:address,tokenAddress:address,kind:'token',dataState:'ready',image:`/api/tokens/${address}/image`,imageAvailable:true});
 
 test('initial HTML can request configured token images without waiting for metadata',()=>{
-  for(const project of INITIAL_CONSTRUCTION_PROJECTS){
-    if(project.kind==='token')assert.equal(project.image,`/api/tokens/${project.tokenAddress}/image`);
+  for(const [index,project] of INITIAL_CONSTRUCTION_PROJECTS.entries()){
+    if(project.kind==='token')assert.equal(project.image,CONSTRUCTION_OVERRIDES[index]?.image??`/api/tokens/${project.tokenAddress}/image`);
     else assert.equal(project.image,'/art/brooklyn.webp');
   }
+});
+
+test('custom artwork starts immediately and survives missing provider imagery and metadata refreshes',async()=>{
+  const mock=fakeImages(),originalFetch=globalThis.fetch,address='custom-artwork';
+  const overrides={name:'SoltoshiDICE',ticker:'SDICE',image:'/art/custom-test.png',imageAvailable:true,website:'https://soltoshidice.wtf/'};
+  try{
+    globalThis.fetch=async()=>Response.json({...metadata(address),name:'Provider name',ticker:'OLD',image:'/art/brooklyn.webp',imageAvailable:false,website:null,cap:'$123'});
+    let settled=false,releaseDecode;
+    const pending=prepareTokenProject(address,new AbortController().signal,overrides).then(project=>{settled=true;return project;});
+    assert.equal(mock.created.length,1);assert.equal(mock.created[0].src,overrides.image);
+    mock.created[0].decode=()=>new Promise(resolve=>{releaseDecode=resolve;});
+    mock.created[0].onload();await tick();assert.equal(settled,false);
+    releaseDecode();const project=await pending;
+    for(const [key,value] of Object.entries(overrides))assert.equal(project[key],value);
+    assert.equal(project.cap,'$123');assert.equal(project.tokenAddress,address);
+    assert.deepEqual(await prepareTokenProject(address,new AbortController().signal,overrides),project);
+    assert.equal(mock.created.length,1,'refresh must reuse the custom image without requesting Pump artwork');
+  }finally{mock.restore();globalThis.fetch=originalFetch;}
 });
 
 test('image and metadata load together, and startup waits for decoding before returning the tile',async()=>{

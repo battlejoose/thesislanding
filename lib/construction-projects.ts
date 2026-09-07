@@ -7,24 +7,28 @@ export const CONSTRUCTION_TOKENS: readonly (string | null)[] = [
   null,
 ];
 
-// Tile 1 keeps these destinations even when token metadata refreshes.
-export function withConstructionLinks(project:Project,index:number):Project {
-  return index===0&&project.kind==='token'?{
-    ...project,
+// Tile 1 keeps its supplied identity, artwork, and links through live refreshes.
+export const CONSTRUCTION_OVERRIDES: readonly Partial<Project>[] = [
+  {
+    name:'SoltoshiDICE',
+    ticker:'SDICE',
+    image:'/art/soltoshidice.png',
+    imageAvailable:true,
     website:'https://soltoshidice.wtf/',
     tokenUrl:'https://soltoshidice.wtf/',
     x:'https://x.com/SoltoshiDice',
-  }:project;
-}
+  },
+];
 
 export function constructionProject(address:string|null,index:number):Project {
-  return withConstructionLinks({
+  return {
     id:address??`soon-${index}`,kind:address?'token':'soon',tokenAddress:address??undefined,
     dataState:address?'loading':undefined,name:'N/A',ticker:'N/A',category:'N/A',description:'N/A',
     cap:'N/A',change:'N/A',price:'N/A',volume:'N/A',liquidity:'N/A',image:address?`/api/tokens/${address}/image`:'/art/brooklyn.webp',video:null,
     icon:'',color:'#9a9586',x:null,telegram:null,website:null,
     tokenUrl:address?`https://pump.fun/coin/${address}`:undefined,
-  },index);
+    ...(address?CONSTRUCTION_OVERRIDES[index]:{}),
+  };
 }
 
 export const INITIAL_CONSTRUCTION_PROJECTS = CONSTRUCTION_TOKENS.map(constructionProject);
