@@ -13,9 +13,61 @@ function rounded(w:number,h:number,r:number){const s=new T.Shape(),x=-w/2,y=-h/2
 function slab(parent:T.Object3D,w:number,h:number,depth:number,color:string,metal=false){const geo=new T.ExtrudeGeometry(rounded(w,h,.12),{depth,bevelEnabled:true,bevelThickness:.05,bevelSize:.045,bevelSegments:2,steps:1,curveSegments:5});geo.translate(0,0,-depth/2);return mesh(parent,geo,new T.MeshStandardMaterial({color,roughness:metal?.36:.85,metalness:metal?.7:0}));}
 function canvasTexture(w:number,h:number,paint:(ctx:CanvasRenderingContext2D)=>void){const c=document.createElement('canvas');c.width=w;c.height=h;paint(c.getContext('2d')!);const t=new T.CanvasTexture(c);t.colorSpace=T.SRGBColorSpace;t.anisotropy=2;return t;}
 function printed(parent:T.Object3D,texture:T.Texture,w:number,h:number,x:number,y:number,z:number){return mesh(parent,new T.PlaneGeometry(w,h),new T.MeshBasicMaterial({map:texture,transparent:true}),x,y,z);}
-function label(parent:T.Object3D,font:Font,text:string,size:number,maxWidth:number,color:string,x:number,y:number,z:number,depth=.045){const geo=new TextGeometry(text,{font,size,depth,curveSegments:3,bevelEnabled:true,bevelThickness:.006,bevelSize:.003,bevelSegments:1});geo.computeBoundingBox();const width=geo.boundingBox!.max.x-geo.boundingBox!.min.x;const m=mesh(parent,geo,new T.MeshStandardMaterial({color,roughness:.52,metalness:.15}),x,y,z);if(width>maxWidth)m.scale.x=maxWidth/width;return m;}
+function label(parent:T.Object3D,font:Font,text:string,size:number,maxWidth:number,color:string,x:number,y:number,z:number,depth=.045){const geo=new TextGeometry(text,{font,size,depth,curveSegments:3,bevelEnabled:true,bevelThickness:.006,bevelSize:.003,bevelSegments:1});geo.computeBoundingBox();const width=geo.boundingBox!.max.x-geo.boundingBox!.min.x;const m=mesh(parent,geo,new T.MeshStandardMaterial({color,roughness:.52,metalness:.15}),x,y,z);if(width>maxWidth)m.scale.x=maxWidth/width;m.userData.label={size,maxWidth,depth};return m;}
 function line(points:number[][],radius:number){return new T.TubeGeometry(new T.CatmullRomCurve3(points.map(p=>new T.Vector3(...p))),18,radius,5,false);}
 function cog(parent:T.Object3D,x:number,y:number,z:number,r:number,material:T.Material){const g=new T.Group();g.position.set(x,y,z);parent.add(g);const s=new T.Shape();for(let i=0;i<=64;i++){const a=i/64*TAU,rr=r*(i%4===1||i%4===2?1:.84);if(i===0)s.moveTo(Math.cos(a)*rr,Math.sin(a)*rr);else s.lineTo(Math.cos(a)*rr,Math.sin(a)*rr);}const hole=new T.Path();hole.absarc(0,0,r*.51,0,TAU,true);s.holes.push(hole);mesh(g,new T.ExtrudeGeometry(s,{depth:.1,bevelEnabled:false,curveSegments:16}),material);mesh(g,new T.TorusGeometry(r*.18,.035,5,12),material,0,0,.06);for(let i=0;i<3;i++){const b=mesh(g,new T.BoxGeometry(r*1.3,.045,.08),material,0,0,.06);b.rotation.z=i*Math.PI/3;}return g;}
+
+function tileImage(p:Project,wake:()=>void):T.Texture {
+  if(!p.kind)return new T.TextureLoader().load(p.image,wake);
+  const canvas=document.createElement('canvas');canvas.width=720;canvas.height=426;const ctx=canvas.getContext('2d')!;
+  ctx.fillStyle='#29393d';ctx.fillRect(0,0,720,426);const texture=new T.CanvasTexture(canvas);texture.colorSpace=T.SRGBColorSpace;
+  const image=new Image();image.crossOrigin='anonymous';
+  const obscured=p.kind==='soon'||p.dataState==='loading'||p.dataState==='error'||p.imageAvailable===false;
+  image.onload=()=>{
+    ctx.fillStyle='#253138';ctx.fillRect(0,0,720,426);
+    const scale=(obscured?Math.max(720/image.width,426/image.height)*1.15:Math.min(720/image.width,426/image.height));
+    ctx.filter=obscured?'blur(22px)':'none';ctx.drawImage(image,(720-image.width*scale)/2,(426-image.height*scale)/2,image.width*scale,image.height*scale);ctx.filter='none';
+    if(obscured){ctx.fillStyle='#101e2866';ctx.fillRect(0,0,720,426);}texture.needsUpdate=true;wake();
+  };
+  image.onerror=()=>{texture.userData={failed:true};ctx.fillStyle='#34454c';ctx.fillRect(0,0,720,426);texture.needsUpdate=true;wake();};image.src=p.image;
+  return texture;
+}
+function tokenOverlay(p:Project){return p.kind==='soon'?'SOON':p.dataState==='loading'?'LOADING':p.dataState==='error'?'RETRY':p.imageAvailable===false?'N/A':'';}
+function centerOverlay(m:T.Mesh){m.geometry.computeBoundingBox();const box=m.geometry.boundingBox!;m.position.x=-(box.max.x-box.min.x)*m.scale.x/2;}
+function changeLabel(parent:T.Group,name:string,text:string,font:Font,color?:string){
+  const m=parent.getObjectByName(name) as T.Mesh|undefined;if(!m)return;
+  const {size,maxWidth,depth}=m.userData.label;
+  m.geometry.dispose();m.geometry=new TextGeometry(text||' ',{font,size,depth,curveSegments:3,bevelEnabled:true,bevelThickness:.006,bevelSize:.003,bevelSegments:1});m.geometry.computeBoundingBox();
+  const box=m.geometry.boundingBox!;m.scale.x=Math.min(1,maxWidth/Math.max(.001,box.max.x-box.min.x));
+  if(color)(m.material as T.MeshStandardMaterial).color.set(color);
+}
+function renderDescription(parent:T.Group,text:string,font:Font,color:string){
+  let group=parent.getObjectByName('project-description') as T.Group|undefined;
+  if(!group){group=new T.Group();group.name='project-description';parent.add(group);}
+  group.children.slice().forEach(child=>{const m=child as T.Mesh;m.geometry.dispose();(m.material as T.Material).dispose();group!.remove(child);});
+  const lines:string[]=[];let current='';
+  for(const word of text.split(' ')){if((current+word).length>38&&current){lines.push(current.trim());current='';}current+=word+' ';}
+  if(current.trim())lines.push(current.trim());
+  lines.slice(0,3).forEach((line,i)=>label(group!,font,line,.155,4,color,-2,-1.11-i*.24,.63,.019));
+}
+function updateTile(tile:Tile,p:Project,font:Font,theme:Theme,wake:()=>void){
+  const old=tile.project,ink=palette[theme].ink;
+  for(const [key,text] of Object.entries({'project-name':p.name,'project-cap':p.cap,'project-ticker':p.ticker==='N/A'?'N/A':'$'+p.ticker,'project-change':p.change,'project-category':p.category.toUpperCase(),'project-roof-ticker':p.ticker}))changeLabel(tile.group,key,text,font,key==='project-change'?(p.change.startsWith('-')?'#a34137':p.change==='N/A'?ink:'#51734b'):undefined);
+  if(p.description!==old.description)renderDescription(tile.group,p.description,font,ink);
+  if(p.image!==old.image||tokenOverlay(p)!==tokenOverlay(old)||tile.imageTexture.userData.failed){
+    tile.imageTexture.dispose();tile.imageTexture=tileImage(p,wake);tile.imageMaterial.map=tile.imageTexture;
+  }
+  changeLabel(tile.group,'token-overlay',tokenOverlay(p)||'N/A',font);
+  const overlay=tile.group.getObjectByName('token-overlay') as T.Mesh|undefined;if(overlay){overlay.visible=!!tokenOverlay(p);centerOverlay(overlay);}
+  tile.group.children.forEach(child=>{
+    if(child.name==='social-x-icon')child.visible=!p.kind||!!p.x;
+    if(child.name==='social-telegram-icon')child.visible=!p.kind||!!p.telegram;
+    if(child.name==='social-x-na')child.visible=!p.x;
+    if(child.name==='social-telegram-na')child.visible=!p.telegram;
+    if(child.name==='project-website')child.visible=!!p.website;
+  });
+  tile.project=p;wake();
+}
 export interface Tile {scene:T.Scene;camera:T.PerspectiveCamera;group:T.Group;article:HTMLElement;project:Project;imageMaterial:T.MeshBasicMaterial;imageTexture:T.Texture;videoTexture:T.VideoTexture|null;video:HTMLVideoElement|null;statusTexture:T.Texture;statusMaterial:T.MeshBasicMaterial;status:string;statusLabel:T.Mesh;animate:Array<(t:number)=>void>;hover:boolean;hoverProgress:number;baseY:number;bounds:T.Box3;}
 export function makeTile(article:HTMLElement,p:Project,index:number,theme:Theme,font:Font,wake:()=>void):Tile{
   const colors=palette[theme],scene=new T.Scene(),camera=new T.PerspectiveCamera(46,1,.1,30);camera.position.set(0,.12,10.4);camera.lookAt(0,.12,0);
@@ -27,7 +79,7 @@ export function makeTile(article:HTMLElement,p:Project,index:number,theme:Theme,
   const railMat=new T.MeshStandardMaterial({color:colors.trim,roughness:theme==='steampunk'?.34:.8,metalness:theme==='steampunk'?.65:0});
   for(const x of [-2.22,2.22])mesh(group,new T.BoxGeometry(.09,2.7,.17),railMat,x,1.27,.57);
   for(const y of [-.07,2.61])mesh(group,new T.BoxGeometry(4.52,.09,.17),railMat,0,y,.57);
-  const imageTexture=new T.TextureLoader().load(p.image,()=>wake());imageTexture.colorSpace=T.SRGBColorSpace;
+  const imageTexture=tileImage(p,wake);imageTexture.colorSpace=T.SRGBColorSpace;
   const imageMaterial=new T.MeshBasicMaterial({map:imageTexture});mesh(group,new T.PlaneGeometry(4.35,2.57),imageMaterial,0,1.27,.585).name='media-screen';
   // All printed details sit on the model's face. Titles and caps are separately extruded.
   const info=canvasTexture(1024,610,ctx=>{
@@ -45,8 +97,8 @@ export function makeTile(article:HTMLElement,p:Project,index:number,theme:Theme,
   });printed(group,info,4.35,2.59,0,-1.42,.588).name='info-face';
   const medallion=mesh(group,new T.CylinderGeometry(.32,.32,.11,theme==='steampunk'?32:12),new T.MeshStandardMaterial({color:p.color,roughness:.5,metalness:.2}),-1.67,-.51,.66);medallion.rotation.x=Math.PI/2;
   const symbol=canvasTexture(128,128,ctx=>{ctx.fillStyle=colors.ink;ctx.font='80px sans-serif';ctx.textAlign='center';ctx.fillText(p.icon,64,94);});printed(group,symbol,.5,.5,-1.67,-.51,.725).name='symbol-face';
-  label(group,font,p.name,.265,3.2,colors.ink,-1.14,-.5,.63,.055);
-  label(group,font,p.cap,.36,1.55,colors.ink,-2,-2.34,.64,.065);
+  label(group,font,p.name,.265,3.2,colors.ink,-1.14,-.5,.63,.055).name='project-name';
+  label(group,font,p.cap,.36,1.55,colors.ink,-2,-2.34,.64,.065).name='project-cap';
   const chip=canvasTexture(768,94,ctx=>{ctx.fillStyle=theme==='brooklyn'?'#dcec83':'#15261fea';ctx.fillRect(0,0,768,94);ctx.fillStyle=theme==='brooklyn'?'#283628':'#e9efda';ctx.font='27px sans-serif';ctx.fillText(p.category.toUpperCase(),25,61);if(p.featured){ctx.textAlign='right';ctx.fillText('↗ FEATURED',740,61);}});printed(group,chip,4.18,.51,0,2.24,.62).name='category-face';
   const makeStatus=(status:string)=>canvasTexture(768,80,ctx=>{ctx.fillStyle='#14271edf';ctx.fillRect(0,0,768,80);ctx.fillStyle='#eaf0df';ctx.font='26px sans-serif';ctx.fillText(status,24,53);ctx.textAlign='right';ctx.fillText('↗',740,53);});
   const statusTexture=makeStatus('▷  DISCOVER '+p.name.toUpperCase());const statusMaterial=new T.MeshBasicMaterial({map:statusTexture,transparent:true});mesh(group,new T.PlaneGeometry(4.18,.435),statusMaterial,0,.232,.625).name='status-face';
@@ -58,19 +110,17 @@ export function makeTile(article:HTMLElement,p:Project,index:number,theme:Theme,
   const mark=mesh(group,new T.TorusGeometry(.15,.022,5,20),markMaterial,-1.67,-.51,.74);
   if(index%2)mark.scale.y=.55;
   const markBar=mesh(group,new T.BoxGeometry(.3,.026,.025),markMaterial,-1.67,-.51,.745);markBar.rotation.z=index*Math.PI/5;
-  label(group,font,'$'+p.ticker,.12,2.9,colors.ink,-1.14,-.77,.64,.02);
-  const words=p.description.split(' ');let lineText='',lineIndex=0;
-  for(const word of words){if((lineText+word).length>38){label(group,font,lineText.trim(),.155,4.0,colors.ink,-2,-1.11-lineIndex*.24,.63,.019);lineText=word+' ';lineIndex++;}else lineText+=word+' ';}
-  if(lineText)label(group,font,lineText.trim(),.155,4.0,colors.ink,-2,-1.11-lineIndex*.24,.63,.019);
+  label(group,font,p.ticker==='N/A'?'N/A':'$'+p.ticker,.12,2.9,colors.ink,-1.14,-.77,.64,.02).name='project-ticker';
+  renderDescription(group,p.description,font,colors.ink);
   mesh(group,new T.BoxGeometry(4.03,.008,.016),railMat,0,-1.72,.64);
   label(group,font,'MARKET CAP',.105,2,colors.ink,-2,-1.96,.64,.024);
-  label(group,font,p.change,.17,1.35,theme==='volcanic'?'#ffc38c':theme==='space'?'#9feac9':'#51734b',-.45,-2.29,.66,.03);
+  label(group,font,p.change,.17,1.35,p.change.startsWith('-')?'#a34137':p.change==='N/A'?colors.ink:theme==='volcanic'?'#ffc38c':theme==='space'?'#9feac9':'#51734b',-.45,-2.29,.66,.03).name='project-change';
   label(group,font,'24h',.10,.6,colors.ink,-.45,-2.51,.64,.019);
   for(const x of [1.23,1.78])mesh(group,new T.TorusGeometry(.175,.007,4,24),markMaterial,x,-2.29,.66);
-  for(const angle of [-Math.PI/4,Math.PI/4])mesh(group,new T.BoxGeometry(.21,.022,.028),markMaterial,1.23,-2.29,.67).rotation.z=angle;
-  const sendShape=new T.Shape();sendShape.moveTo(-.11,.055);sendShape.lineTo(.12,.1);sendShape.lineTo(.04,-.11);sendShape.lineTo(-.015,-.025);sendShape.closePath();mesh(group,new T.ExtrudeGeometry(sendShape,{depth:.024,bevelEnabled:false}),markMaterial,1.78,-2.29,.66);
+  for(const angle of [-Math.PI/4,Math.PI/4]){const icon=mesh(group,new T.BoxGeometry(.21,.022,.028),markMaterial,1.23,-2.29,.67);icon.rotation.z=angle;icon.name='social-x-icon';icon.visible=!p.kind||!!p.x;}
+  const sendShape=new T.Shape();sendShape.moveTo(-.11,.055);sendShape.lineTo(.12,.1);sendShape.lineTo(.04,-.11);sendShape.lineTo(-.015,-.025);sendShape.closePath();const sendIcon=mesh(group,new T.ExtrudeGeometry(sendShape,{depth:.024,bevelEnabled:false}),markMaterial,1.78,-2.29,.66);sendIcon.name='social-telegram-icon';sendIcon.visible=!p.kind||!!p.telegram;
   const categoryFace=group.getObjectByName('category-face') as T.Mesh;categoryFace.material=new T.MeshStandardMaterial({color:theme==='volcanic'?'#482726':theme==='space'?'#263954':'#24382a',roughness:.7});
-  label(group,font,p.category.toUpperCase(),.112,2.75,'#e6efdb',-1.95,2.20,.66,.025);
+  label(group,font,p.category.toUpperCase(),.112,2.75,'#e6efdb',-1.95,2.20,.66,.025).name='project-category';
   if(p.featured)label(group,font,'FEATURED',.105,1,'#e4e5a4',1.07,2.20,.66,.025);
   statusMaterial.map=null;statusMaterial.color.set('#182b24');statusMaterial.needsUpdate=true;
   const statusLabel=label(group,font,'PLAY PREVIEW',.12,3.9,'#e7efdc',-1.96,.19,.665,.024);
@@ -90,7 +140,7 @@ export function makeTile(article:HTMLElement,p:Project,index:number,theme:Theme,
   }else if(theme==='brooklyn'){
     constructionTile(group,animate,index);
     label(group,font,'SITE / 0'+(index+1),.13,1.7,'#e9bd69',.12,3.13,.62,.035);
-    label(group,font,p.ticker,.20,1.8,colors.ink,-1.96,-2.63,.68,.045);
+    label(group,font,p.ticker,.20,1.8,colors.ink,-1.96,-2.63,.68,.045).name='project-roof-ticker';
   }else if(theme==='steampunk'){
     const brass=new T.MeshStandardMaterial({color:'#d1a56a',metalness:.75,roughness:.31});const copper=new T.MeshStandardMaterial({color:'#966440',metalness:.7,roughness:.4});
     for(const x of [-2.38,2.38])mesh(group,new T.CylinderGeometry(.065,.065,5.5,10),copper,x,0,.58);
@@ -102,6 +152,11 @@ export function makeTile(article:HTMLElement,p:Project,index:number,theme:Theme,
     const needle=mesh(group,new T.BoxGeometry(.025,.22,.025),copper,2.35,-2.62,.83);const gauge=mesh(group,new T.CircleGeometry(.22,24),new T.MeshBasicMaterial({color:'#e6d8ab'}),2.35,-2.64,.75);gauge.castShadow=false;
     for(const x of [-2.45,2.45]){mesh(group,new T.CylinderGeometry(.115,.115,.7,12),copper,x,3.02,-.04);mesh(group,new T.TorusGeometry(.14,.04,6,16),brass,x,3.33,-.04).rotation.x=Math.PI/2;}
     animate.push(t=>{gears.forEach((g,i)=>g.rotation.z=t*(i%2?-.21:.17)+index);needle.rotation.z=Math.sin(t*.8+index)*.7;});
+  }
+  if(p.kind){
+    const overlay=label(group,font,tokenOverlay(p)||'N/A',.46,3.6,'#fff0d5',-1.45,1.10,.75,.07);overlay.name='token-overlay';overlay.visible=!!tokenOverlay(p);centerOverlay(overlay);
+    for(const [kind,x,available] of [['x',1.23,p.x],['telegram',1.78,p.telegram]] as const){const na=label(group,font,'N/A',.075,.29,colors.ink,x-.12,-2.315,.70,.02);na.name='social-'+kind+'-na';na.visible=!available;}
+    const website=label(group,font,'WEBSITE',.09,1.3,colors.ink,.64,-2.61,.72,.025);website.name='project-website';website.visible=!!p.website;
   }
   addTileWorldDetails(group,theme,animate,index);
   const shadowTex=canvasTexture(128,128,ctx=>{const grad=ctx.createRadialGradient(64,64,10,64,64,64);grad.addColorStop(0,'#0008');grad.addColorStop(1,'#0000');ctx.fillStyle=grad;ctx.fillRect(0,0,128,128);});const shadow=printed(scene,shadowTex,6.4,7.5,.2,-.26,-1.1);shadow.castShadow=false;shadow.name='drop-shadow';(shadow.material as T.Material).depthWrite=false;
@@ -136,6 +191,8 @@ export async function createGallery(container:HTMLDivElement,articles:HTMLElemen
     const hit=pickObject({x:event.clientX,y:event.clientY},views,active);if(!hit)return;
     event.preventDefault();event.stopImmediatePropagation();
     const article=tiles[hit.index].article;
+    const website=tiles[hit.index].project.website && hit.point.y < -2.48 && hit.point.y > -2.81 && hit.point.x > .5;
+    if(website){article.querySelector<HTMLElement>('.token-website')?.click();return;}
     const social=hit.point.y < -1.98 && hit.point.y > -2.61 && hit.point.x > .99;
     const control=social?article.querySelectorAll<HTMLElement>('.social-links a,.social-links button')[hit.point.x>1.5?1:0]:article.querySelector<HTMLElement>('.project-media');
     control?.click();
@@ -182,7 +239,8 @@ export async function createGallery(container:HTMLDivElement,articles:HTMLElemen
       const video=tile.article.querySelector('video');if(video!==tile.video){tile.videoTexture?.dispose();tile.videoTexture=null;tile.video=video;if(video){tile.videoTexture=new T.VideoTexture(video);tile.videoTexture.colorSpace=T.SRGBColorSpace;}}
       const videoReady=tile.video&&tile.video.readyState>=2&&!tile.video.error&&tile.article.dataset.videoError!=='true';tile.imageMaterial.map=videoReady?tile.videoTexture:tile.imageTexture;
       if(tile.video&&!tile.video.paused)activeVideo=true;
-      const state=tile.article.dataset.videoError==='true'?'↻ PREVIEW UNAVAILABLE · RETRY':tile.article.dataset.busy==='true'?'◌ OPENING A NEW PERSPECTIVE':videoReady?'Ⅱ PLAYING PREVIEW · TAP TO STOP':'▷ DISCOVER '+tile.project.name.toUpperCase();
+      const p=tile.project;const overlay=tile.group.getObjectByName('token-overlay') as T.Mesh|undefined;if(overlay){overlay.visible=!!tokenOverlay(p)||tile.article.dataset.imageError==='true';}
+      const state=p.kind?(p.kind==='soon'?'SOON':p.dataState==='loading'?'LOADING TOKEN DATA':p.dataState==='error'?'RETRY TOKEN DATA':p.dataState==='stale'?'VIEW ON PUMP.FUN / CACHED':'VIEW ON PUMP.FUN'):tile.article.dataset.videoError==='true'?'↻ PREVIEW UNAVAILABLE · RETRY':tile.article.dataset.busy==='true'?'◌ OPENING A NEW PERSPECTIVE':videoReady?'Ⅱ PLAYING PREVIEW · TAP TO STOP':'▷ DISCOVER '+tile.project.name.toUpperCase();
       if(state!==tile.status){tile.status=state;tile.statusLabel.geometry.dispose();const text=state.replace('↻','RETRY').replace('◌','...').replace('Ⅱ','II').replace('▷','PLAY').replace('·','/');const geometry=new TextGeometry(text,{font,size:.115,depth:.024,curveSegments:2,bevelEnabled:false});geometry.computeBoundingBox();tile.statusLabel.geometry=geometry;tile.statusLabel.scale.x=Math.min(1,3.96/(geometry.boundingBox!.max.x-geometry.boundingBox!.min.x));}
 
       const scrollAngle=T.MathUtils.clamp((r.top+r.height/2-height*.58)/(height*.88),-1.1,1.1);
@@ -204,8 +262,8 @@ export async function createGallery(container:HTMLDivElement,articles:HTMLElemen
   }
   function resize(){renderer.setSize(window.innerWidth,window.innerHeight,false);wake();}
   const observer=new ResizeObserver(resize);articles.forEach(a=>observer.observe(a));window.addEventListener('scroll',wake,{passive:true});window.addEventListener('resize',resize);document.addEventListener('visibilitychange',wake);
-  const changes=new MutationObserver(wake);articles.forEach(a=>changes.observe(a,{attributes:true,attributeFilter:['data-selected','data-busy','data-video-error'],childList:true,subtree:true}));
+  const changes=new MutationObserver(wake);articles.forEach(a=>changes.observe(a,{attributes:true,attributeFilter:['data-selected','data-busy','data-video-error','data-image-error'],childList:true,subtree:true}));
   const contextLost=(event:Event)=>{event.preventDefault();container.dispatchEvent(new CustomEvent('gallery-error'));};renderer.domElement.addEventListener('webglcontextlost',contextLost);
   resize();render(performance.now());onReady();
-  return {setMotion(value:boolean){motion=value;wake();},dispose(){disposed=true;cancelAnimationFrame(frame);cleanups.forEach(f=>f());observer.disconnect();changes.disconnect();window.removeEventListener('scroll',wake);window.removeEventListener('resize',resize);document.removeEventListener('visibilitychange',wake);renderer.domElement.removeEventListener('webglcontextlost',contextLost);const geometries=new Set<T.BufferGeometry>(),materials=new Set<T.Material>(),textures=new Set<T.Texture>();tiles.forEach(tile=>{tile.videoTexture?.dispose();textures.add(tile.imageTexture);textures.add(tile.statusTexture);tile.scene.traverse(o=>{const m=o as T.Mesh;if(m.geometry)geometries.add(m.geometry);if(m.material)(Array.isArray(m.material)?m.material:[m.material]).forEach(mat=>{materials.add(mat);for(const value of Object.values(mat))if(value instanceof T.Texture)textures.add(value);});});});geometries.forEach(g=>g.dispose());materials.forEach(m=>m.dispose());textures.forEach(t=>t.dispose());renderer.dispose();renderer.forceContextLoss();renderer.domElement.remove();}};
+  return {setProjects(next:Project[]){if(disposed)return;tiles.forEach(tile=>{const p=next.find(p=>p.id===tile.project.id);if(p&&p!==tile.project)updateTile(tile,p,font,theme,wake);});wake();},setMotion(value:boolean){motion=value;wake();},dispose(){disposed=true;cancelAnimationFrame(frame);cleanups.forEach(f=>f());observer.disconnect();changes.disconnect();window.removeEventListener('scroll',wake);window.removeEventListener('resize',resize);document.removeEventListener('visibilitychange',wake);renderer.domElement.removeEventListener('webglcontextlost',contextLost);const geometries=new Set<T.BufferGeometry>(),materials=new Set<T.Material>(),textures=new Set<T.Texture>();tiles.forEach(tile=>{tile.videoTexture?.dispose();textures.add(tile.imageTexture);textures.add(tile.statusTexture);tile.scene.traverse(o=>{const m=o as T.Mesh;if(m.geometry)geometries.add(m.geometry);if(m.material)(Array.isArray(m.material)?m.material:[m.material]).forEach(mat=>{materials.add(mat);for(const value of Object.values(mat))if(value instanceof T.Texture)textures.add(value);});});});geometries.forEach(g=>g.dispose());materials.forEach(m=>m.dispose());textures.forEach(t=>t.dispose());renderer.dispose();renderer.forceContextLoss();renderer.domElement.remove();}};
 }

@@ -37,7 +37,7 @@ export default function ProjectCard({project:p,index,selected,onSelect,theme,mot
     {theme==='brooklyn'&&<div className="newspaper-masthead"><span>THE {p.ticker} JOURNAL</span><span>NO. 0{index+1}</span></div>}
     <button className="project-media" onClick={select} aria-label={selected?(error?`Retry ${p.name} preview`:`Stop ${p.name} preview`):`Play ${p.name} preview`} aria-pressed={selected}>
       <img src={imageError?`/art/${theme}.webp`:p.image} onError={()=>setImageError(true)} alt={p.description} width={720} height={405} loading={index>2?'lazy':'eager'} decoding="async" style={{opacity:selected&&loaded&&!error?0:1}}/>
-      {selected&&<video ref={video} src={p.video} muted autoPlay loop playsInline preload="none" aria-hidden="true" style={{opacity:loaded&&!error?1:0}} onPlaying={()=>{setLoaded(true);setBusy(false);setError(false);}} onWaiting={()=>setBusy(true)} onError={()=>{setBusy(false);setError(true);}}/>}
+      {selected&&<video ref={video} src={p.video??undefined} muted autoPlay loop playsInline preload="none" aria-hidden="true" style={{opacity:loaded&&!error?1:0}} onPlaying={()=>{setLoaded(true);setBusy(false);setError(false);}} onWaiting={()=>setBusy(true)} onError={()=>{setBusy(false);setError(true);}}/>}
       <span className="media-shade"/>
       <span className="category-chip">{p.category}</span>{p.featured&&<span className="featured-chip">↗ Featured</span>}
       {busy&&!error&&<span className="video-loading"><LoaderCircle size={26}/><span>Opening a new perspective</span></span>}

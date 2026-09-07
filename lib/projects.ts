@@ -1,8 +1,12 @@
 export type Theme = 'roots' | 'brooklyn' | 'steampunk' | 'volcanic' | 'space';
 export interface Project {
   id: string; name: string; ticker: string; category: string; description: string;
-  cap: string; change: string; image: string; video: string; icon: string;
+  cap: string; change: string; image: string; video: string | null; icon: string;
   color: string; featured?: boolean; x: string | null; telegram: string | null;
+  tokenAddress?: string; kind?: 'token' | 'soon'; dataState?: 'loading' | 'ready' | 'error' | 'stale';
+  website?: string | null; tokenUrl?: string; updatedAt?: string;
+  price?: string; volume?: string; liquidity?: string;
+  imageAvailable?: boolean;
 }
 // Illustrative concept projects. Replace metrics and null community URLs with verified project data.
 export const projects: Project[] = [

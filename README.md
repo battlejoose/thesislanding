@@ -14,7 +14,15 @@ The application lives directly in the `thesislanding` repository root. Run these
 ## Editions
 
 - `/` preserves the original five-world showcase, including the Brooklyn theme, heading, and theme selector.
-- `/construction` is the separate **Construction** edition: only the animated Brooklyn cityscape and project buildings. Its tiles render 10% smaller and share a gently eased cursor-following tilt layered over the responsive scrolling wheel. It retains the 20% hover zoom, video previews, and keyboard controls. Its layout styles and selection state are separate from the original page, and it respects system reduced-motion preferences. Cursor tilt returns to neutral when the mouse leaves and is disabled for touch and reduced motion. It does not load the extra page-typography renderer.
+- `/construction` is the separate **Construction** edition: only the animated Brooklyn cityscape and three project buildings. Its tiles render 10% smaller and share a gently eased cursor-following tilt layered over the responsive scrolling wheel. It retains the 20% hover zoom and keyboard controls. Its layout styles and selection state are separate from the original page, and it respects system reduced-motion preferences. Cursor tilt returns to neutral when the mouse leaves and is disabled for touch and reduced motion. It does not load the extra page-typography renderer.
+
+## Construction token tiles
+
+Edit only the three entries in `lib/construction-projects.ts`: a Solana contract address loads the token; `null` produces a blurred **Soon** image with **N/A** fields. The first slot contains `4GBmCJRcmPiwnydKqdGG17fx4CkojpQHeiktDzbNpump`. There are no hardcoded token names, market values, or social links.
+
+`/api/tokens/[ca]` reads Pump.fun's public coin metadata and USD market cap, with the [DEX Screener token-pairs API](https://docs.dexscreener.com/api/reference) supplying price, 24-hour change, volume, liquidity, and fallback token fields from the most liquid matching Solana base-token pair. It never labels Pump's SOL-denominated cap or fully diluted valuation as USD market cap. Missing fields remain N/A. The supplied token currently has no Telegram metadata; no link is invented.
+
+The visible page refreshes every 60 seconds, with short server caching and request deduplication. Updates replace text geometry and changed images in place without recreating the gallery or interrupting animations. Loading/errors appear on the affected tile; failed refreshes mark previously loaded values as cached. The image endpoint serves allowed image sources through the same origin for WebGL compatibility, identifies this app to image hosts, validates redirects and MIME types, and limits image size. Images preserve their aspect ratio. Clicking a populated tile opens its Pump.fun page; its X and website links open the URLs listed by the token metadata. Soon tiles have no fabricated metrics or video previews. The original showcase remains a separate demo.
 
 ## Five worlds
 
