@@ -5,7 +5,7 @@ import ProjectGallery from '@/components/project-gallery';
 import WorldScene from '@/components/world-scene';
 import styles from './construction.module.css';
 import { CONSTRUCTION_TOKENS, INITIAL_CONSTRUCTION_PROJECTS } from '@/lib/construction-projects';
-import { fetchTokenProject, tokenRefreshDelay } from '@/lib/token-client';
+import { prepareTokenProject, tokenRefreshDelay } from '@/lib/token-client';
 import BootSplash from '@/components/boot-splash';
 import { idle, settle, finish, type Stage } from '@/lib/boot-state';
 import { hasWebGL } from '@/lib/webgl';
@@ -33,13 +33,10 @@ export default function Construction() {
     preference.addEventListener('change', update);
     const supported = hasWebGL();
     setWebgl(supported);
-    // With no WebGL nothing will report, so lift straight to the plain page.
-    if (!supported) setBoot(finish);
-    else {
-      // This edition has no 3D typography, so that stage never reports.
-      setBoot(current => settle(current, 'typography'));
-      timer.current = setTimeout(() => setBoot(finish), BOOT_TIMEOUT_MS);
-    }
+    // This edition has no 3D typography. Unsupported graphics settle in their
+    // components, while token images still load for the plain HTML tiles.
+    setBoot(current => settle(current, 'typography'));
+    timer.current = setTimeout(() => setBoot(finish), BOOT_TIMEOUT_MS);
     return () => { preference.removeEventListener('change', update); if (timer.current) clearTimeout(timer.current); };
   }, []);
   useEffect(() => {
@@ -54,13 +51,13 @@ export default function Construction() {
   }, [boot.done]);
 
   useEffect(()=>{
-    const controller=new AbortController();let timer:ReturnType<typeof setTimeout>,running=false,failures=0;
+    const controller=new AbortController();let timer:ReturnType<typeof setTimeout>,running=false,failures=0,initial=true;
     if(retry>0)setProjects(current=>current.map(p=>p.dataState==='error'?{...p,dataState:'loading'}:p));
     const refresh=async()=>{
-      if(running||document.hidden)return;running=true;clearTimeout(timer);
+      if(running||(!initial&&document.hidden))return;running=true;clearTimeout(timer);
       const results=await Promise.all(CONSTRUCTION_TOKENS.filter((address):address is string=>!!address).map(async address=>{
         try{
-          const project=await fetchTokenProject(address,controller.signal);
+          const project=await prepareTokenProject(address,controller.signal);
           if(!controller.signal.aborted)setProjects(current=>current.map(p=>p.id===address?project:p));
           return true;
         }catch{
@@ -68,12 +65,13 @@ export default function Construction() {
           return false;
         }
       }));
-      running=false;failures=results.every(Boolean)?0:failures+1;
+      running=false;initial=false;failures=results.every(Boolean)?0:failures+1;
+      if(!controller.signal.aborted)report('images');
       if(!controller.signal.aborted)timer=setTimeout(refresh,tokenRefreshDelay(failures));
     };
     void refresh();document.addEventListener('visibilitychange',refresh);window.addEventListener('online',refresh);
     return()=>{controller.abort();clearTimeout(timer);document.removeEventListener('visibilitychange',refresh);window.removeEventListener('online',refresh);};
-  },[retry]);
+  },[retry,report]);
 
   return (
     <div className={`showcase ${styles.construction}`} data-theme="brooklyn" data-edition="construction" data-motion={motion}>

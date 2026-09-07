@@ -9,6 +9,7 @@ import { constructionTile } from './brooklyn-world';
 import { CAMERA_Z, cursorTiltTarget, hoverPose, pickObject, pointOnFace, type Pickable, type Pointer } from './gallery-interaction';
 import { TOKEN_SOCIALS, TOKEN_WEBSITE_X, TOKEN_INFO_REGIONS, tokenFooterControls, tokenActionAt, tokenRegionAt } from './token-controls';
 import { socialIconPaths } from './social-icon-paths';
+import { loadTokenImage } from './token-client';
 const TAU=Math.PI*2;
 export const palette={volcanic:{side:'#262124',paper:'#393034',ink:'#ffdaab',trim:'#fa682d'},space:{side:'#242540',paper:'#303850',ink:'#d4efff',trim:'#6bbcea'},roots:{side:'#453826',paper:'#e7ebd4',ink:'#273c2c',trim:'#789052'},brooklyn:{side:'#653c30',paper:'#f0e6cf',ink:'#302922',trim:'#b19a75'},steampunk:{side:'#343130',paper:'#dfcaa2',ink:'#49351f',trim:'#c29656'}};
 function mesh(parent:T.Object3D,g:T.BufferGeometry,m:T.Material|T.Material[],x=0,y=0,z=0){const o=new T.Mesh(g,m);o.position.set(x,y,z);o.castShadow=true;o.receiveShadow=true;parent.add(o);return o;}
@@ -24,15 +25,16 @@ function tileImage(p:Project,wake:()=>void):T.Texture {
   if(!p.kind)return new T.TextureLoader().load(p.image,wake);
   const canvas=document.createElement('canvas');canvas.width=720;canvas.height=426;const ctx=canvas.getContext('2d')!;
   ctx.fillStyle='#29393d';ctx.fillRect(0,0,720,426);const texture=new T.CanvasTexture(canvas);texture.colorSpace=T.SRGBColorSpace;
-  const image=new Image();image.crossOrigin='anonymous';
+  let disposed=false;texture.addEventListener('dispose',()=>{disposed=true;});texture.userData.ready=false;
   const obscured=p.kind==='soon'||p.dataState==='loading'||p.dataState==='error'||p.imageAvailable===false;
-  image.onload=()=>{
+  void loadTokenImage(p.image).then(image=>{
+    if(disposed)return;
+    if(!image){texture.userData.failed=true;texture.userData.ready=true;ctx.fillStyle='#34454c';ctx.fillRect(0,0,720,426);texture.needsUpdate=true;wake();return;}
     ctx.fillStyle='#253138';ctx.fillRect(0,0,720,426);
     const scale=(obscured?Math.max(720/image.width,426/image.height)*1.15:Math.min(720/image.width,426/image.height));
     ctx.filter=obscured?'blur(22px)':'none';ctx.drawImage(image,(720-image.width*scale)/2,(426-image.height*scale)/2,image.width*scale,image.height*scale);ctx.filter='none';
-    if(obscured){ctx.fillStyle='#101e2866';ctx.fillRect(0,0,720,426);}texture.needsUpdate=true;wake();
-  };
-  image.onerror=()=>{texture.userData={failed:true};ctx.fillStyle='#34454c';ctx.fillRect(0,0,720,426);texture.needsUpdate=true;wake();};image.src=p.image;
+    if(obscured){ctx.fillStyle='#101e2866';ctx.fillRect(0,0,720,426);}texture.userData.ready=true;texture.needsUpdate=true;wake();
+  });
   return texture;
 }
 function tokenOverlay(p:Project){return p.kind==='soon'?'SOON':p.dataState==='loading'?'LOADING':p.dataState==='error'?'RETRY':p.imageAvailable===false?'N/A':'';}
@@ -221,7 +223,7 @@ export function makeTile(article:HTMLElement,p:Project,index:number,theme:Theme,
 export async function createGallery(container:HTMLDivElement,articles:HTMLElement[],projects:Project[],theme:Theme,onReady:()=>void,{displayScale=1,cursorTilt=false}:{displayScale?:number;cursorTilt?:boolean}={}){
   const font=await new FontLoader().loadAsync('/fonts/helvetiker.json');
   const renderer=new T.WebGLRenderer({alpha:true,antialias:true,powerPreference:'low-power'});renderer.setPixelRatio(Math.min(window.devicePixelRatio,window.innerWidth<650?1.1:1.4));renderer.outputColorSpace=T.SRGBColorSpace;renderer.toneMapping=T.ACESFilmicToneMapping;renderer.toneMappingExposure=1.2;renderer.setClearColor(0,0);renderer.autoClear=false;container.appendChild(renderer.domElement);
-  let frame=0,elapsed=0,last=0,motion=true,disposed=false;const tiles:Tile[]=[];const cleanups:Array<()=>void>=[];
+  let frame=0,elapsed=0,last=0,motion=true,disposed=false,reported=false;const tiles:Tile[]=[];const cleanups:Array<()=>void>=[];
   function wake(){if(disposed||frame)return;frame=requestAnimationFrame(render);}
   articles.forEach((article,index)=>tiles.push(makeTile(article,projects[index],index,theme,font,wake)));
   let pointer:Pointer|null=null, active=-1, keyboard=-1;
@@ -330,12 +332,15 @@ export async function createGallery(container:HTMLDivElement,articles:HTMLElemen
       renderer.setScissor(Math.max(0,expanded.left),Math.max(0,height-bottom),Math.max(0,Math.min(right,width)-Math.max(0,expanded.left)),Math.max(0,Math.min(bottom,height)-Math.max(0,expanded.top)));
       renderer.clearDepth();renderer.render(tile.scene,tile.camera);
     });
+    // Report after a rendered frame with the current token metadata and images,
+    // including failed images, so placeholders cannot finish a normal boot.
+    if(!reported&&tiles.every(tile=>tile.project.kind!=='token'||(tile.project.dataState!=='loading'&&tile.imageTexture.userData.ready))){reported=true;onReady();}
     if(visibleCount&&(motion||activeVideo||settling))frame=requestAnimationFrame(render);
   }
   function resize(){renderer.setSize(window.innerWidth,window.innerHeight,false);wake();}
   const observer=new ResizeObserver(resize);articles.forEach(a=>observer.observe(a));window.addEventListener('scroll',wake,{passive:true});window.addEventListener('resize',resize);document.addEventListener('visibilitychange',wake);
   const changes=new MutationObserver(wake);articles.forEach(a=>changes.observe(a,{attributes:true,attributeFilter:['data-selected','data-busy','data-video-error','data-image-error'],childList:true,subtree:true}));
   const contextLost=(event:Event)=>{event.preventDefault();container.dispatchEvent(new CustomEvent('gallery-error'));};renderer.domElement.addEventListener('webglcontextlost',contextLost);
-  resize();render(performance.now());onReady();
+  resize();render(performance.now());
   return {setProjects(next:Project[]){if(disposed)return;tiles.forEach(tile=>{const p=next.find(p=>p.id===tile.project.id);if(p&&p!==tile.project)updateTile(tile,p,font,theme,wake);});wake();},setMotion(value:boolean){motion=value;wake();},dispose(){disposed=true;cancelAnimationFrame(frame);cleanups.forEach(f=>f());observer.disconnect();changes.disconnect();window.removeEventListener('scroll',wake);window.removeEventListener('resize',resize);document.removeEventListener('visibilitychange',wake);renderer.domElement.removeEventListener('webglcontextlost',contextLost);const geometries=new Set<T.BufferGeometry>(),materials=new Set<T.Material>(),textures=new Set<T.Texture>();tiles.forEach(tile=>{tile.videoTexture?.dispose();textures.add(tile.imageTexture);textures.add(tile.statusTexture);tile.scene.traverse(o=>{const m=o as T.Mesh;if(m.geometry)geometries.add(m.geometry);if(m.material)(Array.isArray(m.material)?m.material:[m.material]).forEach(mat=>{materials.add(mat);for(const value of Object.values(mat))if(value instanceof T.Texture)textures.add(value);});});});geometries.forEach(g=>g.dispose());materials.forEach(m=>m.dispose());textures.forEach(t=>t.dispose());renderer.dispose();renderer.forceContextLoss();renderer.domElement.remove();}};
 }

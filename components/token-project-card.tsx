@@ -10,7 +10,7 @@ export default function TokenProjectCard({project:p,onRetry}:{project:Project;on
   useEffect(()=>setImageError(false),[p.image,p.updatedAt]);
   const ready=p.dataState==='ready'||p.dataState==='stale',soon=p.kind==='soon';
   const overlay=soon?'Soon':p.dataState==='loading'?'Loading':p.dataState==='error'?'Retry':imageError||p.imageAvailable===false?'N/A':null;
-  const media=<><img src={imageError?'/art/brooklyn.webp':p.image} onError={()=>setImageError(true)} alt={ready?`${p.name} token image`:''} width={720} height={405} style={{objectFit:ready&&!imageError?'contain':'cover'}}/>{p.dataState==='error'?<button className="token-image-overlay token-retry" data-token-action="retry" onClick={onRetry}>Retry</button>:overlay&&<span className="token-image-overlay">{overlay}</span>}</>;
+  const media=<><img src={imageError?'/art/brooklyn.webp':p.image} crossOrigin="anonymous" fetchPriority={soon?'auto':'high'} loading="eager" decoding="async" onError={()=>setImageError(true)} alt={ready?`${p.name} token image`:''} width={720} height={405} style={{objectFit:ready&&!imageError?'contain':'cover'}}/>{p.dataState==='error'?<button className="token-image-overlay token-retry" data-token-action="retry" onClick={onRetry}>Retry</button>:overlay&&<span className="token-image-overlay">{overlay}</span>}</>;
   return <article data-project-id={p.id} data-token-state={p.dataState} data-image-error={imageError} data-kind={p.kind} data-selected="false" data-busy="false" data-video-error="false" className={`project-card token-card${!ready?' token-obscured':''}`}>
     <div className="project-media">{media}</div>
     <div className="project-info">
