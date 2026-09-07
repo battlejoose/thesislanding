@@ -1,11 +1,14 @@
 import * as T from 'three';
 import { FontLoader, type Font } from 'three/addons/loaders/FontLoader.js';
+import { SVGLoader } from 'three/addons/loaders/SVGLoader.js';
 import { TextGeometry } from 'three/addons/geometries/TextGeometry.js';
 import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
 import type { Project, Theme } from './projects';
 import { addTileWorldDetails } from './theme-worlds';
 import { constructionTile } from './brooklyn-world';
-import { CAMERA_Z, cursorTiltTarget, hoverPose, pickObject, type Pickable, type Pointer } from './gallery-interaction';
+import { CAMERA_Z, cursorTiltTarget, hoverPose, pickObject, pointOnFace, type Pickable, type Pointer } from './gallery-interaction';
+import { TOKEN_SOCIALS, TOKEN_INFO_REGIONS, tokenActionAt, tokenRegionAt } from './token-controls';
+import { socialIconPaths } from './social-icon-paths';
 const TAU=Math.PI*2;
 export const palette={volcanic:{side:'#262124',paper:'#393034',ink:'#ffdaab',trim:'#fa682d'},space:{side:'#242540',paper:'#303850',ink:'#d4efff',trim:'#6bbcea'},roots:{side:'#453826',paper:'#e7ebd4',ink:'#273c2c',trim:'#789052'},brooklyn:{side:'#653c30',paper:'#f0e6cf',ink:'#302922',trim:'#b19a75'},steampunk:{side:'#343130',paper:'#dfcaa2',ink:'#49351f',trim:'#c29656'}};
 function mesh(parent:T.Object3D,g:T.BufferGeometry,m:T.Material|T.Material[],x=0,y=0,z=0){const o=new T.Mesh(g,m);o.position.set(x,y,z);o.castShadow=true;o.receiveShadow=true;parent.add(o);return o;}
@@ -41,6 +44,44 @@ function changeLabel(parent:T.Group,name:string,text:string,font:Font,color?:str
   const box=m.geometry.boundingBox!;m.scale.x=Math.min(1,maxWidth/Math.max(.001,box.max.x-box.min.x));
   if(color)(m.material as T.MeshStandardMaterial).color.set(color);
 }
+const LINK_BLUE='#1659c7';
+type InfoHighlight={id:string;fill:T.MeshBasicMaterial;border:T.LineBasicMaterial;progress:number};
+function tokenDecorations(group:T.Group,p:Project,font:Font,ink:string):InfoHighlight[]{
+  const underline=mesh(group,new T.BoxGeometry(1,.014,.022),new T.MeshStandardMaterial({color:LINK_BLUE,roughness:.5}),0,-.56,.68);underline.name='token-title-underline';
+  const loader=new SVGLoader();
+  for(const social of TOKEN_SOCIALS){
+    const icon=new T.Group();icon.name='token-social-'+social.key;icon.position.set(social.x,-2.31,.67);group.add(icon);
+    const paths=loader.parse(`<svg xmlns="http://www.w3.org/2000/svg"><path d="${socialIconPaths[social.key]}"/></svg>`).paths;
+    const material=new T.MeshStandardMaterial({color:ink,roughness:.5,side:T.DoubleSide});
+    for(const path of paths)for(const shape of SVGLoader.createShapes(path)){
+      const geometry=new T.ExtrudeGeometry(shape,{depth:1,bevelEnabled:false,curveSegments:4});geometry.translate(-12,-12,0);geometry.scale(.0105,-.0105,.024);mesh(icon,geometry,material);
+    }
+    const na=label(group,font,'N/A',.065,.23,ink,social.x-.10,-2.53,.69,.015);na.name='token-social-na-'+social.key;
+  }
+  const highlights=TOKEN_INFO_REGIONS.map(region=>{
+    const w=region.right-region.left,h=region.top-region.bottom,x=(region.left+region.right)/2,y=(region.top+region.bottom)/2;
+    const color=region.id==='title'?LINK_BLUE:'#b48132';
+    const fill=new T.MeshBasicMaterial({color,transparent:true,opacity:0,depthWrite:false});
+    mesh(group,new T.ShapeGeometry(rounded(w,h,.045)),fill,x,y,.613);
+    const border=new T.LineBasicMaterial({color,transparent:true,opacity:0,depthWrite:false});
+    const frame=new T.LineLoop(new T.BufferGeometry().setFromPoints(rounded(w,h,.045).getPoints(5)),border);frame.position.set(x,y,.619);group.add(frame);
+    return {id:region.id,fill,border,progress:0};
+  });
+  updateTokenDecorations(group,p,ink);
+  return highlights;
+}
+function updateTokenDecorations(group:T.Group,p:Project,ink:string){
+  const ready=p.dataState==='ready'||p.dataState==='stale';
+  const title=group.getObjectByName('project-name') as T.Mesh;
+  (title.material as T.MeshStandardMaterial).color.set(ready?LINK_BLUE:ink);
+  const underline=group.getObjectByName('token-title-underline') as T.Mesh;
+  if(underline){const box=title.geometry.boundingBox!;const width=(box.max.x-box.min.x)*title.scale.x;underline.scale.x=width;underline.position.x=title.position.x+box.min.x*title.scale.x+width/2;underline.visible=ready;}
+  for(const social of TOKEN_SOCIALS){
+    const icon=group.getObjectByName('token-social-'+social.key);icon?.traverse(child=>{if(child instanceof T.Mesh)(child.material as T.MeshStandardMaterial).color.set(p[social.key]?ink:'#a79c88');});
+    const na=group.getObjectByName('token-social-na-'+social.key);if(na)na.visible=!p[social.key];
+  }
+}
+function titleRight(tile:Tile){const title=tile.group.getObjectByName('project-name') as T.Mesh;return title.position.x+title.geometry.boundingBox!.max.x*title.scale.x+.035;}
 function renderDescription(parent:T.Group,text:string,font:Font,color:string){
   let group=parent.getObjectByName('project-description') as T.Group|undefined;
   if(!group){group=new T.Group();group.name='project-description';parent.add(group);}
@@ -60,15 +101,12 @@ function updateTile(tile:Tile,p:Project,font:Font,theme:Theme,wake:()=>void){
   changeLabel(tile.group,'token-overlay',tokenOverlay(p)||'N/A',font);
   const overlay=tile.group.getObjectByName('token-overlay') as T.Mesh|undefined;if(overlay){overlay.visible=!!tokenOverlay(p);centerOverlay(overlay);}
   tile.group.children.forEach(child=>{
-    if(child.name==='social-x-icon')child.visible=!p.kind||!!p.x;
-    if(child.name==='social-telegram-icon')child.visible=!p.kind||!!p.telegram;
-    if(child.name==='social-x-na')child.visible=!p.x;
-    if(child.name==='social-telegram-na')child.visible=!p.telegram;
     if(child.name==='project-website')child.visible=!!p.website;
   });
+  if(p.kind)updateTokenDecorations(tile.group,p,ink);
   tile.project=p;wake();
 }
-export interface Tile {scene:T.Scene;camera:T.PerspectiveCamera;group:T.Group;article:HTMLElement;project:Project;imageMaterial:T.MeshBasicMaterial;imageTexture:T.Texture;videoTexture:T.VideoTexture|null;video:HTMLVideoElement|null;statusTexture:T.Texture;statusMaterial:T.MeshBasicMaterial;status:string;statusLabel:T.Mesh;animate:Array<(t:number)=>void>;hover:boolean;hoverProgress:number;baseY:number;bounds:T.Box3;}
+export interface Tile {scene:T.Scene;camera:T.PerspectiveCamera;group:T.Group;article:HTMLElement;project:Project;imageMaterial:T.MeshBasicMaterial;imageTexture:T.Texture;videoTexture:T.VideoTexture|null;video:HTMLVideoElement|null;statusTexture:T.Texture;statusMaterial:T.MeshBasicMaterial;status:string;statusLabel:T.Mesh;animate:Array<(t:number)=>void>;hover:boolean;hoverProgress:number;baseY:number;bounds:T.Box3;highlights:InfoHighlight[];}
 export function makeTile(article:HTMLElement,p:Project,index:number,theme:Theme,font:Font,wake:()=>void):Tile{
   const colors=palette[theme],scene=new T.Scene(),camera=new T.PerspectiveCamera(46,1,.1,30);camera.position.set(0,.12,10.4);camera.lookAt(0,.12,0);
   scene.add(new T.HemisphereLight('#fff7e5','#5d625c',2.4));const light=new T.DirectionalLight('#ffe6ba',3);light.position.set(-3,5,6);scene.add(light);const rim=new T.DirectionalLight('#e1f3ed',1.9);rim.position.set(4,-1,2);scene.add(rim);
@@ -122,10 +160,11 @@ export function makeTile(article:HTMLElement,p:Project,index:number,theme:Theme,
   label(group,font,'MARKET CAP',.105,2,colors.ink,-2,p.kind?-1.63:-1.96,.64,.024);
   label(group,font,p.change,p.kind?.23:.17,p.kind?1.68:1.35,p.change.startsWith('-')?'#a34137':p.change==='N/A'?colors.ink:theme==='volcanic'?'#ffc38c':theme==='space'?'#9feac9':'#51734b',p.kind?.30:-.45,p.kind?-2.01:-2.29,.66,.03).name='project-change';
   label(group,font,p.kind?'CHANGE / 24H':'24h',p.kind?.105:.10,p.kind?1.68:.6,colors.ink,p.kind?.30:-.45,p.kind?-1.63:-2.51,.64,.019);
-  const socialY=p.kind?-2.35:-2.29;
-  for(const x of [1.23,1.78])mesh(group,new T.TorusGeometry(p.kind?.145:.175,.007,4,24),markMaterial,x,socialY,.66);
-  for(const angle of [-Math.PI/4,Math.PI/4]){const icon=mesh(group,new T.BoxGeometry(.21,.022,.028),markMaterial,1.23,socialY,.67);icon.rotation.z=angle;icon.name='social-x-icon';icon.visible=!p.kind||!!p.x;}
-  const sendShape=new T.Shape();sendShape.moveTo(-.11,.055);sendShape.lineTo(.12,.1);sendShape.lineTo(.04,-.11);sendShape.lineTo(-.015,-.025);sendShape.closePath();const sendIcon=mesh(group,new T.ExtrudeGeometry(sendShape,{depth:.024,bevelEnabled:false}),markMaterial,1.78,socialY,.66);sendIcon.name='social-telegram-icon';sendIcon.visible=!p.kind||!!p.telegram;
+  if(!p.kind){
+    for(const x of [1.23,1.78])mesh(group,new T.TorusGeometry(.175,.007,4,24),markMaterial,x,-2.29,.66);
+    for(const angle of [-Math.PI/4,Math.PI/4])mesh(group,new T.BoxGeometry(.21,.022,.028),markMaterial,1.23,-2.29,.67).rotation.z=angle;
+    const sendShape=new T.Shape();sendShape.moveTo(-.11,.055);sendShape.lineTo(.12,.1);sendShape.lineTo(.04,-.11);sendShape.lineTo(-.015,-.025);sendShape.closePath();mesh(group,new T.ExtrudeGeometry(sendShape,{depth:.024,bevelEnabled:false}),markMaterial,1.78,-2.29,.66);
+  }
   const categoryFace=group.getObjectByName('category-face') as T.Mesh;categoryFace.material=new T.MeshStandardMaterial({color:theme==='volcanic'?'#482726':theme==='space'?'#263954':'#24382a',roughness:.7});
   label(group,font,p.category.toUpperCase(),.112,2.75,'#e6efdb',-1.95,2.20,.66,.025).name='project-category';
   if(p.featured)label(group,font,'FEATURED',.105,1,'#e4e5a4',1.07,2.20,.66,.025);
@@ -162,14 +201,16 @@ export function makeTile(article:HTMLElement,p:Project,index:number,theme:Theme,
   }
   if(p.kind){
     const overlay=label(group,font,tokenOverlay(p)||'N/A',.46,3.6,'#fff0d5',-1.45,1.10,.75,.07);overlay.name='token-overlay';overlay.visible=!!tokenOverlay(p);centerOverlay(overlay);
-    for(const [kind,x,available] of [['x',1.23,p.x],['telegram',1.78,p.telegram]] as const){const na=label(group,font,'N/A',.075,.24,colors.ink,x-.12,socialY-.025,.70,.02);na.name='social-'+kind+'-na';na.visible=!available;}
     const website=label(group,font,'WEBSITE',.12,1.3,colors.ink,-2,-2.39,.72,.025);website.name='project-website';website.visible=!!p.website;
+    categoryFace.visible=false;group.getObjectByName('project-category')!.visible=false;
+    group.getObjectByName('status-face')!.visible=false;statusLabel.visible=false;
   }
+  const highlights=p.kind?tokenDecorations(group,p,font,colors.ink):[];
   addTileWorldDetails(group,theme,animate,index);
   const shadowTex=canvasTexture(128,128,ctx=>{const grad=ctx.createRadialGradient(64,64,10,64,64,64);grad.addColorStop(0,'#0008');grad.addColorStop(1,'#0000');ctx.fillStyle=grad;ctx.fillRect(0,0,128,128);});const shadow=printed(scene,shadowTex,6.4,7.5,.2,-.26,-1.1);shadow.castShadow=false;shadow.name='drop-shadow';(shadow.material as T.Material).depthWrite=false;
   const bounds=new T.Box3(new T.Vector3(-2.43,-2.95,theme==='brooklyn'?-1.66:-.76),new T.Vector3(2.43,theme==='brooklyn'?3.72:2.95,.77));
   const baseY=.13;group.rotation.set(.09,baseY,0);
-  return {scene,camera,group,article,project:p,imageMaterial,imageTexture,videoTexture:null,video:null,statusTexture,statusMaterial,status:'',statusLabel,animate,hover:false,hoverProgress:0,baseY,bounds};
+  return {scene,camera,group,article,project:p,imageMaterial,imageTexture,videoTexture:null,video:null,statusTexture,statusMaterial,status:'',statusLabel,animate,hover:false,hoverProgress:0,baseY,bounds,highlights};
 }
 export async function createGallery(container:HTMLDivElement,articles:HTMLElement[],projects:Project[],theme:Theme,onReady:()=>void,{displayScale=1,cursorTilt=false}:{displayScale?:number;cursorTilt?:boolean}={}){
   const font=await new FontLoader().loadAsync('/fonts/helvetiker.json');
@@ -197,12 +238,14 @@ export async function createGallery(container:HTMLDivElement,articles:HTMLElemen
     if(event.detail===0||blocked(event.target))return;
     const hit=pickObject({x:event.clientX,y:event.clientY},views,active);if(!hit)return;
     event.preventDefault();event.stopImmediatePropagation();
-    const article=tiles[hit.index].article;
-    const token=!!tiles[hit.index].project.kind;
-    const footer=hit.point.y < -2.14 && hit.point.y > -2.57;
-    const website=tiles[hit.index].project.website && footer && hit.point.x > -2.08 && hit.point.x < -.55;
-    if(website){article.querySelector<HTMLElement>('.token-website')?.click();return;}
-    const social=(token?footer:hit.point.y < -1.98 && hit.point.y > -2.61) && hit.point.x > .99;
+    const tile=tiles[hit.index],article=tile.article;
+    if(tile.project.kind){
+      const point=pointOnFace({x:event.clientX,y:event.clientY},views[hit.index]!);
+      const action=tokenActionAt(tile.project,point,titleRight(tile));
+      if(action)article.querySelector<HTMLElement>(`[data-token-action="${action}"]`)?.click();
+      return;
+    }
+    const social=hit.point.y < -1.98 && hit.point.y > -2.61 && hit.point.x > .99;
     const control=social?article.querySelectorAll<HTMLElement>('.social-links a,.social-links button')[hit.point.x>1.5?1:0]:article.querySelector<HTMLElement>('.project-media');
     control?.click();
   };
@@ -240,7 +283,9 @@ export async function createGallery(container:HTMLDivElement,articles:HTMLElemen
       return {group:tile.group,camera:tile.camera,viewport,bounds:tile.bounds};
     });
     active=keyboard>=0?keyboard:(pickObject(pointer,views,active)?.index??-1);
-    document.body.style.cursor=active>=0?'pointer':'';
+    const face=pointer&&active>=0&&views[active]?pointOnFace(pointer,views[active]!):null;
+    const activeTile=active>=0?tiles[active]:null;
+    document.body.style.cursor=activeTile&&(!activeTile.project.kind||tokenActionAt(activeTile.project,face,titleRight(activeTile)))?'pointer':'';
     tiles.forEach((tile,index)=>{tile.hover=index===active;tile.article.dataset.hovered=String(tile.hover);});
     const order=tiles.map((tile,index)=>({tile,index})).sort((a,b)=>Number(a.tile.hover)-Number(b.tile.hover));order.forEach(({tile,index})=>{
       const r=rects[index],view=views[index];if(!view)return;
@@ -249,6 +294,18 @@ export async function createGallery(container:HTMLDivElement,articles:HTMLElemen
       const videoReady=tile.video&&tile.video.readyState>=2&&!tile.video.error&&tile.article.dataset.videoError!=='true';tile.imageMaterial.map=videoReady?tile.videoTexture:tile.imageTexture;
       if(tile.video&&!tile.video.paused)activeVideo=true;
       const p=tile.project;const overlay=tile.group.getObjectByName('token-overlay') as T.Mesh|undefined;if(overlay){overlay.visible=!!tokenOverlay(p)||tile.article.dataset.imageError==='true';}
+      const focused=keyboard===index?(document.activeElement as HTMLElement)?.dataset.tokenAction:null;
+      const region=tile.hover?(focused??tokenRegionAt(face)):null;
+      for(const highlight of tile.highlights){
+        const enabled=highlight.id==='title'?(p.dataState==='ready'||p.dataState==='stale'):highlight.id==='website'?!!p.website:TOKEN_SOCIALS.some(s=>s.key===highlight.id)?!!p[highlight.id as 'x'|'telegram'|'discord'|'github']:true;
+        const target=enabled&&region===highlight.id?1:0;
+        highlight.progress=motion?T.MathUtils.lerp(highlight.progress,target,1-Math.exp(-dt*12)):target;
+        if(Math.abs(target-highlight.progress)>.002)settling=true;
+        const button=TOKEN_SOCIALS.some(s=>s.key===highlight.id);
+        highlight.border.opacity=(button?.20:0)+highlight.progress*.58;
+        highlight.fill.opacity=highlight.progress*.09;
+      }
+      if(p.kind){const title=tile.group.getObjectByName('project-name') as T.Mesh;const material=title.material as T.MeshStandardMaterial;material.emissive.set(LINK_BLUE);material.emissiveIntensity=tile.highlights[0]?.progress*.22;}
       const state=p.kind?(p.kind==='soon'?'SOON':p.dataState==='loading'?'LOADING TOKEN DATA':p.dataState==='error'?'RETRY TOKEN DATA':p.dataState==='stale'?'VIEW ON PUMP.FUN / CACHED':'VIEW ON PUMP.FUN'):tile.article.dataset.videoError==='true'?'↻ PREVIEW UNAVAILABLE · RETRY':tile.article.dataset.busy==='true'?'◌ OPENING A NEW PERSPECTIVE':videoReady?'Ⅱ PLAYING PREVIEW · TAP TO STOP':'▷ DISCOVER '+tile.project.name.toUpperCase();
       if(state!==tile.status){tile.status=state;tile.statusLabel.geometry.dispose();const text=state.replace('↻','RETRY').replace('◌','...').replace('Ⅱ','II').replace('▷','PLAY').replace('·','/');const geometry=new TextGeometry(text,{font,size:.115,depth:.024,curveSegments:2,bevelEnabled:false});geometry.computeBoundingBox();tile.statusLabel.geometry=geometry;tile.statusLabel.scale.x=Math.min(1,3.96/(geometry.boundingBox!.max.x-geometry.boundingBox!.min.x));}
 

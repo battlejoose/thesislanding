@@ -4,7 +4,7 @@ export interface Project {
   cap: string; change: string; image: string; video: string | null; icon: string;
   color: string; featured?: boolean; x: string | null; telegram: string | null;
   tokenAddress?: string; kind?: 'token' | 'soon'; dataState?: 'loading' | 'ready' | 'error' | 'stale';
-  website?: string | null; tokenUrl?: string; updatedAt?: string;
+  website?: string | null; discord?: string | null; github?: string | null; tokenUrl?: string; updatedAt?: string;
   price?: string; volume?: string; liquidity?: string;
   imageAvailable?: boolean;
 }

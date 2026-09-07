@@ -17,6 +17,13 @@ export function cursorTiltTarget(pointer:Pointer|null,width:number,height:number
 }
 const raycaster = new T.Raycaster(), inverse = new T.Matrix4(), localRay = new T.Ray();
 const point = new T.Vector3(), ndc = new T.Vector2();
+const facePlane = new T.Plane(new T.Vector3(0,0,1),-FACE_Z);
+
+/** Resolve controls on the printed face, rather than on the outer picking box. */
+export function pointOnFace(pointer:Pointer,view:Pickable):T.Vector3|null {
+  hitObject(pointer,view);
+  return localRay.intersectPlane(facePlane,point)?.clone()??null;
+}
 
 /** Use the same camera, viewport and model matrix as the visible WebGL object. */
 export function hitObject(pointer:Pointer, view:Pickable):T.Vector3|null {

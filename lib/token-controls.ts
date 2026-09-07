@@ -1,0 +1,30 @@
+import type { Project } from './projects';
+
+export const TOKEN_SOCIALS = [
+  {key:'x',label:'X',x:.18},
+  {key:'telegram',label:'Telegram',x:.74},
+  {key:'discord',label:'Discord',x:1.30},
+  {key:'github',label:'GitHub',x:1.86},
+] as const;
+export type TokenAction = 'title' | 'website' | 'retry' | typeof TOKEN_SOCIALS[number]['key'];
+export type InfoRegion = {id:string;left:number;right:number;bottom:number;top:number};
+export const TOKEN_INFO_REGIONS:InfoRegion[] = [
+  {id:'title',left:-1.22,right:1.98,bottom:-.65,top:-.17},
+  {id:'price',left:-2.08,right:.02,bottom:-1.31,top:-.85},
+  {id:'volume',left:.22,right:2.08,bottom:-1.31,top:-.85},
+  {id:'cap',left:-2.08,right:.02,bottom:-2.12,top:-1.47},
+  {id:'change',left:.22,right:2.08,bottom:-2.12,top:-1.47},
+  {id:'website',left:-2.08,right:-.66,bottom:-2.56,top:-2.15},
+  ...TOKEN_SOCIALS.map(s=>({id:s.key,left:s.x-.22,right:s.x+.22,bottom:-2.56,top:-2.15})),
+];
+export function tokenRegionAt(point:{x:number;y:number}|null):string|null {
+  return point?TOKEN_INFO_REGIONS.find(r=>point.x>=r.left&&point.x<=r.right&&point.y>=r.bottom&&point.y<=r.top)?.id??null:null;
+}
+export function tokenActionAt(p:Project,point:{x:number;y:number}|null,titleRight=1.98):TokenAction|null {
+  if(!point)return null;
+  if(p.dataState==='error'&&point.x>=-1.8&&point.x<=1.8&&point.y>=.75&&point.y<=1.8)return 'retry';
+  const region=tokenRegionAt(point),ready=p.dataState==='ready'||p.dataState==='stale';
+  if(region==='title')return ready&&p.tokenUrl&&point.x>=-1.18&&point.x<=titleRight&&point.y>=-.56&&point.y<=-.19?'title':null;
+  if(region==='website')return p.website?'website':null;
+  return TOKEN_SOCIALS.find(s=>s.key===region&&p[s.key])?.key??null;
+}

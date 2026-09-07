@@ -1,7 +1,8 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import * as T from 'three';
-import {CAMERA_Z,FACE_Z,cursorTiltTarget,hoverPose,pickObject} from '../lib/gallery-interaction.ts';
+import {CAMERA_Z,FACE_Z,cursorTiltTarget,hoverPose,pickObject,pointOnFace} from '../lib/gallery-interaction.ts';
+import {tokenActionAt,TOKEN_SOCIALS,tokenRegionAt} from '../lib/token-controls.ts';
 import {brooklynCity,constructionTile} from '../lib/brooklyn-world.ts';
 
 function view(left=100,top=80) {
@@ -45,6 +46,22 @@ test('foreground object owns overlaps; no alternating hover from DOM mouseleave 
   const a=view(),b=view(200),p={x:360,y:340};
   for(let i=0;i<50;i++)assert.equal(pickObject(p,[a,b],0)?.index,0);
   assert.equal(pickObject(p,[a,b],1)?.index,1);
+});
+
+test('Construction opens only its title or a supplied footer link, including while tilted and zoomed',()=>{
+  const p={kind:'token',dataState:'ready',tokenUrl:'https://pump.fun/coin/token',x:'https://x.com/token',telegram:null,discord:'https://discord.gg/token',github:'https://github.com/team/token',website:'https://example.com'};
+  for(const angle of [-.7,0,.7])for(const progress of [0,1]){
+    const v=view(),pose=hoverPose(-.8,progress);v.camera.zoom=.9/1.7;v.camera.updateProjectionMatrix();v.group.rotation.set(angle,.14,0);v.group.position.z=pose.z;v.group.scale.setScalar(pose.scale);
+    const action=(x,y)=>tokenActionAt(p,pointOnFace(project(v,x,y,FACE_Z),v));
+    assert.equal(action(0,-.36),'title');
+    assert.equal(action(-1.7,-.4),null);assert.equal(action(0,-.73),null);
+    assert.equal(action(0,1.4),null);assert.equal(action(-1.5,-1.9),null);assert.equal(action(0,-2.7),null);
+    assert.equal(action(-1.5,-2.35),'website');
+    for(const s of TOKEN_SOCIALS)assert.equal(action(s.x,-2.31),p[s.key]?s.key:null);
+  }
+  assert.equal(tokenActionAt({...p,kind:'soon',dataState:undefined,tokenUrl:undefined,x:null,discord:null,github:null,website:null},{x:0,y:-.4}),null);
+  assert.equal(tokenActionAt({...p,dataState:'error'},{x:0,y:1.1}),'retry');
+  assert.equal(tokenRegionAt({x:-1.5,y:-1.9}),'cap');
 });
 
 test('Construction tiles are 10% smaller at rest and on hover, with matching picking',()=>{

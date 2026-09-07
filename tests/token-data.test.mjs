@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {normalizeToken,validContract,safeLink,safeImageUrl,dollars,getToken,getTokenImage} from '../lib/token-data.ts';
+import {normalizeToken,validContract,safeLink,safeImageUrl,dollars,getToken,getTokenImage,pumpSocials} from '../lib/token-data.ts';
 import {CONSTRUCTION_TOKENS,INITIAL_CONSTRUCTION_PROJECTS} from '../lib/construction-projects.ts';
 
 const address=CONSTRUCTION_TOKENS[0];
@@ -31,6 +31,18 @@ test('reject wrong-mint/wrong-chain records, and preserve truthful partial data'
   assert.equal(normalizeToken(address,{...pump,mint:'different'},[{...pair,chainId:'ethereum'}]),null);
   const fallback=normalizeToken(address,null,[pair]);assert.equal(fallback.project.name,pump.name);assert.equal(fallback.project.imageAvailable,false);
   const partial=normalizeToken(address,{...pump,usd_market_cap:0},[]);assert.equal(partial.project.cap,'$0.00');
+});
+
+test('social buttons use Pump metadata and the correct platform, never a guessed or fallback link',()=>{
+  const discord='https://discord.gg/token',github='https://github.com/team/token';
+  assert.deepEqual(pumpSocials({twitter:pump.twitter,telegram:'https://t.me/token',discord,github}),{x:pump.twitter,telegram:'https://t.me/token',discord,github});
+  assert.equal(pumpSocials({website:discord}).discord,discord);
+  assert.equal(pumpSocials({socials:[{type:'github',url:github}]}).github,github);
+  assert.equal(pumpSocials({extensions:{discord}}).discord,discord);
+  const invalid=pumpSocials({twitter:'https://x.com.evil.test/token',telegram:'https://github.com/token',discord:'javascript:alert(1)',github:'https://example.com/github'});
+  assert.deepEqual(invalid,{x:null,telegram:null,discord:null,github:null});
+  const result=normalizeToken(address,pump,[{...pair,info:{socials:[{type:'telegram',url:'https://t.me/different'}]}}]);
+  assert.equal(result.project.telegram,null);assert.equal(result.project.discord,null);assert.equal(result.project.github,null);
 });
 test('external metadata cannot inject scripts or request arbitrary/private image hosts',()=>{
   assert.ok(validContract(address));assert.equal(validContract('../etc/passwd'),false);

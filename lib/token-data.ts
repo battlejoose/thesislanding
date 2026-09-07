@@ -8,6 +8,20 @@ export const validContract=(value:string)=>/^[1-9A-HJ-NP-Za-km-z]{32,44}$/.test(
 export function safeLink(value:unknown):string|null {
   try{const url=new URL(clean(value,2048));return url.protocol==='https:'&&!url.username&&!url.password?url.href:null;}catch{return null;}
 }
+const socialHosts={x:['x.com','twitter.com'],telegram:['t.me','telegram.me','telegram.org'],discord:['discord.gg','discord.com','discordapp.com'],github:['github.com']} as const;
+export function pumpSocials(value:unknown) {
+  const pump=object(value),links=object(pump.socials),extensions=object(pump.extensions);
+  const entries=Array.isArray(pump.socials)?pump.socials.map(object):[];
+  const result:{x:string|null;telegram:string|null;discord:string|null;github:string|null}={x:null,telegram:null,discord:null,github:null};
+  for(const key of Object.keys(result) as (keyof typeof result)[]){
+    const names=key==='x'?['twitter','x']:key==='telegram'?['telegram','tele']: [key];
+    const candidates=[...names.flatMap(name=>[pump[name],links[name],extensions[name]]),...entries.filter(e=>names.includes(String(e.type??e.platform))).map(e=>e.url),pump.website];
+    for(const value of candidates){const url=safeLink(value);if(!url)continue;const host=new URL(url).hostname;
+      if(socialHosts[key].some(domain=>host===domain||host.endsWith('.'+domain))){result[key]=url;break;}
+    }
+  }
+  return result;
+}
 const imageHosts=['gmgn.ai','ipfs.io','gateway.pinata.cloud','pump.mypinata.cloud','arweave.net','pump.fun','dexscreener.com','dexscreener.io','decentralized-content.com','cloudflare-ipfs.com'];
 export function safeImageUrl(value:unknown):string|null {
   const raw=clean(value,2048),url=safeLink(raw.startsWith('ipfs://')?`https://ipfs.io/ipfs/${raw.slice(7).replace(/^ipfs\//,'')}`:raw);
@@ -25,10 +39,6 @@ export function normalizeToken(address:string,pumpValue:unknown,dexValue:unknown
   const pair=pairs[0]??{},base=object(pair.baseToken),info=object(pair.info);
   const name=clean(pump.name,48)||clean(base.name,48);if(!name)return null;
   const symbol=clean(pump.symbol,18)||clean(base.symbol,18)||'N/A';
-  const social=(kind:string)=>{
-    const entry=(Array.isArray(info.socials)?info.socials:[]).map(object).find(link=>link.type===kind||link.platform===kind);
-    return safeLink(entry?.url);
-  };
   const imageSource=safeImageUrl(pump.image_uri)||safeImageUrl(info.imageUrl);
   const change=object(pair.priceChange).h24;
   const price=typeof pair.priceUsd==='string'&&pair.priceUsd.trim()!==''?amount(Number(pair.priceUsd)):null;
@@ -41,7 +51,7 @@ export function normalizeToken(address:string,pumpValue:unknown,dexValue:unknown
     cap:dollars(amount(pump.usd_market_cap)??amount(pump.market_cap_usd)??amount(pair.marketCap)),
     change:typeof change==='number'&&Number.isFinite(change)?`${change>0?'+':''}${change.toFixed(2)}%`:'N/A',
     image:imageSource?`/api/tokens/${address}/image`:'/art/brooklyn.webp',imageAvailable:!!imageSource,video:null,icon:'',color:'#d7ad66',
-    x:safeLink(pump.twitter)||social('twitter')||social('x'),telegram:safeLink(pump.telegram)||social('telegram'),
+    ...pumpSocials(pump),
     website:safeLink(pump.website)||safeLink(object(websites[0]).url),tokenUrl:`https://pump.fun/coin/${address}`,
     price:dollars(price),volume:dollars(volume),liquidity:dollars(amount(object(pair.liquidity).usd)),updatedAt:new Date().toISOString(),
   }};
