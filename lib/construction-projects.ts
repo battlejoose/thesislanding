@@ -7,11 +7,12 @@ export const CONSTRUCTION_TOKENS: readonly (string | null)[] = [
   null,
 ];
 
-// Tile 1 keeps its supplied identity, artwork, and links through live refreshes.
+// Tile 1 keeps these fixed values through live refreshes.
 export const CONSTRUCTION_OVERRIDES: readonly Partial<Project>[] = [
   {
     name:'SoltoshiDICE',
     ticker:'SDICE',
+    change:'0 %',
     image:'/art/soltoshidice.png',
     imageAvailable:true,
     website:'https://soltoshidice.wtf/',
