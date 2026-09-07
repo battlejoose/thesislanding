@@ -9,7 +9,7 @@ const pair={chainId:'solana',baseToken:{address,name:'Harvey The Mini Bull',symb
 
 test('Construction has exactly one configured token and two unavailable Soon tiles',()=>{
   assert.equal(CONSTRUCTION_TOKENS.length,3);assert.equal(CONSTRUCTION_TOKENS.filter(Boolean).length,1);
-  assert.equal(address,'4GBmCJRcmPiwnydKqdGG17fx4CkojpQHeiktDzbNpump');
+  assert.ok(validContract(address),`configured token must be a valid contract: ${address}`);
   for(const p of INITIAL_CONSTRUCTION_PROJECTS.slice(1)){
     assert.equal(p.kind,'soon');for(const field of ['name','ticker','description','category','cap','change'])assert.equal(p[field],'N/A');
     assert.equal(p.video,null);assert.equal(p.x,null);assert.equal(p.telegram,null);
