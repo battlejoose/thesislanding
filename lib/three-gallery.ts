@@ -7,7 +7,7 @@ import type { Project, Theme } from './projects';
 import { addTileWorldDetails } from './theme-worlds';
 import { constructionTile } from './brooklyn-world';
 import { CAMERA_Z, cursorTiltTarget, hoverPose, pickObject, pointOnFace, type Pickable, type Pointer } from './gallery-interaction';
-import { TOKEN_SOCIALS, TOKEN_WEBSITE_X, TOKEN_INFO_REGIONS, tokenActionAt, tokenRegionAt } from './token-controls';
+import { TOKEN_SOCIALS, TOKEN_WEBSITE_X, TOKEN_INFO_REGIONS, tokenFooterControls, tokenActionAt, tokenRegionAt } from './token-controls';
 import { socialIconPaths } from './social-icon-paths';
 const TAU=Math.PI*2;
 export const palette={volcanic:{side:'#262124',paper:'#393034',ink:'#ffdaab',trim:'#fa682d'},space:{side:'#242540',paper:'#303850',ink:'#d4efff',trim:'#6bbcea'},roots:{side:'#453826',paper:'#e7ebd4',ink:'#273c2c',trim:'#789052'},brooklyn:{side:'#653c30',paper:'#f0e6cf',ink:'#302922',trim:'#b19a75'},steampunk:{side:'#343130',paper:'#dfcaa2',ink:'#49351f',trim:'#c29656'}};
@@ -46,7 +46,7 @@ function changeLabel(parent:T.Group,name:string,text:string,font:Font,color?:str
 }
 const LINK_BLUE='#1659c7';
 type InfoHighlight={id:string;fill:T.MeshBasicMaterial;border:T.LineBasicMaterial;progress:number};
-function tokenDecorations(group:T.Group,p:Project,font:Font,ink:string):InfoHighlight[]{
+function tokenDecorations(group:T.Group,p:Project,ink:string):InfoHighlight[]{
   const underline=mesh(group,new T.BoxGeometry(1,.014,.022),new T.MeshStandardMaterial({color:LINK_BLUE,roughness:.5}),0,-.56,.68);underline.name='token-title-underline';
   const loader=new SVGLoader();
   for(const social of TOKEN_SOCIALS){
@@ -56,15 +56,15 @@ function tokenDecorations(group:T.Group,p:Project,font:Font,ink:string):InfoHigh
     for(const path of paths)for(const shape of SVGLoader.createShapes(path)){
       const geometry=new T.ExtrudeGeometry(shape,{depth:1,bevelEnabled:false,curveSegments:4});geometry.translate(-12,-12,0);geometry.scale(.0105,-.0105,.024);mesh(icon,geometry,material);
     }
-    const na=label(group,font,'N/A',.065,.23,ink,social.x-.10,-2.53,.69,.015);na.name='token-social-na-'+social.key;
   }
   const highlights=TOKEN_INFO_REGIONS.map(region=>{
     const w=region.right-region.left,h=region.top-region.bottom,x=(region.left+region.right)/2,y=(region.top+region.bottom)/2;
     const color=region.id==='title'||region.id==='website'?LINK_BLUE:'#b48132';
+    const section=new T.Group();section.name='token-highlight-'+region.id;section.position.set(x,y,0);group.add(section);
     const fill=new T.MeshBasicMaterial({color,transparent:true,opacity:0,depthWrite:false});
-    mesh(group,new T.ShapeGeometry(rounded(w,h,.045)),fill,x,y,.613);
+    mesh(section,new T.ShapeGeometry(rounded(w,h,.045)),fill,0,0,.613);
     const border=new T.LineBasicMaterial({color,transparent:true,opacity:0,depthWrite:false});
-    const frame=new T.LineLoop(new T.BufferGeometry().setFromPoints(rounded(w,h,.045).getPoints(5)),border);frame.position.set(x,y,.619);group.add(frame);
+    const frame=new T.LineLoop(new T.BufferGeometry().setFromPoints(rounded(w,h,.045).getPoints(5)),border);frame.position.z=.619;section.add(frame);
     return {id:region.id,fill,border,progress:0};
   });
   updateTokenDecorations(group,p,ink);
@@ -76,9 +76,11 @@ function updateTokenDecorations(group:T.Group,p:Project,ink:string){
   (title.material as T.MeshStandardMaterial).color.set(ready?LINK_BLUE:ink);
   const underline=group.getObjectByName('token-title-underline') as T.Mesh;
   if(underline){const box=title.geometry.boundingBox!;const width=(box.max.x-box.min.x)*title.scale.x;underline.scale.x=width;underline.position.x=title.position.x+box.min.x*title.scale.x+width/2;underline.visible=ready;}
-  for(const social of TOKEN_SOCIALS){
-    const icon=group.getObjectByName('token-social-'+social.key);icon?.traverse(child=>{if(child instanceof T.Mesh)(child.material as T.MeshStandardMaterial).color.set(p[social.key]?ink:'#a79c88');});
-    const na=group.getObjectByName('token-social-na-'+social.key);if(na)na.visible=!p[social.key];
+  const controls=tokenFooterControls(p);
+  for(const id of ['website',...TOKEN_SOCIALS.map(s=>s.key)]){
+    const control=controls.find(c=>c.id===id);
+    const icon=group.getObjectByName(id==='website'?'project-website':'token-social-'+id),highlight=group.getObjectByName('token-highlight-'+id);
+    for(const object of [icon,highlight])if(object){object.visible=!!control;if(control)object.position.x=control.x;}
   }
 }
 function titleRight(tile:Tile){const title=tile.group.getObjectByName('project-name') as T.Mesh;return title.position.x+title.geometry.boundingBox!.max.x*title.scale.x+.035;}
@@ -209,7 +211,7 @@ export function makeTile(article:HTMLElement,p:Project,index:number,theme:Theme,
     categoryFace.visible=false;group.getObjectByName('project-category')!.visible=false;
     group.getObjectByName('status-face')!.visible=false;statusLabel.visible=false;
   }
-  const highlights=p.kind?tokenDecorations(group,p,font,colors.ink):[];
+  const highlights=p.kind?tokenDecorations(group,p,colors.ink):[];
   addTileWorldDetails(group,theme,animate,index);
   const shadowTex=canvasTexture(128,128,ctx=>{const grad=ctx.createRadialGradient(64,64,10,64,64,64);grad.addColorStop(0,'#0008');grad.addColorStop(1,'#0000');ctx.fillStyle=grad;ctx.fillRect(0,0,128,128);});const shadow=printed(scene,shadowTex,6.4,7.5,.2,-.26,-1.1);shadow.castShadow=false;shadow.name='drop-shadow';(shadow.material as T.Material).depthWrite=false;
   const bounds=new T.Box3(new T.Vector3(-2.43,-2.95,theme==='brooklyn'?-1.66:-.76),new T.Vector3(2.43,theme==='brooklyn'?3.72:2.95,.77));
@@ -299,7 +301,7 @@ export async function createGallery(container:HTMLDivElement,articles:HTMLElemen
       if(tile.video&&!tile.video.paused)activeVideo=true;
       const p=tile.project;const overlay=tile.group.getObjectByName('token-overlay') as T.Mesh|undefined;if(overlay){overlay.visible=!!tokenOverlay(p)||tile.article.dataset.imageError==='true';}
       const focused=keyboard===index?(document.activeElement as HTMLElement)?.dataset.tokenAction:null;
-      const region=tile.hover?(focused??tokenRegionAt(face)):null;
+      const region=tile.hover?(focused??tokenRegionAt(face,p)):null;
       for(const highlight of tile.highlights){
         const enabled=highlight.id==='title'?(p.dataState==='ready'||p.dataState==='stale'):highlight.id==='website'?!!p.website:TOKEN_SOCIALS.some(s=>s.key===highlight.id)?!!p[highlight.id as 'x'|'telegram'|'discord'|'github']:true;
         const target=enabled&&region===highlight.id?1:0;

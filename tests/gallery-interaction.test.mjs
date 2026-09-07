@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import * as T from 'three';
 import {CAMERA_Z,FACE_Z,cursorTiltTarget,hoverPose,pickObject,pointOnFace} from '../lib/gallery-interaction.ts';
-import {tokenActionAt,TOKEN_SOCIALS,TOKEN_WEBSITE_X,tokenRegionAt} from '../lib/token-controls.ts';
+import {tokenActionAt,TOKEN_SOCIALS,tokenFooterControls,tokenRegionAt} from '../lib/token-controls.ts';
 import {brooklynCity,constructionTile} from '../lib/brooklyn-world.ts';
 
 function view(left=100,top=80) {
@@ -56,12 +56,20 @@ test('Construction opens only its title or a supplied footer link, including whi
     assert.equal(action(0,-.36),'title');
     assert.equal(action(-1.7,-.4),null);assert.equal(action(0,-.73),null);
     assert.equal(action(0,1.4),null);assert.equal(action(-1.5,-1.9),null);assert.equal(action(0,-2.7),null);
-    assert.equal(action(TOKEN_WEBSITE_X,-2.35),'website');
-    for(const s of TOKEN_SOCIALS)assert.equal(action(s.x,-2.31),p[s.key]?s.key:null);
+    for(const control of tokenFooterControls(p))assert.equal(action(control.x,-2.31),control.id);
+    assert.equal(action(-1.5,-2.35),null);
   }
   assert.equal(tokenActionAt({...p,kind:'soon',dataState:undefined,tokenUrl:undefined,x:null,discord:null,github:null,website:null},{x:0,y:-.4}),null);
   assert.equal(tokenActionAt({...p,dataState:'error'},{x:0,y:1.1}),'retry');
   assert.equal(tokenRegionAt({x:-1.5,y:-1.9}),'cap');
+  const keys=['website',...TOKEN_SOCIALS.map(s=>s.key)];
+  for(let mask=0;mask<32;mask++){
+    const record={...p,...Object.fromEntries(keys.map((key,i)=>[key,mask&(1<<i)?'https://example.com/'+key:null]))};
+    const controls=tokenFooterControls(record);
+    assert.deepEqual(controls.map(c=>c.id),keys.filter(key=>!!record[key]));
+    for(const control of controls)assert.equal(tokenActionAt(record,{x:control.x,y:-2.31}),control.id);
+    if(controls.length)assert.equal(controls.at(-1).x,1.86);
+  }
 });
 
 test('Construction tiles are 10% smaller at rest and on hover, with matching picking',()=>{

@@ -35,9 +35,6 @@
 .construction :global(.token-card .project-media) { cursor:default; }
 .construction :global(.token-retry) { border:0;background:transparent;cursor:pointer; }
 .construction :global(.token-card .social-links) { gap:7px; }
-.construction :global(.token-card .social-links button) { position:relative; }
-.construction :global(.token-card .social-links button:disabled) { color:#908775;cursor:default; }
-.construction :global(.social-na) { position:absolute;bottom:-9px;font-size:8px;line-height:1; }
 .construction :global(.token-stats>div),
 .construction :global(.token-card .market-cap),
 .construction :global(.token-change) { border-radius:4px;outline:1px solid transparent;outline-offset:6px;transition:background .22s,outline-color .22s; }
