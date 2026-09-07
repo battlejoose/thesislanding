@@ -7,8 +7,10 @@ export const CONSTRUCTION_TOKENS: readonly (string | null)[] = [
   null,
 ];
 
-// No overrides: names, artwork, links, and market data all come from the token.
-export const CONSTRUCTION_OVERRIDES: readonly Partial<Project>[] = [];
+// Keep tile 1's globe destination through token metadata refreshes.
+export const CONSTRUCTION_OVERRIDES: readonly Partial<Project>[] = [
+  { website:'https://soltoshidice.wtf/?room=the-block&ref=EjHmRNG3Ee6iEpGa9yTWA2Y6wqUsnQVZefJJTntpN7mo' },
+];
 
 export function constructionProject(address:string|null,index:number):Project {
   return {
