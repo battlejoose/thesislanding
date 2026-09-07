@@ -57,26 +57,29 @@ export function normalizeToken(address:string,pumpValue:unknown,dexValue:unknown
   }};
 }
 
-async function json(url:string):Promise<unknown> {
+async function json(url:string,requestSignal?:AbortSignal):Promise<unknown> {
+  if(requestSignal?.aborted)return null;
+  const controller=new AbortController(),cancel=()=>controller.abort(requestSignal?.reason);
+  const timer=setTimeout(()=>controller.abort(new DOMException('Token provider timed out','TimeoutError')),6500);
+  requestSignal?.addEventListener('abort',cancel,{once:true});
   try {
-    const response=await fetch(url,{headers:{Accept:'application/json'},signal:AbortSignal.timeout(7000),redirect:'manual'});
+    const response=await fetch(url,{headers:{Accept:'application/json'},signal:controller.signal,redirect:'manual',cache:'no-store'});
     if(!response.ok){console.warn('Token provider response',new URL(url).hostname,response.status);return null;}
     const body=await response.text();return body.length<1_000_000?JSON.parse(body):null;
-  }catch(error){console.warn('Token provider unavailable',new URL(url).hostname,error instanceof Error?error.message:'Unknown error');return null;}
+  }catch(error){if(!requestSignal?.aborted)console.warn('Token provider unavailable',new URL(url).hostname,error instanceof Error?error.message:'Unknown error');return null;}
+  finally{clearTimeout(timer);requestSignal?.removeEventListener('abort',cancel);}
 }
 type TokenResult=NonNullable<ReturnType<typeof normalizeToken>>;
-const cache=new Map<string,{expires:number;value:TokenResult}>(),pending=new Map<string,Promise<TokenResult|null>>();
-export async function getToken(address:string):Promise<TokenResult|null> {
-  if(!validContract(address))return null;
+// Only completed, plain data may outlive a Workers request. Never retain its I/O promises.
+const cache=new Map<string,{expires:number;value:TokenResult}>();
+export async function getToken(address:string,signal?:AbortSignal):Promise<TokenResult|null> {
+  if(!validContract(address)||signal?.aborted)return null;
   const cached=cache.get(address);if(cached&&cached.expires>Date.now())return cached.value;
-  const request=pending.get(address);if(request)return request;
-  const next=(async()=>{
-    const [pump,dex]=await Promise.all([json(`https://frontend-api-v3.pump.fun/coins/${address}`),json(`https://api.dexscreener.com/token-pairs/v1/solana/${address}`)]);
-    const token=normalizeToken(address,pump,dex);
-    if(token){if(cache.size>=128)cache.delete(cache.keys().next().value!);cache.set(address,{expires:Date.now()+60_000,value:token});}
-    return token;
-  })();pending.set(address,next);
-  try{return await next;}finally{pending.delete(address);}
+  const [pump,dex]=await Promise.all([json(`https://frontend-api-v3.pump.fun/coins/${address}`,signal),json(`https://api.dexscreener.com/token-pairs/v1/solana/${address}`,signal)]);
+  if(signal?.aborted)return null;
+  const token=normalizeToken(address,pump,dex);
+  if(token){if(cache.size>=128)cache.delete(cache.keys().next().value!);cache.set(address,{expires:Date.now()+60_000,value:token});}
+  return token;
 }
 
 export async function getTokenImage(address:string):Promise<Response> {

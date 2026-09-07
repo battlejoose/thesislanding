@@ -5,7 +5,7 @@ import ProjectGallery from '@/components/project-gallery';
 import WorldScene from '@/components/world-scene';
 import styles from './construction.module.css';
 import { CONSTRUCTION_TOKENS, INITIAL_CONSTRUCTION_PROJECTS } from '@/lib/construction-projects';
-import type { Project } from '@/lib/projects';
+import { fetchTokenProject, tokenRefreshDelay } from '@/lib/token-client';
 
 export default function Construction() {
   const [projects,setProjects]=useState(INITIAL_CONSTRUCTION_PROJECTS);
@@ -21,24 +21,25 @@ export default function Construction() {
   }, []);
 
   useEffect(()=>{
-    const controller=new AbortController();let timer:ReturnType<typeof setTimeout>,running=false;
+    const controller=new AbortController();let timer:ReturnType<typeof setTimeout>,running=false,failures=0;
+    if(retry>0)setProjects(current=>current.map(p=>p.dataState==='error'?{...p,dataState:'loading'}:p));
     const refresh=async()=>{
       if(running||document.hidden)return;running=true;clearTimeout(timer);
-      await Promise.all(CONSTRUCTION_TOKENS.filter((address):address is string=>!!address).map(async address=>{
+      const results=await Promise.all(CONSTRUCTION_TOKENS.filter((address):address is string=>!!address).map(async address=>{
         try{
-          const response=await fetch(`/api/tokens/${address}`,{signal:controller.signal});
-          if(!response.ok)throw new Error('Token unavailable');
-          const project:Project=await response.json();
-          if(project.tokenAddress!==address||project.kind!=='token')throw new Error('Unexpected token');
+          const project=await fetchTokenProject(address,controller.signal);
           if(!controller.signal.aborted)setProjects(current=>current.map(p=>p.id===address?project:p));
+          return true;
         }catch{
           if(!controller.signal.aborted)setProjects(current=>current.map(p=>p.id===address?{...p,dataState:p.dataState==='ready'||p.dataState==='stale'?'stale':'error'}:p));
+          return false;
         }
       }));
-      running=false;if(!controller.signal.aborted)timer=setTimeout(refresh,60_000);
+      running=false;failures=results.every(Boolean)?0:failures+1;
+      if(!controller.signal.aborted)timer=setTimeout(refresh,tokenRefreshDelay(failures));
     };
-    void refresh();document.addEventListener('visibilitychange',refresh);
-    return()=>{controller.abort();clearTimeout(timer);document.removeEventListener('visibilitychange',refresh);};
+    void refresh();document.addEventListener('visibilitychange',refresh);window.addEventListener('online',refresh);
+    return()=>{controller.abort();clearTimeout(timer);document.removeEventListener('visibilitychange',refresh);window.removeEventListener('online',refresh);};
   },[retry]);
 
   return (

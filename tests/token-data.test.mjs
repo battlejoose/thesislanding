@@ -50,14 +50,32 @@ test('external metadata cannot inject scripts or request arbitrary/private image
   for(const url of ['http://localhost/a','https://127.0.0.1/a','https://gmgn.ai.evil.example/a','https://evil.example/a','https://gmgn.ai:8443/a'])assert.equal(safeImageUrl(url),null);
   assert.equal(safeImageUrl('ipfs://bafytest/image.png'),'https://ipfs.io/ipfs/bafytest/image.png');
 });
-test('concurrent refreshes share one bounded request per upstream and cache the result',async()=>{
+test('completed token data is cached without retaining a request promise',async()=>{
   const original=globalThis.fetch;let calls=0;
   globalThis.fetch=async(url)=>{calls++;return Response.json(String(url).includes('pump.fun')?pump:[pair]);};
   try{
-    const [a,b]=await Promise.all([getToken(address),getToken(address)]);
+    const a=await getToken(address),b=await getToken(address);
     assert.equal(a.project.tokenAddress,address);assert.deepEqual(a,b);assert.equal(calls,2);
     await getToken(address);assert.equal(calls,2);
   }finally{globalThis.fetch=original;}
+});
+
+test('an interrupted request cannot trap a later request for the same token',async()=>{
+  const original=globalThis.fetch,ca='A'.repeat(32),controller=new AbortController();let calls=0;
+  globalThis.fetch=async(url,options)=>{
+    calls++;
+    assert.equal(options.cache,'no-store');
+    if(calls<=2)return new Promise((resolve,reject)=>options.signal.addEventListener('abort',()=>reject(options.signal.reason),{once:true}));
+    return Response.json(String(url).includes('pump.fun')?{...pump,mint:ca}:[{...pair,baseToken:{...pair.baseToken,address:ca}}]);
+  };
+  let stalled,deadline;
+  try{
+    stalled=getToken(ca,controller.signal);
+    const recovered=await Promise.race([getToken(ca),new Promise((_,reject)=>{deadline=setTimeout(()=>reject(new Error('Later request inherited stalled I/O')),250);})]);
+    assert.equal(recovered.project.tokenAddress,ca);assert.equal(calls,4);
+    controller.abort();assert.equal(await stalled,null);
+    assert.equal((await getToken(ca)).project.tokenAddress,ca);assert.equal(calls,4);
+  }finally{clearTimeout(deadline);controller.abort();if(stalled)await stalled;globalThis.fetch=original;}
 });
 
 test('image delivery uses edge-compatible fetching and returns same-origin image bytes',async()=>{
