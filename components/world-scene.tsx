@@ -3,15 +3,17 @@ import { useEffect, useRef, useState } from 'react';
 import { MoveHorizontal, Box } from 'lucide-react';
 import type { Theme } from '@/lib/projects';
 import type { createWorld } from '@/lib/three-world';
-export default function WorldScene({theme,motion}:{theme:Theme;motion:boolean}){
+export default function WorldScene({theme,motion,onReady}:{theme:Theme;motion:boolean;onReady?:()=>void}){
+  const reported=useRef(false);
+  const settleBoot=()=>{if(reported.current)return;reported.current=true;onReady?.();};
   const host=useRef<HTMLDivElement>(null),engine=useRef<ReturnType<typeof createWorld>|null>(null),motionRef=useRef(motion);
   const [ready,setReady]=useState(false),[failed,setFailed]=useState(false);
   useEffect(()=>{motionRef.current=motion;engine.current?.setMotion(motion);},[motion]);
   useEffect(()=>{
     const container=host.current;if(!container)return;
     let disposed=false;setReady(false);setFailed(false);
-    const fail=()=>{setFailed(true);setReady(false);};container.addEventListener('scene-error',fail);
-    void import('@/lib/three-world').then(({createWorld})=>{if(disposed)return;engine.current=createWorld(container,theme,()=>setReady(true));engine.current.setMotion(motionRef.current);}).catch(()=>{if(!disposed)setFailed(true);});
+    const fail=()=>{setFailed(true);setReady(false);settleBoot();};container.addEventListener('scene-error',fail);
+    void import('@/lib/three-world').then(({createWorld})=>{if(disposed)return;engine.current=createWorld(container,theme,()=>{setReady(true);settleBoot();});engine.current.setMotion(motionRef.current);}).catch(()=>{if(!disposed){setFailed(true);settleBoot();}});
     return()=>{disposed=true;container.removeEventListener('scene-error',fail);engine.current?.dispose();engine.current=null;};
   },[theme]);
   return <div className="scene-stage" data-ready={ready} data-motion={motion}>

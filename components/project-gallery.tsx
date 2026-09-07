@@ -4,9 +4,11 @@ import { projects, type Project, type Theme } from '@/lib/projects';
 import type { createGallery } from '@/lib/three-gallery';
 import ProjectCard from './project-card';
 import TokenProjectCard from './token-project-card';
-export default function ProjectGallery({theme,motion,selected,onSelect,displayScale=1,cursorTilt=false,projectList=projects}:{theme:Theme;motion:boolean;selected:string|null;onSelect:(id:string)=>void;displayScale?:number;cursorTilt?:boolean;projectList?:Project[]}){
+export default function ProjectGallery({theme,motion,selected,onSelect,displayScale=1,cursorTilt=false,projectList=projects,onReady}:{theme:Theme;motion:boolean;selected:string|null;onSelect:(id:string)=>void;displayScale?:number;cursorTilt?:boolean;projectList?:Project[];onReady?:()=>void}){
   const root=useRef<HTMLDivElement>(null),canvas=useRef<HTMLDivElement>(null),engine=useRef<Awaited<ReturnType<typeof createGallery>>|null>(null),motionRef=useRef(motion);
   const [ready,setReady]=useState(false);
+  const reported=useRef(false);
+  const settleBoot=()=>{if(reported.current)return;reported.current=true;onReady?.();};
   const projectsRef=useRef(projectList),projectIds=projectList.map(p=>p.id).join(',');
   useEffect(()=>{projectsRef.current=projectList;engine.current?.setProjects(projectList);},[projectList]);
   useEffect(()=>{motionRef.current=motion;engine.current?.setMotion(motion);},[motion]);
