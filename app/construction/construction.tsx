@@ -4,7 +4,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import ProjectGallery from '@/components/project-gallery';
 import WorldScene from '@/components/world-scene';
 import styles from './construction.module.css';
-import { CONSTRUCTION_TOKENS, INITIAL_CONSTRUCTION_PROJECTS } from '@/lib/construction-projects';
+import { CONSTRUCTION_TOKENS, INITIAL_CONSTRUCTION_PROJECTS, withConstructionLinks } from '@/lib/construction-projects';
 import { prepareTokenProject, tokenRefreshDelay } from '@/lib/token-client';
 import BootSplash from '@/components/boot-splash';
 import { idle, settle, finish, type Stage } from '@/lib/boot-state';
@@ -58,7 +58,7 @@ export default function Construction() {
       const results=await Promise.all(CONSTRUCTION_TOKENS.filter((address):address is string=>!!address).map(async address=>{
         try{
           const project=await prepareTokenProject(address,controller.signal);
-          if(!controller.signal.aborted)setProjects(current=>current.map(p=>p.id===address?project:p));
+          if(!controller.signal.aborted)setProjects(current=>current.map((p,index)=>p.id===address?withConstructionLinks(project,index):p));
           return true;
         }catch{
           if(!controller.signal.aborted)setProjects(current=>current.map(p=>p.id===address?{...p,dataState:p.dataState==='ready'||p.dataState==='stale'?'stale':'error'}:p));
