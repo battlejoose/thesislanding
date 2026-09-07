@@ -286,3 +286,9 @@ footer { border-top:1px solid var(--border); padding:25px 0 30px; display:flex; 
 .boot-percent { color:var(--accent,#f3c574); font-variant-numeric:tabular-nums; }
 html[data-booting=true], html[data-booting=true] body { overflow:hidden; }
 @media(prefers-reduced-motion:reduce){ .boot-splash,.boot-rail span { transition:none; } }
+
+/* Between the loading screen lifting and the tiles being drawn, the plain
+   cards would otherwise flash at full size. They are the fallback for
+   browsers with no WebGL, so they are only held back when 3D is coming. */
+.project-gallery[data-3d=pending] .project-card { visibility:hidden; }
+.project-gallery[data-3d=pending] .gallery-canvas { opacity:0; }

@@ -37,3 +37,14 @@ test('boot is one-way: a later failure cannot drop the screen back over the page
   assert.equal(settle(done,'world'),done);
   assert.equal(finish(done),done);
 });
+
+// Regression: an unresolved capability check must not settle a stage.
+// Reading "not yet known" as "unsupported" lifted the screen before any 3D
+// existed, which showed the plain cards for a moment on every first load.
+test('an unknown WebGL answer settles nothing; only a definite false does',()=>{
+  const gate=support=>support===null||support===undefined?'wait':support?'build3d':'settle';
+  assert.equal(gate(null),'wait');
+  assert.equal(gate(undefined),'wait');
+  assert.equal(gate(false),'settle');
+  assert.equal(gate(true),'build3d');
+});

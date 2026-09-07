@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from 'react';
 import { MoveHorizontal, Box } from 'lucide-react';
 import type { Theme } from '@/lib/projects';
 import type { createWorld } from '@/lib/three-world';
-export default function WorldScene({theme,motion,webgl=true,onReady}:{theme:Theme;motion:boolean;webgl?:boolean;onReady?:()=>void}){
+export default function WorldScene({theme,motion,webgl=true,onReady}:{theme:Theme;motion:boolean;webgl?:boolean|null;onReady?:()=>void}){
   const reported=useRef(false);
   const settleBoot=()=>{if(reported.current)return;reported.current=true;onReady?.();};
   const host=useRef<HTMLDivElement>(null),engine=useRef<ReturnType<typeof createWorld>|null>(null),motionRef=useRef(motion);
@@ -11,6 +11,10 @@ export default function WorldScene({theme,motion,webgl=true,onReady}:{theme:Them
   useEffect(()=>{motionRef.current=motion;engine.current?.setMotion(motion);},[motion]);
   useEffect(()=>{
     const container=host.current;if(!container)return;
+    // null means the capability check has not answered yet. Treating that as
+    // "unsupported" would settle the stage and lift the loading screen before
+    // any 3D exists, which is the flicker. Wait for a real answer.
+    if(webgl===null||webgl===undefined)return;
     // No WebGL: never fetch three.js, show the still artwork and settle at once.
     if(!webgl){setFailed(true);setReady(false);settleBoot();return;}
     let disposed=false;setReady(false);setFailed(false);
