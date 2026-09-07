@@ -13,11 +13,14 @@ export default function TokenProjectCard({project:p,onRetry}:{project:Project;on
     {ready?<a className="project-media" href={p.tokenUrl} target="_blank" rel="noopener noreferrer" aria-label={`View ${p.name} on Pump.fun`}>{media}</a>:<button className="project-media" disabled={soon||p.dataState==='loading'} onClick={onRetry}>{media}</button>}
     <div className="project-info">
       {ready?<a className="project-name-row" href={p.tokenUrl} target="_blank" rel="noopener noreferrer"><span className="project-symbol" style={{background:p.color}}>◈</span><span className="name-block"><h3>{p.name}</h3><span className="ticker">${p.ticker}</span></span></a>:<div className="project-name-row"><span className="project-symbol">—</span><span className="name-block"><h3>N/A</h3><span className="ticker">N/A</span></span></div>}
-      <p className="project-description">{p.description}</p>
-      <div className="project-bottom"><div className="market-cap"><span>Market cap</span><strong>{p.cap}</strong></div><span className={`price-change${p.change.startsWith('-')?' is-negative':''}`}>{p.change}<span className="change-period">24h</span></span>
+      <p className="sr-only">{p.description}</p>
+      <dl className="token-stats"><div><dt>Price</dt><dd>{p.price??'N/A'}</dd></div><div><dt>Volume / 24h</dt><dd>{p.volume??'N/A'}</dd></div></dl>
+      <div className="project-bottom"><div className="market-cap"><span>Market cap</span><strong>{p.cap}</strong></div><div className="token-change"><span>Change / 24h</span><strong className={`price-change${p.change.startsWith('-')?' is-negative':''}`}>{p.change}</strong></div></div>
+      <div className="token-links">
+        {p.website&&<a className="token-website" href={p.website} target="_blank" rel="noopener noreferrer">Website <ArrowUpRight size={14}/></a>}
         <div className="social-links">{p.x?<a href={p.x} target="_blank" rel="noopener noreferrer" aria-label={`${p.name} on X`}>𝕏</a>:<button disabled aria-label="X: N/A">N/A</button>}{p.telegram?<a href={p.telegram} target="_blank" rel="noopener noreferrer" aria-label={`${p.name} on Telegram`}><Send size={14}/></a>:<button disabled aria-label="Telegram: N/A">N/A</button>}</div>
       </div>
-      <div className="token-extra">{p.website&&<a className="token-website" href={p.website} target="_blank" rel="noopener noreferrer">Website ↗</a>}<span>{p.tokenAddress?`CA: ${p.tokenAddress}`:'CA: N/A'}</span></div>
+      <div className="token-extra"><span>{p.tokenAddress?`CA: ${p.tokenAddress}`:'CA: N/A'}</span></div>
     </div>
   </article>;
 }

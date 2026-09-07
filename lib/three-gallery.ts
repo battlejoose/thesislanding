@@ -52,8 +52,8 @@ function renderDescription(parent:T.Group,text:string,font:Font,color:string){
 }
 function updateTile(tile:Tile,p:Project,font:Font,theme:Theme,wake:()=>void){
   const old=tile.project,ink=palette[theme].ink;
-  for(const [key,text] of Object.entries({'project-name':p.name,'project-cap':p.cap,'project-ticker':p.ticker==='N/A'?'N/A':'$'+p.ticker,'project-change':p.change,'project-category':p.category.toUpperCase(),'project-roof-ticker':p.ticker}))changeLabel(tile.group,key,text,font,key==='project-change'?(p.change.startsWith('-')?'#a34137':p.change==='N/A'?ink:'#51734b'):undefined);
-  if(p.description!==old.description)renderDescription(tile.group,p.description,font,ink);
+  for(const [key,text] of Object.entries({'project-name':p.name,'project-cap':p.cap,'project-ticker':p.ticker==='N/A'?'N/A':'$'+p.ticker,'project-change':p.change,'project-category':p.category.toUpperCase(),'project-roof-ticker':p.ticker,'project-price':p.price??'N/A','project-volume':p.volume??'N/A'}))changeLabel(tile.group,key,text,font,key==='project-change'?(p.change.startsWith('-')?'#a34137':p.change==='N/A'?ink:'#51734b'):undefined);
+  if(!p.kind&&p.description!==old.description)renderDescription(tile.group,p.description,font,ink);
   if(p.image!==old.image||tokenOverlay(p)!==tokenOverlay(old)||tile.imageTexture.userData.failed){
     tile.imageTexture.dispose();tile.imageTexture=tileImage(p,wake);tile.imageMaterial.map=tile.imageTexture;
   }
@@ -97,8 +97,8 @@ export function makeTile(article:HTMLElement,p:Project,index:number,theme:Theme,
   });printed(group,info,4.35,2.59,0,-1.42,.588).name='info-face';
   const medallion=mesh(group,new T.CylinderGeometry(.32,.32,.11,theme==='steampunk'?32:12),new T.MeshStandardMaterial({color:p.color,roughness:.5,metalness:.2}),-1.67,-.51,.66);medallion.rotation.x=Math.PI/2;
   const symbol=canvasTexture(128,128,ctx=>{ctx.fillStyle=colors.ink;ctx.font='80px sans-serif';ctx.textAlign='center';ctx.fillText(p.icon,64,94);});printed(group,symbol,.5,.5,-1.67,-.51,.725).name='symbol-face';
-  label(group,font,p.name,.265,3.2,colors.ink,-1.14,-.5,.63,.055).name='project-name';
-  label(group,font,p.cap,.36,1.55,colors.ink,-2,-2.34,.64,.065).name='project-cap';
+  label(group,font,p.name,p.kind?.23:.265,p.kind?3.02:3.2,colors.ink,-1.14,-.5,.63,.055).name='project-name';
+  label(group,font,p.cap,p.kind?.30:.36,p.kind?1.92:1.55,colors.ink,-2,p.kind?-2.04:-2.34,.64,.065).name='project-cap';
   const chip=canvasTexture(768,94,ctx=>{ctx.fillStyle=theme==='brooklyn'?'#dcec83':'#15261fea';ctx.fillRect(0,0,768,94);ctx.fillStyle=theme==='brooklyn'?'#283628':'#e9efda';ctx.font='27px sans-serif';ctx.fillText(p.category.toUpperCase(),25,61);if(p.featured){ctx.textAlign='right';ctx.fillText('↗ FEATURED',740,61);}});printed(group,chip,4.18,.51,0,2.24,.62).name='category-face';
   const makeStatus=(status:string)=>canvasTexture(768,80,ctx=>{ctx.fillStyle='#14271edf';ctx.fillRect(0,0,768,80);ctx.fillStyle='#eaf0df';ctx.font='26px sans-serif';ctx.fillText(status,24,53);ctx.textAlign='right';ctx.fillText('↗',740,53);});
   const statusTexture=makeStatus('▷  DISCOVER '+p.name.toUpperCase());const statusMaterial=new T.MeshBasicMaterial({map:statusTexture,transparent:true});mesh(group,new T.PlaneGeometry(4.18,.435),statusMaterial,0,.232,.625).name='status-face';
@@ -111,14 +111,21 @@ export function makeTile(article:HTMLElement,p:Project,index:number,theme:Theme,
   if(index%2)mark.scale.y=.55;
   const markBar=mesh(group,new T.BoxGeometry(.3,.026,.025),markMaterial,-1.67,-.51,.745);markBar.rotation.z=index*Math.PI/5;
   label(group,font,p.ticker==='N/A'?'N/A':'$'+p.ticker,.12,2.9,colors.ink,-1.14,-.77,.64,.02).name='project-ticker';
-  renderDescription(group,p.description,font,colors.ink);
-  mesh(group,new T.BoxGeometry(4.03,.008,.016),railMat,0,-1.72,.64);
-  label(group,font,'MARKET CAP',.105,2,colors.ink,-2,-1.96,.64,.024);
-  label(group,font,p.change,.17,1.35,p.change.startsWith('-')?'#a34137':p.change==='N/A'?colors.ink:theme==='volcanic'?'#ffc38c':theme==='space'?'#9feac9':'#51734b',-.45,-2.29,.66,.03).name='project-change';
-  label(group,font,'24h',.10,.6,colors.ink,-.45,-2.51,.64,.019);
-  for(const x of [1.23,1.78])mesh(group,new T.TorusGeometry(.175,.007,4,24),markMaterial,x,-2.29,.66);
-  for(const angle of [-Math.PI/4,Math.PI/4]){const icon=mesh(group,new T.BoxGeometry(.21,.022,.028),markMaterial,1.23,-2.29,.67);icon.rotation.z=angle;icon.name='social-x-icon';icon.visible=!p.kind||!!p.x;}
-  const sendShape=new T.Shape();sendShape.moveTo(-.11,.055);sendShape.lineTo(.12,.1);sendShape.lineTo(.04,-.11);sendShape.lineTo(-.015,-.025);sendShape.closePath();const sendIcon=mesh(group,new T.ExtrudeGeometry(sendShape,{depth:.024,bevelEnabled:false}),markMaterial,1.78,-2.29,.66);sendIcon.name='social-telegram-icon';sendIcon.visible=!p.kind||!!p.telegram;
+  if(p.kind){
+    // Two aligned metric columns reserve a separate footer above the site hoarding.
+    label(group,font,'PRICE',.105,1.9,colors.ink,-2,-.98,.64,.024);
+    label(group,font,p.price??'N/A',.17,1.92,colors.ink,-2,-1.22,.64,.03).name='project-price';
+    label(group,font,'VOLUME / 24H',.105,1.68,colors.ink,.30,-.98,.64,.024);
+    label(group,font,p.volume??'N/A',.17,1.68,colors.ink,.30,-1.22,.64,.03).name='project-volume';
+  }else renderDescription(group,p.description,font,colors.ink);
+  mesh(group,new T.BoxGeometry(4.03,.008,.016),railMat,0,p.kind?-1.40:-1.72,.64);
+  label(group,font,'MARKET CAP',.105,2,colors.ink,-2,p.kind?-1.63:-1.96,.64,.024);
+  label(group,font,p.change,p.kind?.23:.17,p.kind?1.68:1.35,p.change.startsWith('-')?'#a34137':p.change==='N/A'?colors.ink:theme==='volcanic'?'#ffc38c':theme==='space'?'#9feac9':'#51734b',p.kind?.30:-.45,p.kind?-2.01:-2.29,.66,.03).name='project-change';
+  label(group,font,p.kind?'CHANGE / 24H':'24h',p.kind?.105:.10,p.kind?1.68:.6,colors.ink,p.kind?.30:-.45,p.kind?-1.63:-2.51,.64,.019);
+  const socialY=p.kind?-2.35:-2.29;
+  for(const x of [1.23,1.78])mesh(group,new T.TorusGeometry(p.kind?.145:.175,.007,4,24),markMaterial,x,socialY,.66);
+  for(const angle of [-Math.PI/4,Math.PI/4]){const icon=mesh(group,new T.BoxGeometry(.21,.022,.028),markMaterial,1.23,socialY,.67);icon.rotation.z=angle;icon.name='social-x-icon';icon.visible=!p.kind||!!p.x;}
+  const sendShape=new T.Shape();sendShape.moveTo(-.11,.055);sendShape.lineTo(.12,.1);sendShape.lineTo(.04,-.11);sendShape.lineTo(-.015,-.025);sendShape.closePath();const sendIcon=mesh(group,new T.ExtrudeGeometry(sendShape,{depth:.024,bevelEnabled:false}),markMaterial,1.78,socialY,.66);sendIcon.name='social-telegram-icon';sendIcon.visible=!p.kind||!!p.telegram;
   const categoryFace=group.getObjectByName('category-face') as T.Mesh;categoryFace.material=new T.MeshStandardMaterial({color:theme==='volcanic'?'#482726':theme==='space'?'#263954':'#24382a',roughness:.7});
   label(group,font,p.category.toUpperCase(),.112,2.75,'#e6efdb',-1.95,2.20,.66,.025).name='project-category';
   if(p.featured)label(group,font,'FEATURED',.105,1,'#e4e5a4',1.07,2.20,.66,.025);
@@ -140,7 +147,7 @@ export function makeTile(article:HTMLElement,p:Project,index:number,theme:Theme,
   }else if(theme==='brooklyn'){
     constructionTile(group,animate,index);
     label(group,font,'SITE / 0'+(index+1),.13,1.7,'#e9bd69',.12,3.13,.62,.035);
-    label(group,font,p.ticker,.20,1.8,colors.ink,-1.96,-2.63,.68,.045).name='project-roof-ticker';
+    if(!p.kind)label(group,font,p.ticker,.20,1.8,colors.ink,-1.96,-2.63,.68,.045).name='project-roof-ticker';
   }else if(theme==='steampunk'){
     const brass=new T.MeshStandardMaterial({color:'#d1a56a',metalness:.75,roughness:.31});const copper=new T.MeshStandardMaterial({color:'#966440',metalness:.7,roughness:.4});
     for(const x of [-2.38,2.38])mesh(group,new T.CylinderGeometry(.065,.065,5.5,10),copper,x,0,.58);
@@ -155,8 +162,8 @@ export function makeTile(article:HTMLElement,p:Project,index:number,theme:Theme,
   }
   if(p.kind){
     const overlay=label(group,font,tokenOverlay(p)||'N/A',.46,3.6,'#fff0d5',-1.45,1.10,.75,.07);overlay.name='token-overlay';overlay.visible=!!tokenOverlay(p);centerOverlay(overlay);
-    for(const [kind,x,available] of [['x',1.23,p.x],['telegram',1.78,p.telegram]] as const){const na=label(group,font,'N/A',.075,.29,colors.ink,x-.12,-2.315,.70,.02);na.name='social-'+kind+'-na';na.visible=!available;}
-    const website=label(group,font,'WEBSITE',.09,1.3,colors.ink,.64,-2.61,.72,.025);website.name='project-website';website.visible=!!p.website;
+    for(const [kind,x,available] of [['x',1.23,p.x],['telegram',1.78,p.telegram]] as const){const na=label(group,font,'N/A',.075,.24,colors.ink,x-.12,socialY-.025,.70,.02);na.name='social-'+kind+'-na';na.visible=!available;}
+    const website=label(group,font,'WEBSITE',.12,1.3,colors.ink,-2,-2.39,.72,.025);website.name='project-website';website.visible=!!p.website;
   }
   addTileWorldDetails(group,theme,animate,index);
   const shadowTex=canvasTexture(128,128,ctx=>{const grad=ctx.createRadialGradient(64,64,10,64,64,64);grad.addColorStop(0,'#0008');grad.addColorStop(1,'#0000');ctx.fillStyle=grad;ctx.fillRect(0,0,128,128);});const shadow=printed(scene,shadowTex,6.4,7.5,.2,-.26,-1.1);shadow.castShadow=false;shadow.name='drop-shadow';(shadow.material as T.Material).depthWrite=false;
@@ -191,9 +198,11 @@ export async function createGallery(container:HTMLDivElement,articles:HTMLElemen
     const hit=pickObject({x:event.clientX,y:event.clientY},views,active);if(!hit)return;
     event.preventDefault();event.stopImmediatePropagation();
     const article=tiles[hit.index].article;
-    const website=tiles[hit.index].project.website && hit.point.y < -2.48 && hit.point.y > -2.81 && hit.point.x > .5;
+    const token=!!tiles[hit.index].project.kind;
+    const footer=hit.point.y < -2.14 && hit.point.y > -2.57;
+    const website=tiles[hit.index].project.website && footer && hit.point.x > -2.08 && hit.point.x < -.55;
     if(website){article.querySelector<HTMLElement>('.token-website')?.click();return;}
-    const social=hit.point.y < -1.98 && hit.point.y > -2.61 && hit.point.x > .99;
+    const social=(token?footer:hit.point.y < -1.98 && hit.point.y > -2.61) && hit.point.x > .99;
     const control=social?article.querySelectorAll<HTMLElement>('.social-links a,.social-links button')[hit.point.x>1.5?1:0]:article.querySelector<HTMLElement>('.project-media');
     control?.click();
   };

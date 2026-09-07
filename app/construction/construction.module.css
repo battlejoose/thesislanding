@@ -28,6 +28,25 @@
 
 .construction :global(.token-obscured .project-media img) { filter: blur(18px); transform: scale(1.15); opacity: .62; }
 .construction :global(.token-image-overlay) { position:absolute;inset:0;display:grid;place-items:center;font-size:clamp(28px,4vw,50px);font-weight:600;letter-spacing:.1em;text-transform:uppercase; }
+.construction :global(.token-card .name-block) { min-width:0; }
+.construction :global(.token-card h3) { font-size:20px;line-height:1.2;overflow-wrap:anywhere; }
+.construction :global(.token-stats),
+.construction :global(.token-card .project-bottom) { display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:20px; }
+.construction :global(.token-stats) { margin:18px 0 16px; }
+.construction :global(.token-stats dt),
+.construction :global(.token-change>span) { color:var(--paper-muted);font-size:12px;line-height:1.4; }
+.construction :global(.token-stats dd) { margin:5px 0 0;font-size:14px;font-variant-numeric:tabular-nums;overflow-wrap:anywhere; }
+.construction :global(.token-change) { display:flex;flex-direction:column;gap:7px; }
+.construction :global(.token-card .price-change) { font-size:16px;font-weight:500;padding:0; }
+.construction :global(.token-card .market-cap) { gap:7px; }
+.construction :global(.token-card .market-cap>strong) { font-size:24px;line-height:1.15; }
+.construction :global(.token-links) { display:flex;align-items:center;justify-content:space-between;gap:16px;margin-top:18px;min-height:32px; }
+.construction :global(.token-website) { display:inline-flex;align-items:center;gap:5px;font-size:12px;text-transform:uppercase;letter-spacing:.06em; }
+.construction :global(.models-ready .token-stats),
+.construction :global(.models-ready .token-change) { opacity:0;pointer-events:none; }
+.construction :global(.models-ready .token-links) { position:absolute;inset:auto 0 8%;margin:0; }
+.construction :global(.models-ready .token-website) { opacity:0; }
+.construction :global(.models-ready .token-website:focus-visible) { opacity:1;background:var(--paper);outline-color:var(--ink); }
 .construction :global(.token-extra) { display:flex;flex-wrap:wrap;gap:8px;overflow-wrap:anywhere;font-size:12px;padding-top:10px; }
 .construction :global(.models-ready .token-extra) { opacity:0; }
 .construction :global(.models-ready .token-image-overlay) { opacity:0!important; }
