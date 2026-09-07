@@ -13,6 +13,28 @@ export interface TokenStats {
   // rather than asserting figures with nothing to check them against.
   name?: string; symbol?: string; address?: string; image?: string;
   chart?: string; website?: string; twitter?: string; telegram?: string;
+  price?: string; volume?: string; liquidity?: string;
+}
+
+// These URLs come from a third party and are rendered as links, so only plain
+// https without embedded credentials is accepted.
+export function safeLink(value: unknown): string|undefined {
+  if (typeof value !== 'string') return undefined;
+  try {
+    const url = new URL(value.trim());
+    return url.protocol === 'https:' && !url.username && !url.password ? url.href : undefined;
+  } catch { return undefined; }
+}
+
+// One formatter for every dollar figure: compact above $1,000, and enough
+// decimals below it that a sub-cent token price is still legible.
+export function dollars(value: unknown): string|undefined {
+  if (typeof value !== 'number' || !Number.isFinite(value) || value < 0) return undefined;
+  return new Intl.NumberFormat('en-US', {
+    style: 'currency', currency: 'USD',
+    notation: value >= 1000 ? 'compact' : 'standard',
+    maximumFractionDigits: value >= 1000 ? 2 : value < 1 ? 8 : 2,
+  }).format(value);
 }
 
 export function shortAddress(address: string): string {
@@ -44,7 +66,8 @@ export function formatChange(value: number): string {
 interface Social { url?: string; type?: string; }
 interface Pair {
   liquidity?: { usd?: number } | null; marketCap?: number; fdv?: number;
-  priceChange?: { h24?: number } | null; url?: string;
+  priceChange?: { h24?: number } | null; url?: string; priceUsd?: string;
+  volume?: { h24?: number } | null;
   baseToken?: { address?: string; name?: string; symbol?: string };
   info?: { imageUrl?: string; websites?: { url?: string }[]; socials?: Social[] } | null;
 }
@@ -71,10 +94,13 @@ export function toStats(pair: Pair | null): TokenStats | null {
     symbol: pair.baseToken?.symbol,
     address: pair.baseToken?.address,
     image: pair.info?.imageUrl,
-    chart: pair.url,
-    website: pair.info?.websites?.[0]?.url,
-    twitter: find('twitter'),
-    telegram: find('telegram'),
+    chart: safeLink(pair.url),
+    website: safeLink(pair.info?.websites?.[0]?.url),
+    twitter: safeLink(find('twitter')),
+    telegram: safeLink(find('telegram')),
+    price: dollars(Number(pair.priceUsd)),
+    volume: dollars(pair.volume?.h24),
+    liquidity: dollars(pair.liquidity?.usd ?? undefined),
   };
 }
 

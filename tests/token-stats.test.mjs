@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {formatCap,formatChange,pickPair,toStats,fetchTokenStats,shortAddress,pumpFunUrl} from '../lib/token-stats.ts';
+import {formatCap,formatChange,pickPair,toStats,fetchTokenStats,shortAddress,pumpFunUrl,safeLink,dollars} from '../lib/token-stats.ts';
 
 const figures=s=>s&&{cap:s.cap,change:s.change,up:s.up};
 
@@ -64,7 +64,7 @@ test('the token carries its own identity and links, so figures can be checked',(
   assert.equal(stats.symbol,'ZCASHCAT');
   assert.equal(stats.twitter,'https://x.com/ZcashCatMeme');
   assert.equal(stats.telegram,'https://t.me/zcashcatmeme');
-  assert.equal(stats.website,'https://zcashcatsol.fun');
+  assert.equal(stats.website,'https://zcashcatsol.fun/'); // normalised by URL parsing
   assert.equal(stats.chart,'https://dexscreener.com/solana/pool');
 });
 test('a token with no listed socials leaves those links absent, not broken',()=>{
@@ -78,4 +78,31 @@ test('the contract address is shown abbreviated but links to the full mint',()=>
   assert.equal(shortAddress(mint),'3rbm…pump');
   assert.equal(shortAddress('short'),'short');
   assert.ok(pumpFunUrl(mint).endsWith(mint));
+});
+
+test('a link is only rendered when it is plain https without credentials',()=>{
+  assert.equal(safeLink('https://zcashcatsol.fun'),'https://zcashcatsol.fun/');
+  for(const bad of ['http://plain.example','javascript:alert(1)','https://user:pw@evil.example','',null,undefined,42])
+    assert.equal(safeLink(bad),undefined,`should reject ${String(bad)}`);
+});
+test('dollars stays legible from sub-cent prices up to millions',()=>{
+  assert.equal(dollars(0.00000815),'$0.00000815');
+  assert.equal(dollars(3_470_000),'$3.47M');
+  assert.equal(dollars(635_560),'$635.56K');
+  assert.equal(dollars(12.5),'$12.50');
+  for(const bad of [null,undefined,NaN,Infinity,-1,'5'])assert.equal(dollars(bad),undefined);
+});
+test('price, volume and liquidity are carried through from the pool',()=>{
+  const stats=toStats({liquidity:{usd:4190},marketCap:3900,priceChange:{h24:-96.3},
+    priceUsd:'0.00000391',volume:{h24:3470000},baseToken:{address:'X'},info:null});
+  assert.equal(stats.price,'$0.00000391');
+  assert.equal(stats.volume,'$3.47M');
+  assert.equal(stats.liquidity,'$4.19K');
+  assert.equal(stats.up,false);
+});
+test('a pool missing price or volume omits them rather than showing zero',()=>{
+  const stats=toStats({liquidity:null,marketCap:1000,priceChange:{h24:1},baseToken:{address:'X'},info:null});
+  assert.equal(stats.price,undefined);
+  assert.equal(stats.volume,undefined);
+  assert.equal(stats.liquidity,undefined);
 });

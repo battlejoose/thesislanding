@@ -1,6 +1,8 @@
 import * as T from 'three';
 import { FontLoader, type Font } from 'three/addons/loaders/FontLoader.js';
 import { TextGeometry } from 'three/addons/geometries/TextGeometry.js';
+import { SVGLoader } from 'three/addons/loaders/SVGLoader.js';
+import { socialIconPaths } from './social-icon-paths';
 import type { Project } from './projects';
 import { constructionTile } from './brooklyn-world';
 import { CAMERA_Z, hoverPose, pickObject, type Pickable, type Pointer } from './gallery-interaction';
@@ -22,7 +24,7 @@ function blurredTexture(src:string,wake:()=>void){
 }
 function printed(parent:T.Object3D,texture:T.Texture,w:number,h:number,x:number,y:number,z:number){return mesh(parent,new T.PlaneGeometry(w,h),new T.MeshBasicMaterial({map:texture,transparent:true}),x,y,z);}
 function label(parent:T.Object3D,font:Font,text:string,size:number,maxWidth:number,color:string,x:number,y:number,z:number,depth=.045){const geo=new TextGeometry(text,{font,size,depth,curveSegments:3,bevelEnabled:true,bevelThickness:.006,bevelSize:.003,bevelSegments:1});geo.computeBoundingBox();const width=geo.boundingBox!.max.x-geo.boundingBox!.min.x;const m=mesh(parent,geo,new T.MeshStandardMaterial({color,roughness:.52,metalness:.15}),x,y,z);if(width>maxWidth)m.scale.x=maxWidth/width;return m;}
-export interface Tile {scene:T.Scene;camera:T.PerspectiveCamera;group:T.Group;article:HTMLElement;project:Project;imageMaterial:T.MeshBasicMaterial;imageTexture:T.Texture;statusTexture:T.Texture;statusMaterial:T.MeshBasicMaterial;capLabel:T.Mesh|null;changeLabel:T.Mesh|null;nameLabel:T.Mesh;tickerLabel:T.Mesh;animate:Array<(t:number)=>void>;hover:boolean;hoverProgress:number;baseY:number;bounds:T.Box3;}
+export interface Tile {scene:T.Scene;camera:T.PerspectiveCamera;group:T.Group;article:HTMLElement;project:Project;imageMaterial:T.MeshBasicMaterial;imageTexture:T.Texture;statusTexture:T.Texture;statusMaterial:T.MeshBasicMaterial;capLabel:T.Mesh|null;changeLabel:T.Mesh|null;priceLabel:T.Mesh|null;volumeLabel:T.Mesh|null;nameLabel:T.Mesh;tickerLabel:T.Mesh;socials:Record<string,T.Group>;websiteIcon:T.Group|null;animate:Array<(t:number)=>void>;hover:boolean;hoverProgress:number;baseY:number;bounds:T.Box3;}
 export function makeTile(article:HTMLElement,p:Project,index:number,font:Font,wake:()=>void):Tile{
   const colors=p.comingSoon?mutedPalette:palette,scene=new T.Scene(),camera=new T.PerspectiveCamera(46,1,.1,30);camera.position.set(0,.12,10.4);camera.lookAt(0,.12,0);
   scene.add(new T.HemisphereLight('#fff7e5','#5d625c',2.4));const light=new T.DirectionalLight('#ffe6ba',3);light.position.set(-3,5,6);scene.add(light);const rim=new T.DirectionalLight('#e1f3ed',1.9);rim.position.set(4,-1,2);scene.add(rim);
@@ -53,7 +55,7 @@ export function makeTile(article:HTMLElement,p:Project,index:number,font:Font,wa
   const medallion=mesh(group,new T.CylinderGeometry(.32,.32,.11,12),new T.MeshStandardMaterial({color:p.color,roughness:.5,metalness:.2}),-1.67,-.51,.66);medallion.rotation.x=Math.PI/2;
   const symbol=canvasTexture(128,128,ctx=>{ctx.fillStyle=colors.ink;ctx.font='80px sans-serif';ctx.textAlign='center';ctx.fillText(p.icon,64,94);});printed(group,symbol,.5,.5,-1.67,-.51,.725).name='symbol-face';
   const nameLabel=label(group,font,p.name,.265,3.2,colors.ink,-1.14,-.5,.63,.055);
-  const capLabel=p.comingSoon?null:label(group,font,p.cap,.32,1.42,colors.ink,-2,-2.42,.64,.06);
+  const capLabel=p.comingSoon?null:label(group,font,p.cap,.30,1.92,colors.ink,-2,-2.04,.64,.06);
   const chip=canvasTexture(768,94,ctx=>{ctx.fillStyle=p.comingSoon?'#9a9d8c':'#dcec83';ctx.fillRect(0,0,768,94);ctx.fillStyle='#283628';ctx.font='27px sans-serif';ctx.fillText(p.category.toUpperCase(),25,61);if(p.featured){ctx.textAlign='right';ctx.fillText('↗ FEATURED',740,61);}});printed(group,chip,4.18,.51,0,2.24,.62).name='category-face';
   const makeStatus=(status:string)=>canvasTexture(768,80,ctx=>{ctx.fillStyle='#14271edf';ctx.fillRect(0,0,768,80);ctx.fillStyle='#eaf0df';ctx.font='26px sans-serif';ctx.fillText(status,24,53);ctx.textAlign='right';ctx.fillText('↗',740,53);});
   const statusTexture=makeStatus('COMING SOON');const statusMaterial=new T.MeshBasicMaterial({map:statusTexture,transparent:true});const statusFace=mesh(group,new T.PlaneGeometry(4.18,.435),statusMaterial,0,.232,.625);statusFace.name='status-face';statusFace.visible=!!p.comingSoon;
@@ -66,18 +68,32 @@ export function makeTile(article:HTMLElement,p:Project,index:number,font:Font,wa
   if(index%2)mark.scale.y=.55;
   const markBar=mesh(group,new T.BoxGeometry(.3,.026,.025),markMaterial,-1.67,-.51,.745);markBar.rotation.z=index*Math.PI/5;
   const tickerLabel=label(group,font,'$'+p.ticker,.12,2.9,colors.ink,-1.14,-.77,.64,.02);
-  const words=p.description.split(' ');let lineText='',lineIndex=0;
-  for(const word of words){if((lineText+word).length>38){label(group,font,lineText.trim(),.155,4.0,colors.ink,-2,-1.11-lineIndex*.24,.63,.019);lineText=word+' ';lineIndex++;}else lineText+=word+' ';}
-  if(lineText)label(group,font,lineText.trim(),.155,4.0,colors.ink,-2,-1.11-lineIndex*.24,.63,.019);
-  mesh(group,new T.BoxGeometry(4.03,.008,.016),railMat,0,-1.72,.64);
-  let changeLabel:T.Mesh|null=null;
-  if(!p.comingSoon){
-    label(group,font,'MARKET CAP',.10,2,colors.ink,-2,-2.02,.64,.024);
-    changeLabel=label(group,font,p.change,.155,1.05,'#51734b',-.28,-2.40,.66,.03);
-    label(group,font,'24h',.095,.6,colors.ink,-.28,-2.62,.64,.019);
-    for(const x of [1.23,1.78])mesh(group,new T.TorusGeometry(.175,.007,4,24),markMaterial,x,-2.29,.66);
-    for(const angle of [-Math.PI/4,Math.PI/4])mesh(group,new T.BoxGeometry(.21,.022,.028),markMaterial,1.23,-2.29,.67).rotation.z=angle;
-    const sendShape=new T.Shape();sendShape.moveTo(-.11,.055);sendShape.lineTo(.12,.1);sendShape.lineTo(.04,-.11);sendShape.lineTo(-.015,-.025);sendShape.closePath();mesh(group,new T.ExtrudeGeometry(sendShape,{depth:.024,bevelEnabled:false}),markMaterial,1.78,-2.29,.66);
+  let changeLabel:T.Mesh|null=null,priceLabel:T.Mesh|null=null,volumeLabel:T.Mesh|null=null;
+  const socials:Record<string,T.Group>={};let websiteIcon:T.Group|null=null;
+  if(p.comingSoon){
+    const words=p.description.split(' ');let lineText='',lineIndex=0;
+    for(const word of words){if((lineText+word).length>38){label(group,font,lineText.trim(),.155,4.0,colors.ink,-2,-1.11-lineIndex*.24,.63,.019);lineText=word+' ';lineIndex++;}else lineText+=word+' ';}
+    if(lineText)label(group,font,lineText.trim(),.155,4.0,colors.ink,-2,-1.11-lineIndex*.24,.63,.019);
+    mesh(group,new T.BoxGeometry(4.03,.008,.016),railMat,0,-1.72,.64);
+  }else{
+    mesh(group,new T.BoxGeometry(4.03,.008,.016),railMat,0,-1.44,.64);
+    label(group,font,'PRICE',.105,1.9,colors.ink,-2,-.98,.64,.024);
+    priceLabel=label(group,font,'—',.17,1.92,colors.ink,-2,-1.22,.64,.03);
+    label(group,font,'VOLUME / 24H',.105,1.68,colors.ink,.30,-.98,.64,.024);
+    volumeLabel=label(group,font,'—',.17,1.68,colors.ink,.30,-1.22,.64,.03);
+    label(group,font,'MARKET CAP',.105,2,colors.ink,-2,-1.63,.64,.024);
+    label(group,font,'CHANGE / 24H',.105,1.68,colors.ink,.30,-1.63,.64,.019);
+    changeLabel=label(group,font,p.change,.23,1.68,'#51734b',.30,-2.01,.66,.03);
+    // Link marks are created hidden and revealed only once a real URL arrives.
+    const linkMaterial=new T.MeshStandardMaterial({color:'#b48132',roughness:.5,metalness:.2});
+    const globeMaterial=new T.MeshStandardMaterial({color:LINK_BLUE,emissive:LINK_BLUE,emissiveIntensity:.08,roughness:.45});
+    websiteIcon=new T.Group();websiteIcon.position.set(-.38,-2.31,.68);websiteIcon.visible=false;group.add(websiteIcon);
+    mesh(websiteIcon,new T.TorusGeometry(.13,.010,6,32),globeMaterial);
+    mesh(websiteIcon,new T.TorusGeometry(.13,.009,6,32),globeMaterial).scale.x=.44;
+    mesh(websiteIcon,new T.BoxGeometry(.25,.014,.02),globeMaterial);
+    for(const [key,x] of [['x',.18],['telegram',.74]] as const){
+      const icon=socialIcon(group,key,linkMaterial,x,-2.31,.67);icon.visible=false;socials[key]=icon;
+    }
   }
   const categoryFace=group.getObjectByName('category-face') as T.Mesh;categoryFace.material=new T.MeshStandardMaterial({color:'#24382a',roughness:.7});
   label(group,font,p.category.toUpperCase(),.112,2.75,'#e6efdb',-1.95,2.20,.66,.025);
@@ -104,7 +120,21 @@ export function makeTile(article:HTMLElement,p:Project,index:number,font:Font,wa
   const shadowTex=canvasTexture(128,128,ctx=>{const grad=ctx.createRadialGradient(64,64,10,64,64,64);grad.addColorStop(0,'#0008');grad.addColorStop(1,'#0000');ctx.fillStyle=grad;ctx.fillRect(0,0,128,128);});const shadow=printed(scene,shadowTex,6.4,7.5,.2,-.26,-1.1);shadow.castShadow=false;shadow.name='drop-shadow';(shadow.material as T.Material).depthWrite=false;
   const bounds=new T.Box3(new T.Vector3(-2.43,-2.95,-1.66),new T.Vector3(2.43,3.72,.77));
   const baseY=.13;group.rotation.set(.09,baseY,0);
-  return {scene,camera,group,article,project:p,imageMaterial,imageTexture,statusTexture,statusMaterial,capLabel,changeLabel,nameLabel,tickerLabel,animate,hover:false,hoverProgress:0,baseY,bounds};
+  return {scene,camera,group,article,project:p,imageMaterial,imageTexture,statusTexture,statusMaterial,capLabel,changeLabel,priceLabel,volumeLabel,nameLabel,tickerLabel,socials,websiteIcon,animate,hover:false,hoverProgress:0,baseY,bounds};
+}
+const LINK_BLUE='#6ba8e8';
+// Footer hit regions, aligned with the icon positions on the tile face.
+const FOOTER_CONTROLS=[{id:'website',x:-.38},{id:'x',x:.18},{id:'telegram',x:.74}] as const;
+function socialIcon(parent:T.Object3D,key:'x'|'telegram',material:T.Material,x:number,y:number,z:number){
+  const group=new T.Group();group.position.set(x,y,z);parent.add(group);
+  const paths=new SVGLoader().parse(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="${socialIconPaths[key]}"/></svg>`).paths;
+  for(const path of paths)for(const shape of SVGLoader.createShapes(path)){
+    const geometry=new T.ExtrudeGeometry(shape,{depth:6,bevelEnabled:false});
+    geometry.computeBoundingBox();const box=geometry.boundingBox!;
+    geometry.translate(-(box.max.x+box.min.x)/2,-(box.max.y+box.min.y)/2,0);
+    const icon=new T.Mesh(geometry,material);icon.scale.set(.0155,-.0155,.004);group.add(icon);
+  }
+  return group;
 }
 function retext(target:T.Mesh,font:Font,text:string,size:number,maxWidth:number,depth:number){
   target.geometry.dispose();
@@ -139,9 +169,11 @@ export async function createGallery(container:HTMLDivElement,articles:HTMLElemen
     const hit=pickObject({x:event.clientX,y:event.clientY},views,active);if(!hit)return;
     event.preventDefault();event.stopImmediatePropagation();
     const article=tiles[hit.index].article;
-    const social=hit.point.y < -1.98 && hit.point.y > -2.61 && hit.point.x > .99;
-    if(!social)return;
-    article.querySelectorAll<HTMLElement>('.social-links a,.social-links button')[hit.point.x>1.5?1:0]?.click();
+    // The footer strip carries the website globe and the brand marks.
+    if(hit.point.y > -2.15 || hit.point.y < -2.56) return;
+    const control=FOOTER_CONTROLS.find(c=>Math.abs(hit.point.x-c.x)<=.22);
+    if(!control)return;
+    article.querySelector<HTMLElement>(`[data-token-action="${control.id}"]`)?.click();
   };
   const down=(event:PointerEvent)=>{
     if(blocked(event.target))return;
@@ -201,15 +233,21 @@ export async function createGallery(container:HTMLDivElement,articles:HTMLElemen
   const contextLost=(event:Event)=>{event.preventDefault();container.dispatchEvent(new CustomEvent('gallery-error'));};renderer.domElement.addEventListener('webglcontextlost',contextLost);
   resize();render(performance.now());onReady();
   return {setMotion(value:boolean){motion=value;wake();},
-    setStats(id:string,stats:{cap:string;change:string;up:boolean;name?:string;symbol?:string}){
+    setStats(id:string,stats:{cap:string;change:string;up:boolean;name?:string;symbol?:string;price?:string;volume?:string;website?:string;twitter?:string;telegram?:string}){
       const tile=tiles.find(t=>t.project.id===id);if(!tile)return;
       if(stats.name)retext(tile.nameLabel,font,stats.name,.265,3.2,.055);
       if(stats.symbol)retext(tile.tickerLabel,font,'$'+stats.symbol,.12,2.9,.02);
-      if(tile.capLabel)retext(tile.capLabel,font,stats.cap,.32,1.42,.06);
+      if(tile.capLabel)retext(tile.capLabel,font,stats.cap,.30,1.92,.06);
+      if(tile.priceLabel&&stats.price)retext(tile.priceLabel,font,stats.price,.17,1.92,.03);
+      if(tile.volumeLabel&&stats.volume)retext(tile.volumeLabel,font,stats.volume,.17,1.68,.03);
       if(tile.changeLabel){
-        retext(tile.changeLabel,font,stats.change,.155,1.05,.03);
-        (tile.changeLabel.material as T.MeshStandardMaterial).color.set(stats.up?'#51734b':'#9c4a3c');
+        retext(tile.changeLabel,font,stats.change,.23,1.68,.03);
+        (tile.changeLabel.material as T.MeshStandardMaterial).color.set(stats.up?'#51734b':'#a34137');
       }
+      // A link the token does not list stays hidden rather than dead.
+      if(tile.websiteIcon)tile.websiteIcon.visible=!!stats.website;
+      if(tile.socials.x)tile.socials.x.visible=!!stats.twitter;
+      if(tile.socials.telegram)tile.socials.telegram.visible=!!stats.telegram;
       wake();
     },
     dispose(){disposed=true;cancelAnimationFrame(frame);cleanups.forEach(f=>f());observer.disconnect();changes.disconnect();window.removeEventListener('scroll',wake);window.removeEventListener('resize',resize);document.removeEventListener('visibilitychange',wake);renderer.domElement.removeEventListener('webglcontextlost',contextLost);const geometries=new Set<T.BufferGeometry>(),materials=new Set<T.Material>(),textures=new Set<T.Texture>();tiles.forEach(tile=>{textures.add(tile.imageTexture);textures.add(tile.statusTexture);tile.scene.traverse(o=>{const m=o as T.Mesh;if(m.geometry)geometries.add(m.geometry);if(m.material)(Array.isArray(m.material)?m.material:[m.material]).forEach(mat=>{materials.add(mat);for(const value of Object.values(mat))if(value instanceof T.Texture)textures.add(value);});});});geometries.forEach(g=>g.dispose());materials.forEach(m=>m.dispose());textures.forEach(t=>t.dispose());renderer.dispose();renderer.forceContextLoss();renderer.domElement.remove();}};

@@ -252,9 +252,22 @@ html[data-booting=true], html[data-booting=true] body { overflow:hidden; }
 }
 @media(prefers-reduced-motion:reduce){ .live-dot { animation:none; } }
 
-.token-links { display:flex; flex-wrap:wrap; gap:12px; margin:9px 0 0; font-size:11px; letter-spacing:.4px; }
-.token-links a { color:var(--paper-muted); border-bottom:1px solid #0000; }
-.token-links a:hover { color:var(--ink); border-bottom-color:currentColor; }
-.token-ca { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; }
-.models-ready .token-links { opacity:0; pointer-events:none; }
-.models-ready .token-links a:focus-visible { opacity:1; }
+
+/* Two aligned metric columns, then a footer strip of links. */
+.token-stats { display:grid; grid-template-columns:1fr 1fr; gap:10px 14px; margin:12px 0 0; }
+.token-stats div { min-width:0; }
+.token-stats dt { font-size:10px; letter-spacing:1.6px; text-transform:uppercase; color:var(--paper-muted); }
+.token-stats dd { margin:2px 0 0; font-size:16px; font-weight:600; color:var(--ink); font-variant-numeric:tabular-nums; overflow-wrap:anywhere; }
+.token-stats .price-change { color:#4b7652; }
+.token-stats .price-change.is-negative { color:#a34137; }
+.token-links { display:flex; align-items:center; gap:14px; margin-top:12px; min-height:20px; }
+.token-links a { display:grid; place-items:center; width:26px; height:26px; color:var(--paper-muted); border-radius:3px; }
+.token-links a:hover { color:var(--ink); }
+.token-links .token-website { color:#3f7fc4; }
+.token-ca { margin:10px 0 0; font-size:11px; font-family:ui-monospace,SFMono-Regular,Menlo,monospace; color:var(--paper-muted); }
+.token-ca a { border-bottom:1px solid #0000; }
+.token-ca a:hover { color:var(--ink); border-bottom-color:currentColor; }
+.models-ready .token-stats,.models-ready .token-ca { opacity:0; pointer-events:none; }
+.models-ready .token-links { opacity:0; }
+.models-ready .token-links a { width:34px; height:34px; }
+.models-ready .token-links a:focus-visible { opacity:1; background:var(--paper); outline-color:var(--ink); }
