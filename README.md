@@ -10,6 +10,24 @@ The application lives directly in the `thesislanding` repository root. Run these
 - `npm run dev`
 - `npm run build`
 - `npx tsc --noEmit`
+- `node --test --experimental-strip-types "tests/*.test.mjs"`
+
+## Deployment
+
+Pushing to `main` deploys to production at https://thesis.casino. This runs
+through `.github/workflows/deploy.yml` rather than Vercel's own Git
+integration, which cannot be used here: connecting it installs a webhook that
+needs the Vercel GitHub App on the repository owner's account, and only that
+owner can grant it. The workflow uploads source and builds on Vercel, the same
+path as a manual `vercel deploy`, so CI cannot drift from what ships.
+
+It needs three repository secrets: `VERCEL_TOKEN`, `VERCEL_ORG_ID` and
+`VERCEL_PROJECT_ID`. If a deploy fails with `You defined "--token", but it's
+missing a value`, the token secret is empty rather than wrong.
+
+The Vercel build sets `output: 'export'`, which emits no route handlers, so the
+two token endpoints are also exposed as Vercel Edge Functions under `api/`.
+Both delegate to `lib/token-data.ts` and hold no logic of their own.
 
 ## Editions
 
