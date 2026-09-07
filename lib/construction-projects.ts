@@ -2,24 +2,13 @@ import type { Project } from './projects';
 
 // A contract address is the only input required. Null slots stay under wraps.
 export const CONSTRUCTION_TOKENS: readonly (string | null)[] = [
-  'C4BWXWratnu33o5gmDvF4RC3U8VA5xmqX86q4egTrize',
+  '4nCmpwne7hCoWTSpAd54uENmCgHJrHTyn4DMPCEMpump',
   null,
   null,
 ];
 
-// Tile 1 keeps these fixed values through live refreshes.
-export const CONSTRUCTION_OVERRIDES: readonly Partial<Project>[] = [
-  {
-    name:'SoltoshiDICE',
-    ticker:'SDICE',
-    change:'0 %',
-    image:'/art/soltoshidice.png',
-    imageAvailable:true,
-    website:'https://soltoshidice.wtf/',
-    tokenUrl:'https://soltoshidice.wtf/',
-    x:'https://x.com/SoltoshiDice',
-  },
-];
+// No overrides: names, artwork, links, and market data all come from the token.
+export const CONSTRUCTION_OVERRIDES: readonly Partial<Project>[] = [];
 
 export function constructionProject(address:string|null,index:number):Project {
   return {
