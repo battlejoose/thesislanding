@@ -82,7 +82,7 @@ export default function Construction() {
         <a className="wordmark" href="#" aria-label="Thesis home"><img src="/thesis-logo.png" alt="Thesis" width={790} height={159}/></a>
       </header>
       <div className="world-scene" aria-hidden="true">
-        <WorldScene theme="brooklyn" motion={motion} onReady={onWorld} />
+        <WorldScene theme="brooklyn" motion={motion} webgl={webgl===true} onReady={onWorld} />
       </div>
       <main className={styles.collection} aria-label="Construction project collection">
         <ProjectGallery
@@ -93,6 +93,7 @@ export default function Construction() {
           motion={motion}
           selected={null}
           onSelect={()=>setRetry(value=>value+1)}
+          webgl={webgl===true}
           onReady={onGallery}
         />
       </main>
