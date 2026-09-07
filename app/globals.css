@@ -268,3 +268,21 @@ footer { border-top:1px solid var(--border); padding:25px 0 30px; display:flex; 
 .showcase[data-theme=brooklyn] .intro-copy{filter:drop-shadow(0 3px 12px #101a29);}
 .showcase[data-theme=brooklyn] .collection-header{margin-bottom:40px;}
 .showcase[data-theme=brooklyn] .project-gallery .project-grid{row-gap:46px;}
+
+/* Loading screen. Sits above every layer of the page, including the fixed
+   world scene and the 3D typography canvas, so nothing shows through while
+   the scene builds. */
+.boot-splash { position:fixed; inset:0; z-index:120; display:grid; place-items:center; margin:0; padding:0;
+  background:radial-gradient(ellipse at 90% 12%,#965f4933,transparent 50%),var(--background,#1d293a);
+  transition:opacity .5s ease; }
+.boot-splash[data-fading=true] { opacity:0; pointer-events:none; }
+.boot-inner { width:min(330px,72vw); display:flex; flex-direction:column; align-items:center; gap:20px; }
+/* The mark is an image: size it here rather than inheriting a font size. */
+.boot-logo { display:block; width:100%; height:auto; }
+.boot-rail { width:100%; height:2px; background:#ffffff1f; overflow:hidden; }
+.boot-rail span { display:block; height:100%; background:var(--accent,#f3c574); transition:width .45s ease; }
+.boot-caption { margin:0; width:100%; display:flex; justify-content:space-between; gap:12px;
+  font-family:'DM Sans',sans-serif; font-size:11px; letter-spacing:2.2px; text-transform:uppercase; color:#9fb0c4; }
+.boot-percent { color:var(--accent,#f3c574); font-variant-numeric:tabular-nums; }
+html[data-booting=true], html[data-booting=true] body { overflow:hidden; }
+@media(prefers-reduced-motion:reduce){ .boot-splash,.boot-rail span { transition:none; } }
