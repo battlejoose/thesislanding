@@ -7,8 +7,23 @@ export const HOVER_DEPTH = .8;
 export type Viewport = {left:number;top:number;width:number;height:number};
 export type Pointer = {x:number;y:number};
 export type Pickable = {group:T.Group;camera:T.PerspectiveCamera;viewport:Viewport;bounds:T.Box3};
+
+/** One small, shared cursor offset keeps rows aligned on the larger wheel. */
+export function cursorTiltTarget(pointer:Pointer|null,width:number,height:number) {
+  if(!pointer||width<=0||height<=0)return {x:0,y:0};
+  const horizontal=T.MathUtils.clamp(pointer.x/width*2-1,-1,1);
+  const vertical=T.MathUtils.clamp(pointer.y/height*2-1,-1,1);
+  return {x:-vertical*.08,y:horizontal*.16};
+}
 const raycaster = new T.Raycaster(), inverse = new T.Matrix4(), localRay = new T.Ray();
 const point = new T.Vector3(), ndc = new T.Vector2();
+const facePlane = new T.Plane(new T.Vector3(0,0,1),-FACE_Z);
+
+/** Resolve controls on the printed face, rather than on the outer picking box. */
+export function pointOnFace(pointer:Pointer,view:Pickable):T.Vector3|null {
+  hitObject(pointer,view);
+  return localRay.intersectPlane(facePlane,point)?.clone()??null;
+}
 
 /** Use the same camera, viewport and model matrix as the visible WebGL object. */
 export function hitObject(pointer:Pointer, view:Pickable):T.Vector3|null {

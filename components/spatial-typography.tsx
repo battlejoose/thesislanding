@@ -1,10 +1,7 @@
 'use client';
 import { useEffect, useRef } from 'react';
-export default function SpatialTypography({motion,onReady}:{motion:boolean;onReady?:()=>void}){
+export default function SpatialTypography({motion}:{motion:boolean}){
   const host=useRef<HTMLDivElement>(null),motionRef=useRef(motion);
-  const reported=useRef(false);
-  // rebuild() runs on every DOM mutation; boot only wants the first one.
-  const report=()=>{if(reported.current)return;reported.current=true;onReady?.();};
   useEffect(()=>{motionRef.current=motion;},[motion]);
   useEffect(()=>{
     const container=host.current;if(!container)return;let disposed=false;let cleanup=()=>{};
@@ -16,17 +13,17 @@ export default function SpatialTypography({motion,onReady}:{motion:boolean;onRea
       type LetterObject={element:HTMLElement;mesh:InstanceType<typeof T.Mesh>;heading:boolean;offset:number;panel?:boolean;};let objects:LetterObject[]=[];let frame=0,start=performance.now(),rebuildFrame=0;
       const disposeObjects=()=>{objects.forEach(o=>{scene.remove(o.mesh);o.mesh.geometry.dispose();(Array.isArray(o.mesh.material)?o.mesh.material:[o.mesh.material]).forEach(m=>m.dispose());});objects=[];};
       function rebuild(){
-        if(disposed)return;disposeObjects();const root=document.querySelector('.showcase');if(!root)return;const rootStyle=getComputedStyle(root);
+        if(disposed)return;disposeObjects();const root=document.querySelector('.showcase');if(!root)return;const rootStyle=getComputedStyle(root),theme=root.getAttribute('data-theme');
         const fg=rootStyle.getPropertyValue('--foreground').trim()||'#eff0df',accent=rootStyle.getPropertyValue('--accent').trim()||'#d7e8a1',bg=rootStyle.getPropertyValue('--background').trim()||'#10251d';
         document.querySelectorAll<HTMLElement>('[data-spatial-text]').forEach((element,i)=>{
           const text=(element.textContent??'').trim();if(!text)return;const style=getComputedStyle(element),size=parseFloat(style.fontSize),heading=element.dataset.spatialText==='heading';
           const geometry=new TextGeometry(text,{font,size,depth:heading?Math.max(4,size*.13):Math.max(1,size*.07),curveSegments:heading?4:2,bevelEnabled:heading,bevelThickness:heading?.35:0,bevelSize:heading?.2:0,bevelSegments:1});geometry.computeBoundingBox();
           const active=element.closest('[data-active]');const color=element.dataset.spatialTone==='accent'?accent:element.dataset.spatialTone==='muted'?'#bac5b3':active?bg:fg;
-          const face=new T.MeshStandardMaterial({color,metalness:.18,roughness:.4,emissive:'#000000',emissiveIntensity:.12});const side=new T.MeshStandardMaterial({color:new T.Color(color).lerp(new T.Color(bg),.57),metalness:.4,roughness:.48});
+          const face=new T.MeshStandardMaterial({color,metalness:theme==='steampunk'?.65:.18,roughness:.4,emissive:theme==='volcanic'&&heading?accent:'#000000',emissiveIntensity:.12});const side=new T.MeshStandardMaterial({color:new T.Color(color).lerp(new T.Color(bg),.57),metalness:.4,roughness:.48});
           const mesh=new T.Mesh(geometry,[face,side]);mesh.userData.originalWidth=geometry.boundingBox!.max.x-geometry.boundingBox!.min.x;mesh.userData.originalHeight=geometry.boundingBox!.max.y-geometry.boundingBox!.min.y;mesh.userData.bottom=geometry.boundingBox!.min.y;scene.add(mesh);objects.push({element,mesh,heading,offset:i*.09});
         });
         document.querySelectorAll<HTMLElement>('[data-spatial-panel]').forEach(element=>{const shape=new T.Shape();shape.moveTo(-.3,-.5);shape.lineTo(.3,-.5);shape.quadraticCurveTo(.5,-.5,.5,-.3);shape.lineTo(.5,.3);shape.quadraticCurveTo(.5,.5,.3,.5);shape.lineTo(-.3,.5);shape.quadraticCurveTo(-.5,.5,-.5,.3);shape.lineTo(-.5,-.3);shape.quadraticCurveTo(-.5,-.5,-.3,-.5);const geometry=new T.ExtrudeGeometry(shape,{depth:4,bevelEnabled:false,curveSegments:8});const active=element.hasAttribute('data-active');const baseColor=active?accent:rootStyle.getPropertyValue('--muted').trim()||bg;const mesh=new T.Mesh(geometry,new T.MeshStandardMaterial({color:baseColor,metalness:.35,roughness:.45}));scene.add(mesh);objects.push({element,mesh,heading:false,offset:0,panel:true});});
-        root.setAttribute('data-typography-ready','true');start=performance.now();wake();report();
+        root.setAttribute('data-typography-ready','true');start=performance.now();wake();
       }
       function queue(){cancelAnimationFrame(rebuildFrame);rebuildFrame=requestAnimationFrame(rebuild);}
       function render(now:number){frame=0;if(disposed||document.hidden)return;const t=(now-start)/1000;const height=window.innerHeight;
@@ -35,12 +32,12 @@ export default function SpatialTypography({motion,onReady}:{motion:boolean;onRea
       }
       function wake(){cancelAnimationFrame(frame);frame=requestAnimationFrame(render);}
       function resize(){camera.right=window.innerWidth;camera.top=window.innerHeight;camera.updateProjectionMatrix();renderer.setSize(window.innerWidth,window.innerHeight,false);queue();}
-      const observer=new MutationObserver(queue);observer.observe(document.querySelector('.showcase')!,{childList:true,characterData:true,subtree:true});
+      const observer=new MutationObserver(queue);observer.observe(document.querySelector('.showcase')!,{childList:true,characterData:true,subtree:true,attributes:true,attributeFilter:['data-theme','data-active']});
       const ro=new ResizeObserver(resize);ro.observe(document.documentElement);window.addEventListener('scroll',wake,{passive:true});window.addEventListener('resize',resize);document.addEventListener('visibilitychange',wake);
       const lost=(e:Event)=>{e.preventDefault();document.querySelector('.showcase')?.removeAttribute('data-typography-ready');cancelAnimationFrame(frame);};renderer.domElement.addEventListener('webglcontextlost',lost);
       resize();rebuild();cleanup=()=>{cancelAnimationFrame(frame);cancelAnimationFrame(rebuildFrame);observer.disconnect();ro.disconnect();window.removeEventListener('scroll',wake);window.removeEventListener('resize',resize);document.removeEventListener('visibilitychange',wake);renderer.domElement.removeEventListener('webglcontextlost',lost);disposeObjects();renderer.dispose();renderer.forceContextLoss();renderer.domElement.remove();document.querySelector('.showcase')?.removeAttribute('data-typography-ready');};
-    }).catch(()=>{document.querySelector('.showcase')?.removeAttribute('data-typography-ready');report();});
+    }).catch(()=>{document.querySelector('.showcase')?.removeAttribute('data-typography-ready');});
     return()=>{disposed=true;cleanup();};
-  },[onReady]);
+  },[]);
   return <div ref={host} className="spatial-typography" aria-hidden="true"/>;
 }

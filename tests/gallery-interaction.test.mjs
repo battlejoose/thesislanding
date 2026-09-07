@@ -1,7 +1,8 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import * as T from 'three';
-import {CAMERA_Z,FACE_Z,hoverPose,pickObject} from '../lib/gallery-interaction.ts';
+import {CAMERA_Z,FACE_Z,cursorTiltTarget,hoverPose,pickObject,pointOnFace} from '../lib/gallery-interaction.ts';
+import {tokenActionAt,TOKEN_SOCIALS,tokenFooterControls,tokenRegionAt} from '../lib/token-controls.ts';
 import {brooklynCity,constructionTile} from '../lib/brooklyn-world.ts';
 
 function view(left=100,top=80) {
@@ -45,6 +46,54 @@ test('foreground object owns overlaps; no alternating hover from DOM mouseleave 
   const a=view(),b=view(200),p={x:360,y:340};
   for(let i=0;i<50;i++)assert.equal(pickObject(p,[a,b],0)?.index,0);
   assert.equal(pickObject(p,[a,b],1)?.index,1);
+});
+
+test('Construction opens only its title or a supplied footer link, including while tilted and zoomed',()=>{
+  const p={kind:'token',dataState:'ready',tokenUrl:'https://pump.fun/coin/token',x:'https://x.com/token',telegram:null,discord:'https://discord.gg/token',github:'https://github.com/team/token',website:'https://example.com'};
+  for(const angle of [-.7,0,.7])for(const progress of [0,1]){
+    const v=view(),pose=hoverPose(-.8,progress);v.camera.zoom=.9/1.7;v.camera.updateProjectionMatrix();v.group.rotation.set(angle,.14,0);v.group.position.z=pose.z;v.group.scale.setScalar(pose.scale);
+    const action=(x,y)=>tokenActionAt(p,pointOnFace(project(v,x,y,FACE_Z),v));
+    assert.equal(action(0,-.36),'title');
+    assert.equal(action(-1.7,-.4),null);assert.equal(action(0,-.73),null);
+    assert.equal(action(0,1.4),null);assert.equal(action(-1.5,-1.9),null);assert.equal(action(0,-2.7),null);
+    for(const control of tokenFooterControls(p))assert.equal(action(control.x,-2.31),control.id);
+    assert.equal(action(-1.5,-2.35),null);
+  }
+  assert.equal(tokenActionAt({...p,kind:'soon',dataState:undefined,tokenUrl:undefined,x:null,discord:null,github:null,website:null},{x:0,y:-.4}),null);
+  assert.equal(tokenActionAt({...p,dataState:'error'},{x:0,y:1.1}),'retry');
+  assert.equal(tokenRegionAt({x:-1.5,y:-1.9}),'cap');
+  const keys=['website',...TOKEN_SOCIALS.map(s=>s.key)];
+  for(let mask=0;mask<32;mask++){
+    const record={...p,...Object.fromEntries(keys.map((key,i)=>[key,mask&(1<<i)?'https://example.com/'+key:null]))};
+    const controls=tokenFooterControls(record);
+    assert.deepEqual(controls.map(c=>c.id),keys.filter(key=>!!record[key]));
+    for(const control of controls)assert.equal(tokenActionAt(record,{x:control.x,y:-2.31}),control.id);
+    if(controls.length)assert.equal(controls.at(-1).x,1.86);
+  }
+});
+
+test('Construction tiles are 10% smaller at rest and on hover, with matching picking',()=>{
+  for(const progress of [0,.5,1]){
+    const v=view(),pose=hoverPose(-.8,progress);
+    v.group.rotation.set(.35*(1-progress),.13,0);v.group.position.z=pose.z;v.group.scale.setScalar(pose.scale);
+    const originalLeft=project(v,-2,0),originalRight=project(v,2,0);
+    v.camera.zoom=.9;v.camera.updateProjectionMatrix();
+    const smallerLeft=project(v,-2,0),smallerRight=project(v,2,0);
+    assert.ok(Math.abs((smallerRight.x-smallerLeft.x)/(originalRight.x-originalLeft.x)-.9)<1e-12);
+    assert.equal(pickObject(project(v,1.8,1),[v])?.index,0);
+    assert.equal(pickObject(project(v,2.8,1),[v]),null);
+  }
+});
+
+test('cursor tilt follows both axes, stays subtle, and resets without a mouse',()=>{
+  const left=cursorTiltTarget({x:0,y:300},1200,600),right=cursorTiltTarget({x:1200,y:300},1200,600);
+  const top=cursorTiltTarget({x:600,y:0},1200,600),bottom=cursorTiltTarget({x:600,y:600},1200,600);
+  assert.ok(left.y<0 && right.y>0 && top.x>0 && bottom.x<0);
+  assert.deepEqual(cursorTiltTarget(null,1200,600),{x:0,y:0});
+  const extreme=cursorTiltTarget({x:9000,y:-9000},1200,600);
+  assert.ok(Math.abs(extreme.x)<=.08 && Math.abs(extreme.y)<=.16);
+  // The same additive offset applies regardless of each row's wheel rotation.
+  for(const wheel of [-.9,0,.9])assert.ok(Math.abs((wheel+right.x)-wheel)<1e-12);
 });
 test('Brooklyn architecture has valid geometry and keeps animating independently of tilt',()=>{
   const tile=new T.Group(),animations=[];constructionTile(tile,animations,2);

@@ -1,34 +1,20 @@
 'use client';
-import { useEffect, useRef, useState } from 'react';
-import { projects } from '@/lib/projects';
-import { fetchTokenStats, type TokenStats } from '@/lib/token-stats';
+import { useEffect, useRef, useState, type CSSProperties } from 'react';
+import { projects, type Project, type Theme } from '@/lib/projects';
 import type { createGallery } from '@/lib/three-gallery';
 import ProjectCard from './project-card';
-export default function ProjectGallery({motion,webgl=true,onReady}:{motion:boolean;webgl?:boolean;onReady?:()=>void}){
-  const [stats,setStats]=useState<Record<string,TokenStats>>({});
-  const statsRef=useRef<Record<string,TokenStats>>({});
+import TokenProjectCard from './token-project-card';
+export default function ProjectGallery({theme,motion,selected,onSelect,displayScale=1,cursorTilt=false,projectList=projects,onReady}:{theme:Theme;motion:boolean;selected:string|null;onSelect:(id:string)=>void;displayScale?:number;cursorTilt?:boolean;projectList?:Project[];onReady?:()=>void}){
   const root=useRef<HTMLDivElement>(null),canvas=useRef<HTMLDivElement>(null),engine=useRef<Awaited<ReturnType<typeof createGallery>>|null>(null),motionRef=useRef(motion);
   const [ready,setReady]=useState(false);
   const reported=useRef(false);
-  const settle=()=>{if(reported.current)return;reported.current=true;onReady?.();};
+  const settleBoot=()=>{if(reported.current)return;reported.current=true;onReady?.();};
+  const projectsRef=useRef(projectList),projectIds=projectList.map(p=>p.id).join(',');
+  useEffect(()=>{projectsRef.current=projectList;engine.current?.setProjects(projectList);},[projectList]);
   useEffect(()=>{motionRef.current=motion;engine.current?.setMotion(motion);},[motion]);
-  useEffect(()=>{
-    const controller=new AbortController();
-    const tracked=projects.filter(project=>project.token);
-    void Promise.all(tracked.map(async project=>{
-      const result=await fetchTokenStats(project.token!,'solana',controller.signal);
-      if(!result||controller.signal.aborted)return;
-      statsRef.current={...statsRef.current,[project.id]:result};
-      setStats(current=>({...current,[project.id]:result}));
-      engine.current?.setStats(project.id,result);
-    }));
-    return()=>controller.abort();
-  },[]);
-  useEffect(()=>{const host=canvas.current;if(!host||!root.current)return;
-    if(!webgl){settle();return;}
-    let disposed=false;setReady(false);const fail=()=>{setReady(false);settle();};host.addEventListener('gallery-error',fail);
-    void import('@/lib/three-gallery').then(async({createGallery})=>{if(disposed)return;const articles=Array.from(root.current!.querySelectorAll<HTMLElement>('[data-project-id]'));const result=await createGallery(host,articles,projects,()=>{if(!disposed){setReady(true);settle();}});if(disposed){result.dispose();return;}engine.current=result;result.setMotion(motionRef.current);for(const [id,value] of Object.entries(statsRef.current))result.setStats(id,value);}).catch(()=>{if(!disposed){setReady(false);settle();}});
+  useEffect(()=>{const host=canvas.current;if(!host||!root.current)return;let disposed=false;setReady(false);const fail=()=>setReady(false);host.addEventListener('gallery-error',fail);
+    void import('@/lib/three-gallery').then(async({createGallery})=>{if(disposed)return;const articles=Array.from(root.current!.querySelectorAll<HTMLElement>('[data-project-id]'));const result=await createGallery(host,articles,projectsRef.current,theme,()=>{if(!disposed)setReady(true);},{displayScale,cursorTilt});if(disposed){result.dispose();return;}engine.current=result;result.setProjects(projectsRef.current);result.setMotion(motionRef.current);}).catch(()=>{if(!disposed)setReady(false);});
     return()=>{disposed=true;host.removeEventListener('gallery-error',fail);engine.current?.dispose();engine.current=null;};
-  },[webgl,onReady]);
-  return <div className={`project-gallery${ready?' models-ready':''}`} ref={root}><div ref={canvas} className="gallery-canvas" aria-hidden="true"/><div className="project-grid" tabIndex={0} aria-label="Project collection. Scroll to roll the project wheel.">{projects.map((project,index)=><ProjectCard key={project.id} project={project} index={index} stats={stats[project.id]}/>)}</div></div>;
+  },[theme,displayScale,cursorTilt,projectIds]);
+  return <div className={`project-gallery${ready?' models-ready':''}`} ref={root} style={{'--project-display-scale':displayScale} as CSSProperties}><div ref={canvas} className="gallery-canvas" aria-hidden="true"/><div className="project-grid" tabIndex={0} aria-label="Project collection. Scroll to roll the project wheel.">{projectList.map((project,index)=>project.kind?<TokenProjectCard key={project.id} project={project} onRetry={()=>onSelect(project.id)}/>:<ProjectCard key={project.id} project={project} index={index} theme={theme} motion={motion && !ready} selected={selected===project.id} onSelect={()=>onSelect(project.id)}/>)}</div></div>;
 }

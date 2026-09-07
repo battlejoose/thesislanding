@@ -1,0 +1,96 @@
+.construction {
+  min-height: 100svh;
+  isolation: isolate;
+  overflow-x: clip;
+}
+
+.collection {
+  position: relative;
+  max-width: 1440px;
+  margin-inline: auto;
+  min-height: 100svh;
+  padding: calc(clamp(44px, 8vh, 96px) + env(safe-area-inset-top)) clamp(16px, 4vw, 76px) max(16vh, 80px);
+}
+
+/* Edition-specific spacing keeps the original Brooklyn page untouched. */
+.construction .collection :global(.project-grid) {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 310px), 1fr));
+  gap: 48px 28px;
+}
+
+.construction :global(.world-scene)::after {
+  background: linear-gradient(180deg, #14223318, transparent 42%, #12203138);
+}
+
+.construction :global(.project-gallery:not(.models-ready) .project-card) {
+  transform: scale(var(--project-display-scale, 1));
+}
+
+.construction :global(.token-obscured .project-media img) { filter: blur(18px); transform: scale(1.15); opacity: .62; }
+.construction :global(.token-image-overlay) { position:absolute;inset:0;display:grid;place-items:center;font-size:clamp(28px,4vw,50px);font-weight:600;letter-spacing:.1em;text-transform:uppercase; }
+.construction :global(.token-card .name-block) { min-width:0; }
+.construction :global(.token-card h3) { font-size:20px;line-height:1.2;overflow-wrap:anywhere; }
+.construction :global(.token-title) { color:#1659c7;text-decoration:underline;text-underline-offset:.18em;text-decoration-thickness:1.5px;transition:color .2s,text-shadow .2s; }
+.construction :global(.token-title:hover) { color:#087add;text-shadow:0 0 12px #86b6fb60; }
+.construction :global(.token-card .project-media) { cursor:default; }
+.construction :global(.token-retry) { border:0;background:transparent;cursor:pointer; }
+.construction :global(.token-card .social-links) { gap:7px; }
+.construction :global(.token-stats>div),
+.construction :global(.token-card .market-cap),
+.construction :global(.token-change) { border-radius:4px;outline:1px solid transparent;outline-offset:6px;transition:background .22s,outline-color .22s; }
+.construction :global(.project-gallery:not(.models-ready) .token-stats>div:hover),
+.construction :global(.project-gallery:not(.models-ready) .token-card .market-cap:hover),
+.construction :global(.project-gallery:not(.models-ready) .token-change:hover) { background:#dfa94b16;outline-color:#b9863c90; }
+.construction :global(.models-ready .project-name-row:focus-within) { opacity:1;background:var(--paper); }
+.construction :global(.models-ready .token-title:focus-visible) { outline:2px solid #1659c7;outline-offset:4px; }
+.construction :global(.models-ready .token-retry:focus-visible) { opacity:1!important;background:var(--paper);color:var(--ink); }
+.construction :global(.token-stats),
+.construction :global(.token-card .project-bottom) { display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:20px; }
+.construction :global(.token-stats) { margin:18px 0 16px; }
+.construction :global(.token-stats dt),
+.construction :global(.token-change>span) { color:var(--paper-muted);font-size:12px;line-height:1.4; }
+.construction :global(.token-stats dd) { margin:5px 0 0;font-size:14px;font-variant-numeric:tabular-nums;overflow-wrap:anywhere; }
+.construction :global(.token-change) { display:flex;flex-direction:column;gap:7px; }
+.construction :global(.token-card .price-change) { font-size:16px;font-weight:500;padding:0; }
+.construction :global(.token-card .market-cap) { gap:7px; }
+.construction :global(.token-card .market-cap>strong) { font-size:24px;line-height:1.15; }
+.construction :global(.token-links) { display:flex;align-items:center;justify-content:flex-end;gap:7px;margin-top:18px;min-height:32px; }
+.construction :global(.token-links .social-links) { margin-left:0; }
+.construction :global(.token-website) { display:grid;place-items:center;width:32px;height:32px;flex-shrink:0;color:#1659c7;border:1px solid #1659c740;border-radius:50%;transition:background .2s; }
+.construction :global(.token-website:hover) { background:#1659c714; }
+.construction :global(.models-ready .token-stats),
+.construction :global(.models-ready .token-change) { opacity:0;pointer-events:none; }
+.construction :global(.models-ready .token-links) { position:absolute;inset:auto 0 8%;margin:0; }
+.construction :global(.models-ready .token-website) { opacity:0; }
+.construction :global(.models-ready .token-website:focus-visible) { opacity:1;background:var(--paper);outline-color:var(--ink); }
+.construction :global(.token-extra) { display:flex;flex-wrap:wrap;gap:8px;overflow-wrap:anywhere;font-size:12px;padding-top:10px; }
+.construction :global(.models-ready .token-extra) { opacity:0; }
+.construction :global(.models-ready .token-image-overlay) { opacity:0!important; }
+.construction :global(.is-negative) { color:#a34137; }
+.construction :global(.project-media:disabled) { cursor:default; }
+
+@media (prefers-reduced-motion: reduce) {
+  .construction :global(.token-title),
+  .construction :global(.token-stats>div),
+  .construction :global(.token-card .market-cap),
+  .construction :global(.token-change) { transition:none; }
+}
+
+@media (max-width: 760px) {
+  .construction .collection :global(.project-grid) {
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 265px), 1fr));
+    gap: 32px 14px;
+  }
+}
+
+@media (max-width: 600px) {
+  .collection {
+    padding-inline: max(12px, env(safe-area-inset-left)) max(12px, env(safe-area-inset-right));
+    padding-top: calc(48px + env(safe-area-inset-top));
+  }
+
+  .construction .collection :global(.project-grid) {
+    grid-template-columns: 1fr;
+    row-gap: 24px;
+  }
+}
