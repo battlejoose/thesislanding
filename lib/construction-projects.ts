@@ -2,7 +2,7 @@ import type { Project } from './projects';
 
 // A contract address is the only input required. Null slots stay under wraps.
 export const CONSTRUCTION_TOKENS: readonly (string | null)[] = [
-  '3rbmAAonWqxmPJ7rzQUHyZtqwqrF54EZa3pJgphmpump',
+  '4GBmCJRcmPiwnydKqdGG17fx4CkojpQHeiktDzbNpump',
   null,
   null,
 ];
