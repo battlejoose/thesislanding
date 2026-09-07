@@ -1,5 +1,6 @@
 import type { Project } from './projects';
 
+export const TOKEN_WEBSITE_X = -.38;
 export const TOKEN_SOCIALS = [
   {key:'x',label:'X',x:.18},
   {key:'telegram',label:'Telegram',x:.74},
@@ -14,7 +15,7 @@ export const TOKEN_INFO_REGIONS:InfoRegion[] = [
   {id:'volume',left:.22,right:2.08,bottom:-1.31,top:-.85},
   {id:'cap',left:-2.08,right:.02,bottom:-2.12,top:-1.47},
   {id:'change',left:.22,right:2.08,bottom:-2.12,top:-1.47},
-  {id:'website',left:-2.08,right:-.66,bottom:-2.56,top:-2.15},
+  {id:'website',left:TOKEN_WEBSITE_X-.22,right:TOKEN_WEBSITE_X+.22,bottom:-2.56,top:-2.15},
   ...TOKEN_SOCIALS.map(s=>({id:s.key,left:s.x-.22,right:s.x+.22,bottom:-2.56,top:-2.15})),
 ];
 export function tokenRegionAt(point:{x:number;y:number}|null):string|null {

@@ -1,6 +1,6 @@
 'use client';
 import { useEffect, useState } from 'react';
-import { ArrowUpRight } from 'lucide-react';
+import { Globe } from 'lucide-react';
 import type { Project } from '@/lib/projects';
 import { TOKEN_SOCIALS } from '@/lib/token-controls';
 import { socialIconPaths } from '@/lib/social-icon-paths';
@@ -19,7 +19,7 @@ export default function TokenProjectCard({project:p,onRetry}:{project:Project;on
       <dl className="token-stats"><div><dt>Price</dt><dd>{p.price??'N/A'}</dd></div><div><dt>Volume / 24h</dt><dd>{p.volume??'N/A'}</dd></div></dl>
       <div className="project-bottom"><div className="market-cap"><span>Market cap</span><strong>{p.cap}</strong></div><div className="token-change"><span>Change / 24h</span><strong className={`price-change${p.change.startsWith('-')?' is-negative':''}`}>{p.change}</strong></div></div>
       <div className="token-links">
-        {p.website&&<a className="token-website" data-token-action="website" href={p.website} target="_blank" rel="noopener noreferrer">Website <ArrowUpRight size={14}/></a>}
+        {p.website&&<a className="token-website" data-token-action="website" href={p.website} target="_blank" rel="noopener noreferrer" aria-label={`${p.name} website`} title="Website"><Globe size={17} aria-hidden="true"/></a>}
         <div className="social-links">{TOKEN_SOCIALS.map(s=>{
           const icon=<svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" aria-hidden="true"><path d={socialIconPaths[s.key]}/></svg>;
           return p[s.key]?<a key={s.key} data-token-action={s.key} href={p[s.key]!} target="_blank" rel="noopener noreferrer" aria-label={`${p.name} on ${s.label}`} title={s.label}>{icon}</a>:<button key={s.key} disabled aria-label={`${s.label}: N/A`} title={`${s.label}: N/A`}>{icon}<span className="social-na">N/A</span></button>;

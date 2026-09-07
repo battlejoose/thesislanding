@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import * as T from 'three';
 import {CAMERA_Z,FACE_Z,cursorTiltTarget,hoverPose,pickObject,pointOnFace} from '../lib/gallery-interaction.ts';
-import {tokenActionAt,TOKEN_SOCIALS,tokenRegionAt} from '../lib/token-controls.ts';
+import {tokenActionAt,TOKEN_SOCIALS,TOKEN_WEBSITE_X,tokenRegionAt} from '../lib/token-controls.ts';
 import {brooklynCity,constructionTile} from '../lib/brooklyn-world.ts';
 
 function view(left=100,top=80) {
@@ -56,7 +56,7 @@ test('Construction opens only its title or a supplied footer link, including whi
     assert.equal(action(0,-.36),'title');
     assert.equal(action(-1.7,-.4),null);assert.equal(action(0,-.73),null);
     assert.equal(action(0,1.4),null);assert.equal(action(-1.5,-1.9),null);assert.equal(action(0,-2.7),null);
-    assert.equal(action(-1.5,-2.35),'website');
+    assert.equal(action(TOKEN_WEBSITE_X,-2.35),'website');
     for(const s of TOKEN_SOCIALS)assert.equal(action(s.x,-2.31),p[s.key]?s.key:null);
   }
   assert.equal(tokenActionAt({...p,kind:'soon',dataState:undefined,tokenUrl:undefined,x:null,discord:null,github:null,website:null},{x:0,y:-.4}),null);

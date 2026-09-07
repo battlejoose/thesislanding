@@ -7,7 +7,7 @@ import type { Project, Theme } from './projects';
 import { addTileWorldDetails } from './theme-worlds';
 import { constructionTile } from './brooklyn-world';
 import { CAMERA_Z, cursorTiltTarget, hoverPose, pickObject, pointOnFace, type Pickable, type Pointer } from './gallery-interaction';
-import { TOKEN_SOCIALS, TOKEN_INFO_REGIONS, tokenActionAt, tokenRegionAt } from './token-controls';
+import { TOKEN_SOCIALS, TOKEN_WEBSITE_X, TOKEN_INFO_REGIONS, tokenActionAt, tokenRegionAt } from './token-controls';
 import { socialIconPaths } from './social-icon-paths';
 const TAU=Math.PI*2;
 export const palette={volcanic:{side:'#262124',paper:'#393034',ink:'#ffdaab',trim:'#fa682d'},space:{side:'#242540',paper:'#303850',ink:'#d4efff',trim:'#6bbcea'},roots:{side:'#453826',paper:'#e7ebd4',ink:'#273c2c',trim:'#789052'},brooklyn:{side:'#653c30',paper:'#f0e6cf',ink:'#302922',trim:'#b19a75'},steampunk:{side:'#343130',paper:'#dfcaa2',ink:'#49351f',trim:'#c29656'}};
@@ -60,7 +60,7 @@ function tokenDecorations(group:T.Group,p:Project,font:Font,ink:string):InfoHigh
   }
   const highlights=TOKEN_INFO_REGIONS.map(region=>{
     const w=region.right-region.left,h=region.top-region.bottom,x=(region.left+region.right)/2,y=(region.top+region.bottom)/2;
-    const color=region.id==='title'?LINK_BLUE:'#b48132';
+    const color=region.id==='title'||region.id==='website'?LINK_BLUE:'#b48132';
     const fill=new T.MeshBasicMaterial({color,transparent:true,opacity:0,depthWrite:false});
     mesh(group,new T.ShapeGeometry(rounded(w,h,.045)),fill,x,y,.613);
     const border=new T.LineBasicMaterial({color,transparent:true,opacity:0,depthWrite:false});
@@ -201,7 +201,11 @@ export function makeTile(article:HTMLElement,p:Project,index:number,theme:Theme,
   }
   if(p.kind){
     const overlay=label(group,font,tokenOverlay(p)||'N/A',.46,3.6,'#fff0d5',-1.45,1.10,.75,.07);overlay.name='token-overlay';overlay.visible=!!tokenOverlay(p);centerOverlay(overlay);
-    const website=label(group,font,'WEBSITE',.12,1.3,colors.ink,-2,-2.39,.72,.025);website.name='project-website';website.visible=!!p.website;
+    const website=new T.Group();website.name='project-website';website.position.set(TOKEN_WEBSITE_X,-2.31,.69);website.visible=!!p.website;group.add(website);
+    const globeMaterial=new T.MeshStandardMaterial({color:LINK_BLUE,emissive:LINK_BLUE,emissiveIntensity:.08,roughness:.45});
+    mesh(website,new T.TorusGeometry(.13,.010,6,32),globeMaterial);
+    mesh(website,new T.TorusGeometry(.13,.009,6,32),globeMaterial).scale.x=.44;
+    mesh(website,new T.BoxGeometry(.25,.014,.02),globeMaterial);
     categoryFace.visible=false;group.getObjectByName('project-category')!.visible=false;
     group.getObjectByName('status-face')!.visible=false;statusLabel.visible=false;
   }
@@ -301,7 +305,7 @@ export async function createGallery(container:HTMLDivElement,articles:HTMLElemen
         const target=enabled&&region===highlight.id?1:0;
         highlight.progress=motion?T.MathUtils.lerp(highlight.progress,target,1-Math.exp(-dt*12)):target;
         if(Math.abs(target-highlight.progress)>.002)settling=true;
-        const button=TOKEN_SOCIALS.some(s=>s.key===highlight.id);
+        const button=(highlight.id==='website'&&!!p.website)||TOKEN_SOCIALS.some(s=>s.key===highlight.id);
         highlight.border.opacity=(button?.20:0)+highlight.progress*.58;
         highlight.fill.opacity=highlight.progress*.09;
       }

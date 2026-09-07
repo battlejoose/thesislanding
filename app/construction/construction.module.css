@@ -57,8 +57,10 @@
 .construction :global(.token-card .price-change) { font-size:16px;font-weight:500;padding:0; }
 .construction :global(.token-card .market-cap) { gap:7px; }
 .construction :global(.token-card .market-cap>strong) { font-size:24px;line-height:1.15; }
-.construction :global(.token-links) { display:flex;align-items:center;justify-content:space-between;gap:16px;margin-top:18px;min-height:32px; }
-.construction :global(.token-website) { display:inline-flex;align-items:center;gap:5px;font-size:12px;text-transform:uppercase;letter-spacing:.06em; }
+.construction :global(.token-links) { display:flex;align-items:center;justify-content:flex-end;gap:7px;margin-top:18px;min-height:32px; }
+.construction :global(.token-links .social-links) { margin-left:0; }
+.construction :global(.token-website) { display:grid;place-items:center;width:32px;height:32px;flex-shrink:0;color:#1659c7;border:1px solid #1659c740;border-radius:50%;transition:background .2s; }
+.construction :global(.token-website:hover) { background:#1659c714; }
 .construction :global(.models-ready .token-stats),
 .construction :global(.models-ready .token-change) { opacity:0;pointer-events:none; }
 .construction :global(.models-ready .token-links) { position:absolute;inset:auto 0 8%;margin:0; }
