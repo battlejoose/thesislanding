@@ -13,13 +13,13 @@ test('market caps read at a glance across magnitudes',()=>{
   assert.equal(formatCap(842),'$842');
 });
 test('a missing or nonsensical cap shows a dash, never a zero',()=>{
-  for(const value of [0,-5,NaN,Infinity])assert.equal(formatCap(value),'—');
+  for(const value of [0,-5,NaN,Infinity])assert.equal(formatCap(value),'N/A');
 });
 test('change keeps its sign so a fall is never shown as a rise',()=>{
   assert.equal(formatChange(8.241),'+8.24%');
-  assert.equal(formatChange(-19.9),'−19.90%');
+  assert.equal(formatChange(-19.9),'-19.90%');
   assert.equal(formatChange(0),'+0.00%');
-  assert.equal(formatChange(NaN),'—');
+  assert.equal(formatChange(NaN),'N/A');
 });
 test('a graduated pool outranks the stale bonding-curve pair left behind',()=>{
   // Shape taken from ZCASHCAT, which lists both at once.
@@ -105,4 +105,11 @@ test('a pool missing price or volume omits them rather than showing zero',()=>{
   assert.equal(stats.price,undefined);
   assert.equal(stats.volume,undefined);
   assert.equal(stats.liquidity,undefined);
+});
+
+test('every extruded string is ASCII, since the 3D font renders gaps as "?"',()=>{
+  const ascii=s=>/^[\x20-\x7e]*$/.test(s);
+  for(const v of [1234,0,-1,NaN,987654321])assert.ok(ascii(formatCap(v)),`cap ${v}: ${formatCap(v)}`);
+  for(const v of [8.24,-96.32,0,NaN])assert.ok(ascii(formatChange(v)),`change ${v}: ${formatChange(v)}`);
+  assert.equal(formatChange(-96.32),'-96.32%');
 });

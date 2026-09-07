@@ -25,7 +25,7 @@ export default function ProjectCard({project:p,index,stats}:{project:Project;ind
       <img src={imageError?'/art/brooklyn.webp':p.image} onError={()=>setImageError(true)} alt={p.comingSoon?'':`${name} token image`} width={720} height={405} loading={p.featured?'eager':'lazy'} decoding="async"/>
       <span className="media-shade"/>
       <span className="category-chip">{p.category}</span>{p.featured&&<span className="featured-chip">↗ Featured</span>}
-      {p.comingSoon&&<span className="play-prompt"><span>Coming soon</span></span>}
+      {p.comingSoon&&<span className="soon-overlay">SOON</span>}
     </div>
     <div className="project-info">
       <div className="project-name-row">
@@ -35,19 +35,17 @@ export default function ProjectCard({project:p,index,stats}:{project:Project;ind
           <span className="ticker">${ticker}</span>
         </span>
       </div>
-      {p.comingSoon?<p className="project-description">{p.description}</p>:<>
-        <dl className="token-stats">
-          <div><dt>Price</dt><dd>{stats?.price??'—'}</dd></div>
-          <div><dt>Volume / 24h</dt><dd>{stats?.volume??'—'}</dd></div>
-          <div><dt>Market cap</dt><dd>{stats?.cap??p.cap}</dd></div>
-          <div><dt>Change / 24h</dt><dd className={`price-change${stats&&!stats.up?' is-negative':''}`}>{stats?.change??p.change}</dd></div>
-        </dl>
-        <div className="token-links">
+      <dl className="token-stats">
+          <div><dt>Price</dt><dd>{stats?.price??'N/A'}</dd></div>
+          <div><dt>Volume / 24h</dt><dd>{stats?.volume??'N/A'}</dd></div>
+          <div><dt>Market cap</dt><dd>{p.comingSoon?'N/A':stats?.cap??p.cap}</dd></div>
+          <div><dt>Change / 24h</dt><dd className={`price-change${stats&&!stats.up?' is-negative':''}`}>{p.comingSoon?'N/A':stats?.change??p.change}</dd></div>
+      </dl>
+      <div className="token-links">
           {stats?.website&&<a data-token-action="website" className="token-website" href={stats.website} target="_blank" rel="noopener noreferrer" aria-label={`${name} website`} title="Website"><Globe size={16} aria-hidden="true"/></a>}
           {links.map(s=><a key={s.key} data-token-action={s.icon} href={stats![s.key]!} target="_blank" rel="noopener noreferrer" aria-label={`${name} on ${s.label}`} title={s.label}><BrandIcon name={s.icon}/></a>)}
-        </div>
-        {stats?.address&&<p className="token-ca"><a href={pumpFunUrl(stats.address)} target="_blank" rel="noopener noreferrer" title={stats.address}>CA {shortAddress(stats.address)}</a>{stats.chart&&<> · <a href={stats.chart} target="_blank" rel="noopener noreferrer">Chart</a></>}</p>}
-      </>}
+      </div>
+      {stats?.address&&<p className="token-ca"><a href={pumpFunUrl(stats.address)} target="_blank" rel="noopener noreferrer" title={stats.address}>CA {shortAddress(stats.address)}</a>{stats.chart&&<> · <a href={stats.chart} target="_blank" rel="noopener noreferrer">Chart</a></>}</p>}
     </div>
   </article>;
 }

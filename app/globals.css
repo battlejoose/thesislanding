@@ -271,3 +271,6 @@ html[data-booting=true], html[data-booting=true] body { overflow:hidden; }
 .models-ready .token-links { opacity:0; }
 .models-ready .token-links a { width:34px; height:34px; }
 .models-ready .token-links a:focus-visible { opacity:1; background:var(--paper); outline-color:var(--ink); }
+
+.soon-overlay { position:absolute; inset:0; display:grid; place-items:center; font-size:34px; font-weight:600;
+  letter-spacing:5px; color:#fff0d5; text-shadow:0 3px 14px #0009; pointer-events:none; }

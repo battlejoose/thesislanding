@@ -70,36 +70,35 @@ export function makeTile(article:HTMLElement,p:Project,index:number,font:Font,wa
   const tickerLabel=label(group,font,'$'+p.ticker,.12,2.9,colors.ink,-1.14,-.77,.64,.02);
   let changeLabel:T.Mesh|null=null,priceLabel:T.Mesh|null=null,volumeLabel:T.Mesh|null=null;
   const socials:Record<string,T.Group>={};let websiteIcon:T.Group|null=null;
-  if(p.comingSoon){
-    const words=p.description.split(' ');let lineText='',lineIndex=0;
-    for(const word of words){if((lineText+word).length>38){label(group,font,lineText.trim(),.155,4.0,colors.ink,-2,-1.11-lineIndex*.24,.63,.019);lineText=word+' ';lineIndex++;}else lineText+=word+' ';}
-    if(lineText)label(group,font,lineText.trim(),.155,4.0,colors.ink,-2,-1.11-lineIndex*.24,.63,.019);
-    mesh(group,new T.BoxGeometry(4.03,.008,.016),railMat,0,-1.72,.64);
-  }else{
-    mesh(group,new T.BoxGeometry(4.03,.008,.016),railMat,0,-1.44,.64);
-    label(group,font,'PRICE',.105,1.9,colors.ink,-2,-.98,.64,.024);
-    priceLabel=label(group,font,'—',.17,1.92,colors.ink,-2,-1.22,.64,.03);
-    label(group,font,'VOLUME / 24H',.105,1.68,colors.ink,.30,-.98,.64,.024);
-    volumeLabel=label(group,font,'—',.17,1.68,colors.ink,.30,-1.22,.64,.03);
-    label(group,font,'MARKET CAP',.105,2,colors.ink,-2,-1.63,.64,.024);
-    label(group,font,'CHANGE / 24H',.105,1.68,colors.ink,.30,-1.63,.64,.019);
-    changeLabel=label(group,font,p.change,.23,1.68,'#51734b',.30,-2.01,.66,.03);
-    // Link marks are created hidden and revealed only once a real URL arrives.
+  mesh(group,new T.BoxGeometry(4.03,.008,.016),railMat,0,-1.44,.64);
+  label(group,font,'PRICE',.105,1.9,colors.ink,-2,-.98,.64,.024);
+  priceLabel=label(group,font,'N/A',.17,1.92,colors.ink,-2,-1.22,.64,.03);
+  label(group,font,'VOLUME / 24H',.105,1.68,colors.ink,.30,-.98,.64,.024);
+  volumeLabel=label(group,font,'N/A',.17,1.68,colors.ink,.30,-1.22,.64,.03);
+  label(group,font,'MARKET CAP',.105,2,colors.ink,-2,-1.63,.64,.024);
+  label(group,font,'CHANGE / 24H',.105,1.68,colors.ink,.30,-1.63,.64,.019);
+  changeLabel=label(group,font,p.comingSoon?'N/A':p.change,.23,1.68,colors.ink,.30,-2.01,.66,.03);
+  if(!p.comingSoon){
+    // Link marks are created hidden and placed once the real URLs arrive.
     const linkMaterial=new T.MeshStandardMaterial({color:'#b48132',roughness:.5,metalness:.2});
     const globeMaterial=new T.MeshStandardMaterial({color:LINK_BLUE,emissive:LINK_BLUE,emissiveIntensity:.08,roughness:.45});
-    websiteIcon=new T.Group();websiteIcon.position.set(-.38,-2.31,.68);websiteIcon.visible=false;group.add(websiteIcon);
+    websiteIcon=new T.Group();websiteIcon.position.set(1.86,-2.31,.68);websiteIcon.visible=false;group.add(websiteIcon);
     mesh(websiteIcon,new T.TorusGeometry(.13,.010,6,32),globeMaterial);
     mesh(websiteIcon,new T.TorusGeometry(.13,.009,6,32),globeMaterial).scale.x=.44;
     mesh(websiteIcon,new T.BoxGeometry(.25,.014,.02),globeMaterial);
-    for(const [key,x] of [['x',.18],['telegram',.74]] as const){
-      const icon=socialIcon(group,key,linkMaterial,x,-2.31,.67);icon.visible=false;socials[key]=icon;
+    for(const key of ['x','telegram'] as const){
+      const icon=socialIcon(group,key,linkMaterial,1.86,-2.31,.67);icon.visible=false;socials[key]=icon;
     }
   }
   const categoryFace=group.getObjectByName('category-face') as T.Mesh;categoryFace.material=new T.MeshStandardMaterial({color:'#24382a',roughness:.7});
   label(group,font,p.category.toUpperCase(),.112,2.75,'#e6efdb',-1.95,2.20,.66,.025);
   if(p.featured)label(group,font,'FEATURED',.105,1,'#e4e5a4',1.07,2.20,.66,.025);
   statusMaterial.map=null;statusMaterial.color.set('#182b24');statusMaterial.needsUpdate=true;
-  if(p.comingSoon)label(group,font,'COMING SOON',.12,3.9,'#e7efdc',-1.96,.19,.665,.024);
+  if(p.comingSoon){
+    const soon=label(group,font,'SOON',.46,3.6,'#fff0d5',0,1.10,.75,.07);
+    soon.geometry.computeBoundingBox();const box=soon.geometry.boundingBox!;
+    soon.position.x=-(box.max.x+box.min.x)/2;
+  }
   constructionTile(group,animate,index);
   label(group,font,'SITE / 0'+(index+1),.13,1.7,'#e9bd69',.12,3.13,.62,.035);
   // A live site keeps a beacon burning, so the running build reads at a glance.
@@ -123,8 +122,14 @@ export function makeTile(article:HTMLElement,p:Project,index:number,font:Font,wa
   return {scene,camera,group,article,project:p,imageMaterial,imageTexture,statusTexture,statusMaterial,capLabel,changeLabel,priceLabel,volumeLabel,nameLabel,tickerLabel,socials,websiteIcon,animate,hover:false,hoverProgress:0,baseY,bounds};
 }
 const LINK_BLUE='#6ba8e8';
-// Footer hit regions, aligned with the icon positions on the tile face.
-const FOOTER_CONTROLS=[{id:'website',x:-.38},{id:'x',x:.18},{id:'telegram',x:.74}] as const;
+const FOOTER_IDS=['website','x','telegram'] as const;
+type FooterId=typeof FOOTER_IDS[number];
+// Only the links a token actually lists take a slot, right-aligned so the row
+// stays anchored to the card edge however many there are.
+export function footerLayout(present:Partial<Record<FooterId,boolean>>){
+  const ids=FOOTER_IDS.filter(id=>present[id]);
+  return ids.map((id,index)=>({id,x:1.86-(ids.length-1-index)*.56}));
+}
 function socialIcon(parent:T.Object3D,key:'x'|'telegram',material:T.Material,x:number,y:number,z:number){
   const group=new T.Group();group.position.set(x,y,z);parent.add(group);
   const paths=new SVGLoader().parse(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="${socialIconPaths[key]}"/></svg>`).paths;
@@ -171,7 +176,9 @@ export async function createGallery(container:HTMLDivElement,articles:HTMLElemen
     const article=tiles[hit.index].article;
     // The footer strip carries the website globe and the brand marks.
     if(hit.point.y > -2.15 || hit.point.y < -2.56) return;
-    const control=FOOTER_CONTROLS.find(c=>Math.abs(hit.point.x-c.x)<=.22);
+    const tile=tiles[hit.index];
+    const control=footerLayout({website:!!tile.websiteIcon?.visible,x:!!tile.socials.x?.visible,telegram:!!tile.socials.telegram?.visible})
+      .find(c=>Math.abs(hit.point.x-c.x)<=.22);
     if(!control)return;
     article.querySelector<HTMLElement>(`[data-token-action="${control.id}"]`)?.click();
   };
@@ -244,10 +251,16 @@ export async function createGallery(container:HTMLDivElement,articles:HTMLElemen
         retext(tile.changeLabel,font,stats.change,.23,1.68,.03);
         (tile.changeLabel.material as T.MeshStandardMaterial).color.set(stats.up?'#51734b':'#a34137');
       }
-      // A link the token does not list stays hidden rather than dead.
-      if(tile.websiteIcon)tile.websiteIcon.visible=!!stats.website;
-      if(tile.socials.x)tile.socials.x.visible=!!stats.twitter;
-      if(tile.socials.telegram)tile.socials.telegram.visible=!!stats.telegram;
+      // A link the token does not list stays hidden rather than dead, and the
+      // rest close up so the row is never left with a gap.
+      const present={website:!!stats.website,x:!!stats.twitter,telegram:!!stats.telegram};
+      if(tile.websiteIcon)tile.websiteIcon.visible=present.website;
+      if(tile.socials.x)tile.socials.x.visible=present.x;
+      if(tile.socials.telegram)tile.socials.telegram.visible=present.telegram;
+      for(const slot of footerLayout(present)){
+        const target=slot.id==='website'?tile.websiteIcon:tile.socials[slot.id];
+        if(target)target.position.x=slot.x;
+      }
       wake();
     },
     dispose(){disposed=true;cancelAnimationFrame(frame);cleanups.forEach(f=>f());observer.disconnect();changes.disconnect();window.removeEventListener('scroll',wake);window.removeEventListener('resize',resize);document.removeEventListener('visibilitychange',wake);renderer.domElement.removeEventListener('webglcontextlost',contextLost);const geometries=new Set<T.BufferGeometry>(),materials=new Set<T.Material>(),textures=new Set<T.Texture>();tiles.forEach(tile=>{textures.add(tile.imageTexture);textures.add(tile.statusTexture);tile.scene.traverse(o=>{const m=o as T.Mesh;if(m.geometry)geometries.add(m.geometry);if(m.material)(Array.isArray(m.material)?m.material:[m.material]).forEach(mat=>{materials.add(mat);for(const value of Object.values(mat))if(value instanceof T.Texture)textures.add(value);});});});geometries.forEach(g=>g.dispose());materials.forEach(m=>m.dispose());textures.forEach(t=>t.dispose());renderer.dispose();renderer.forceContextLoss();renderer.domElement.remove();}};

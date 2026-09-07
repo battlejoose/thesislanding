@@ -49,7 +49,7 @@ const BY_TOKEN = 'https://api.dexscreener.com/latest/dex/tokens/';
 const BY_CHAIN = 'https://api.dexscreener.com/token-pairs/v1/';
 
 export function formatCap(value: number): string {
-  if (!Number.isFinite(value) || value <= 0) return '—';
+  if (!Number.isFinite(value) || value <= 0) return 'N/A';
   if (value >= 1e9) return `$${(value / 1e9).toFixed(2)}B`;
   if (value >= 1e6) return `$${(value / 1e6).toFixed(2)}M`;
   // Below $100K a rounded figure loses too much: $6,749 must not read "$7K".
@@ -58,9 +58,11 @@ export function formatCap(value: number): string {
   return `$${Math.round(value)}`;
 }
 
+// Plain ASCII throughout: these strings are extruded with a font that has no
+// glyph for U+2212 or an em dash, and a missing glyph renders as "?".
 export function formatChange(value: number): string {
-  if (!Number.isFinite(value)) return '—';
-  return `${value >= 0 ? '+' : '−'}${Math.abs(value).toFixed(2)}%`;
+  if (!Number.isFinite(value)) return 'N/A';
+  return `${value >= 0 ? '+' : '-'}${Math.abs(value).toFixed(2)}%`;
 }
 
 interface Social { url?: string; type?: string; }
@@ -87,8 +89,8 @@ export function toStats(pair: Pair | null): TokenStats | null {
   const socials = pair.info?.socials ?? [];
   const find = (type: string) => socials.find(s => s.type === type)?.url;
   return {
-    cap: typeof cap === 'number' ? formatCap(cap) : '—',
-    change: typeof change === 'number' ? formatChange(change) : '—',
+    cap: typeof cap === 'number' ? formatCap(cap) : 'N/A',
+    change: typeof change === 'number' ? formatChange(change) : 'N/A',
     up: (change ?? 0) >= 0,
     name: pair.baseToken?.name,
     symbol: pair.baseToken?.symbol,
