@@ -1,0 +1,36 @@
+# Deploy main to Vercel production.
+#
+# Vercel's own GitHub integration cannot be used: connecting it installs a
+# webhook, which needs the Vercel GitHub App on the repository owner's
+# account, and only that owner can grant it. This does the same job with a
+# token instead, so a push to main reaches thesis.casino on its own.
+name: Deploy to Vercel
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  # A newer commit supersedes an in-flight deploy rather than racing it.
+  group: vercel-production
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    env:
+      VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+      VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - name: Install the Vercel CLI
+        run: npm install --global vercel@latest
+      - name: Deploy
+        # Source is uploaded and built on Vercel, matching how this project is
+        # deployed by hand. Building in the runner instead would introduce a
+        # second toolchain that could drift from the one that actually ships.
+        run: vercel deploy --prod --yes --token="${{ secrets.VERCEL_TOKEN }}"
