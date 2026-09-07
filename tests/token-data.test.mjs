@@ -93,3 +93,21 @@ test('image delivery rejects redirects to untrusted hosts before making another 
   try{const response=await getTokenImage(address);assert.equal(response.status,502);assert.equal(calls,1);}
   finally{globalThis.fetch=original;}
 });
+
+for(const status of [429,503])test(`image delivery preserves IPFS content through an allowed gateway after HTTP ${status}`,async()=>{
+  const original=globalThis.fetch,ca=(status===429?'B':'C').repeat(32),cid='bafkreice6ikusnwmlhviqo54je35yyrkq4zi4mma2dfutpirnwszd7y6pi',requested=[];
+  globalThis.fetch=async(url,options)=>{
+    if(url===`https://frontend-api-v3.pump.fun/coins/${ca}`)return Response.json({...pump,mint:ca,image_uri:`https://ipfs.io/ipfs/${cid}`});
+    if(url===`https://api.dexscreener.com/token-pairs/v1/solana/${ca}`)return Response.json([]);
+    requested.push(url);assert.equal(options.redirect,'manual');
+    if(url===`https://ipfs.io/ipfs/${cid}`)return new Response('Gateway unavailable',{status});
+    assert.equal(url,`https://gateway.pinata.cloud/ipfs/${cid}`);
+    return new Response(new Uint8Array([1,2,3]),{headers:{'Content-Type':'image/webp'}});
+  };
+  try{
+    const response=await getTokenImage(ca);
+    assert.equal(response.status,200);assert.equal(response.headers.get('Content-Type'),'image/webp');
+    assert.deepEqual(new Uint8Array(await response.arrayBuffer()),new Uint8Array([1,2,3]));
+    assert.deepEqual(requested,[`https://ipfs.io/ipfs/${cid}`,`https://gateway.pinata.cloud/ipfs/${cid}`]);
+  }finally{globalThis.fetch=original;}
+});

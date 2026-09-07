@@ -88,6 +88,11 @@ export async function getTokenImage(address:string):Promise<Response> {
   for(let step=0;step<3;step++){
     if(!safeImageUrl(url))break;
     const response:Response=await fetch(url,{signal:AbortSignal.timeout(8000),redirect:'manual',headers:{Accept:'image/webp,image/png,image/jpeg,image/*;q=0.8','User-Agent':'Thesis-Token-Showcase/1.0'}});
+    // Preserve the content identifier when the public IPFS gateway is unavailable.
+    const gatewayUrl=new URL(url);
+    if((response.status===429||response.status>=500)&&gatewayUrl.hostname==='ipfs.io'&&gatewayUrl.pathname.startsWith('/ipfs/')){
+      await response.body?.cancel();gatewayUrl.hostname='gateway.pinata.cloud';url=gatewayUrl.href;continue;
+    }
     if(response.status>=300&&response.status<400){const location:string|null=response.headers.get('Location');if(!location)break;url=new URL(location,url).href;continue;}
     const type=response.headers.get('Content-Type')?.split(';')[0]??'';
     if(!response.ok||!/^image\/(png|jpeg|webp|gif|avif)$/.test(type)||Number(response.headers.get('Content-Length'))>5_000_000){console.warn('Token image response',response.status,type);break;}
