@@ -7,7 +7,21 @@
 // Two DexScreener endpoints are needed. The token-search endpoint only knows
 // tokens that trade on a DEX, so a pump.fun token still on its bonding curve
 // comes back empty there; the per-chain endpoint does list it.
-export interface TokenStats { cap: string; change: string; up: boolean; }
+export interface TokenStats {
+  cap: string; change: string; up: boolean;
+  // The token's own identity and links, so the card cites a real asset
+  // rather than asserting figures with nothing to check them against.
+  name?: string; symbol?: string; address?: string; image?: string;
+  chart?: string; website?: string; twitter?: string; telegram?: string;
+}
+
+export function shortAddress(address: string): string {
+  return address.length > 12 ? `${address.slice(0, 4)}…${address.slice(-4)}` : address;
+}
+
+export function pumpFunUrl(address: string): string {
+  return `https://pump.fun/coin/${address}`;
+}
 
 const BY_TOKEN = 'https://api.dexscreener.com/latest/dex/tokens/';
 const BY_CHAIN = 'https://api.dexscreener.com/token-pairs/v1/';
@@ -27,7 +41,13 @@ export function formatChange(value: number): string {
   return `${value >= 0 ? '+' : '−'}${Math.abs(value).toFixed(2)}%`;
 }
 
-interface Pair { liquidity?: { usd?: number } | null; marketCap?: number; fdv?: number; priceChange?: { h24?: number } | null; }
+interface Social { url?: string; type?: string; }
+interface Pair {
+  liquidity?: { usd?: number } | null; marketCap?: number; fdv?: number;
+  priceChange?: { h24?: number } | null; url?: string;
+  baseToken?: { address?: string; name?: string; symbol?: string };
+  info?: { imageUrl?: string; websites?: { url?: string }[]; socials?: Social[] } | null;
+}
 
 export function pickPair(pairs: Pair[]): Pair | null {
   if (!pairs.length) return null;
@@ -41,10 +61,20 @@ export function toStats(pair: Pair | null): TokenStats | null {
   const cap = pair.marketCap ?? pair.fdv;
   const change = pair.priceChange?.h24;
   if (typeof cap !== 'number' && typeof change !== 'number') return null;
+  const socials = pair.info?.socials ?? [];
+  const find = (type: string) => socials.find(s => s.type === type)?.url;
   return {
     cap: typeof cap === 'number' ? formatCap(cap) : '—',
     change: typeof change === 'number' ? formatChange(change) : '—',
     up: (change ?? 0) >= 0,
+    name: pair.baseToken?.name,
+    symbol: pair.baseToken?.symbol,
+    address: pair.baseToken?.address,
+    image: pair.info?.imageUrl,
+    chart: pair.url,
+    website: pair.info?.websites?.[0]?.url,
+    twitter: find('twitter'),
+    telegram: find('telegram'),
   };
 }
 

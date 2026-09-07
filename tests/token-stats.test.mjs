@@ -1,6 +1,8 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {formatCap,formatChange,pickPair,toStats,fetchTokenStats} from '../lib/token-stats.ts';
+import {formatCap,formatChange,pickPair,toStats,fetchTokenStats,shortAddress,pumpFunUrl} from '../lib/token-stats.ts';
+
+const figures=s=>s&&{cap:s.cap,change:s.change,up:s.up};
 
 test('market caps read at a glance across magnitudes',()=>{
   assert.equal(formatCap(291397),'$291K');
@@ -25,11 +27,11 @@ test('a graduated pool outranks the stale bonding-curve pair left behind',()=>{
   const curve={dexId:'pumpfun',liquidity:null,marketCap:43520.43,priceChange:{h24:1360}};
   assert.equal(pickPair([curve,graduated]),graduated);
   assert.equal(pickPair([graduated,curve]),graduated);
-  assert.deepEqual(toStats(pickPair([curve,graduated])),{cap:'$291K',change:'+180.00%',up:true});
+  assert.deepEqual(figures(toStats(pickPair([curve,graduated]))),{cap:'$291K',change:'+180.00%',up:true});
 });
 test('a token still on its bonding curve reports no liquidity and still resolves',()=>{
   const curve={dexId:'pumpfun',liquidity:null,marketCap:6749.74,priceChange:{h24:127}};
-  assert.deepEqual(toStats(pickPair([curve])),{cap:'$6.7K',change:'+127.00%',up:true});
+  assert.deepEqual(figures(toStats(pickPair([curve]))),{cap:'$6.7K',change:'+127.00%',up:true});
 });
 test('falls back to the per-chain endpoint when the token search knows nothing',async()=>{
   const calls=[];
@@ -38,7 +40,7 @@ test('falls back to the per-chain endpoint when the token search knows nothing',
     if(String(url).includes('/latest/dex/tokens/'))return{ok:true,json:async()=>({pairs:[]})};
     return{ok:true,json:async()=>[{liquidity:null,marketCap:6749.74,priceChange:{h24:127}}]};
   };
-  assert.deepEqual(await fetchTokenStats('MINT'),{cap:'$6.7K',change:'+127.00%',up:true});
+  assert.deepEqual(figures(await fetchTokenStats('MINT')),{cap:'$6.7K',change:'+127.00%',up:true});
   assert.equal(calls.length,2);
   assert.ok(calls[1].includes('/token-pairs/v1/solana/MINT'));
 });
@@ -49,4 +51,31 @@ test('a failed, empty or rejected response yields null rather than a fake number
   assert.equal(await fetchTokenStats('MINT'),null);
   global.fetch=async()=>{throw new Error('offline');};
   assert.equal(await fetchTokenStats('MINT'),null);
+});
+
+test('the token carries its own identity and links, so figures can be checked',()=>{
+  const pair={liquidity:{usd:49701},marketCap:291397,priceChange:{h24:180},
+    url:'https://dexscreener.com/solana/pool',
+    baseToken:{address:'3rbmAAonWqxmPJ7rzQUHyZtqwqrF54EZa3pJgphmpump',name:'Zcash Cat',symbol:'ZCASHCAT'},
+    info:{imageUrl:'https://cdn/img.png',websites:[{url:'https://zcashcatsol.fun'}],
+      socials:[{type:'telegram',url:'https://t.me/zcashcatmeme'},{type:'twitter',url:'https://x.com/ZcashCatMeme'}]}};
+  const stats=toStats(pair);
+  assert.equal(stats.name,'Zcash Cat');
+  assert.equal(stats.symbol,'ZCASHCAT');
+  assert.equal(stats.twitter,'https://x.com/ZcashCatMeme');
+  assert.equal(stats.telegram,'https://t.me/zcashcatmeme');
+  assert.equal(stats.website,'https://zcashcatsol.fun');
+  assert.equal(stats.chart,'https://dexscreener.com/solana/pool');
+});
+test('a token with no listed socials leaves those links absent, not broken',()=>{
+  const stats=toStats({liquidity:{usd:1},marketCap:1000,priceChange:{h24:1},baseToken:{address:'X'},info:null});
+  assert.equal(stats.twitter,undefined);
+  assert.equal(stats.telegram,undefined);
+  assert.equal(stats.address,'X');
+});
+test('the contract address is shown abbreviated but links to the full mint',()=>{
+  const mint='3rbmAAonWqxmPJ7rzQUHyZtqwqrF54EZa3pJgphmpump';
+  assert.equal(shortAddress(mint),'3rbm…pump');
+  assert.equal(shortAddress('short'),'short');
+  assert.ok(pumpFunUrl(mint).endsWith(mint));
 });

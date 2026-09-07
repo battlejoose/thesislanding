@@ -242,19 +242,6 @@ h3 { font-size:17px; font-weight:600; margin:0; line-height:1.35; letter-spacing
 html[data-booting=true], html[data-booting=true] body { overflow:hidden; }
 @media(prefers-reduced-motion:reduce){ .boot-splash,.boot-rail span { transition:none; } }
 
-/* Dialogue box that answers a hover over a build, in the spirit of a game HUD. */
-.lore-box { position:fixed; left:50%; bottom:26px; transform:translateX(-50%); z-index:40;
-  width:min(620px,calc(100vw - 40px)); padding:16px 20px 18px; pointer-events:none;
-  background:#0f1a29ee; border:1px solid var(--accent); border-radius:3px;
-  box-shadow:0 0 0 1px #0f1a2988, 0 18px 44px #0008; animation:lore-in .16s ease both; }
-.lore-heading { margin:0 0 9px; font-size:10px; letter-spacing:2.6px; text-transform:uppercase; color:var(--accent); }
-.lore-line { margin:0 0 7px; font-size:13.5px; line-height:1.55; color:#e7eef7; }
-.lore-line:last-of-type { margin-bottom:0; }
-.lore-caret { display:inline-block; width:7px; height:14px; background:var(--accent); vertical-align:-2px; animation:lore-blink .9s steps(1) infinite; }
-@keyframes lore-in { from { opacity:0; transform:translate(-50%,7px); } to { opacity:1; transform:translate(-50%,0); } }
-@keyframes lore-blink { 0%,50% { opacity:1; } 50.01%,100% { opacity:0; } }
-@media(max-width:640px){ .lore-box { bottom:14px; padding:13px 15px 15px; } .lore-line { font-size:12.5px; } }
-@media(prefers-reduced-motion:reduce){ .lore-box { animation:none; } .lore-caret { animation:none; } }
 
 .live-dot { display:inline-block; width:7px; height:7px; margin-right:7px; border-radius:50%;
   background:#ff3d18; box-shadow:0 0 0 0 #ff3d18aa; animation:live-pulse 1.6s ease-out infinite; }
@@ -264,3 +251,10 @@ html[data-booting=true], html[data-booting=true] body { overflow:hidden; }
   100% { opacity:1; box-shadow:0 0 0 0 #ff3d1800; }
 }
 @media(prefers-reduced-motion:reduce){ .live-dot { animation:none; } }
+
+.token-links { display:flex; flex-wrap:wrap; gap:12px; margin:9px 0 0; font-size:11px; letter-spacing:.4px; }
+.token-links a { color:var(--paper-muted); border-bottom:1px solid #0000; }
+.token-links a:hover { color:var(--ink); border-bottom-color:currentColor; }
+.token-ca { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; }
+.models-ready .token-links { opacity:0; pointer-events:none; }
+.models-ready .token-links a:focus-visible { opacity:1; }
