@@ -39,9 +39,10 @@ application; `/docs/onchain.html` and `/llms.txt` provide generated documentatio
 ## Automatic deployment
 
 The site uses Cloudflare Workers Static Assets (`thesis-perps`) in the owner's
-Cloudflare account. Connect this repository's `main` branch in Workers Builds
+Cloudflare account. Workers Builds connects this repository's `main` branch
 with build command `npm test && npm run build`, deploy command `npm run deploy`,
-root directory `/`, and `NODE_VERSION=24`. GitHub's workflow also runs the tests
+and root directory `/`. `.node-version` selects Node 24. Preview builds are disabled.
+GitHub's workflow also runs the tests
 and production build. Vercel credentials are no longer used.
 
 `wrangler.jsonc` serves `dist/` with SPA fallback. `public/_headers` preserves
