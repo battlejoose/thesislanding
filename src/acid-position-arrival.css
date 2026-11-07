@@ -1,0 +1,25 @@
+/* The real confirmed card travels; its contents and close action stay usable. */
+.positions .position.position-reordering {
+  will-change: transform;
+}
+.positions .position.position-arriving {
+  transform-origin: center;
+  will-change: transform;
+  box-shadow:
+    0 0 0 1px #c6ff5280,
+    0 0 25px #c6ff5230,
+    0 14px 35px #0006;
+}
+/* Share-image clones must reflect the resting card, never a transient flight. */
+.position-capture .position.position-arriving,
+.position-capture .position.position-reordering {
+  transform: none;
+  filter: none;
+  will-change: auto;
+}
+@media (prefers-reduced-motion: reduce) {
+  .position.position-arriving,
+  .position.position-reordering {
+    will-change: auto;
+  }
+}

@@ -1,0 +1,6 @@
+.pool-contribution{margin-top:1rem;padding:1rem;border:1px solid #64834b;border-radius:16px;background:#101e16;color:#e5f4ce}
+.pool-contribution h3{margin:0 0 .5rem;color:#d1ff79}.pool-contribution p{margin:.6rem 0;font-size:.9rem}
+.pool-contribution label{display:block}.pool-contribution input:not([type=checkbox]){display:block;box-sizing:border-box;width:100%;padding:.7rem;margin:.4rem 0;background:#0c1612;color:inherit;border:1px solid #739954;border-radius:8px}
+.pool-contribution .contribution-consent{display:flex;align-items:flex-start;gap:.5rem;margin:1rem 0;font-size:.85rem}
+.pool-contribution button{width:100%;padding:.8rem;background:#cff782;color:#132018;border:0;border-radius:8px;font-weight:bold}.pool-contribution button:disabled{opacity:.5}
+.pool-contribution small{display:block;font-size:.75rem;line-height:1.4;margin-top:.5rem;color:#aabbac}

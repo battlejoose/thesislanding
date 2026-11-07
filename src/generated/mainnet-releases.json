@@ -1,0 +1,34 @@
+[
+  {
+    "name": "acidpump-mainnet-test",
+    "programId": "8Uh8KYcEPdEMSiavjRgEFew3Q5keoozZdA6AoX6az6qc",
+    "admin": "7MX8VQiMD7itp21g6TdzrCpFS8NBKytZiaemHbXEFx3w",
+    "publisher": "5ikTLEQkDJszk4ncQuUWh3fnd4TYUhr8JMu6EEj85nSu",
+    "sponsor": "DD5DJ3sMaHi4p1yUKNoWhqVDhtBt2krxq89Po5ZeqDA4",
+    "validator": "MAS1Dt9qreoRMQ14YQuhg8UTZMMzDdKhmkZMECCzk57",
+    "primaryMint": "4nCmpwne7hCoWTSpAd54uENmCgHJrHTyn4DMPCEMpump",
+    "primaryPool": "B88u4SDr4GdM6nnfeWdDqGE4VaU3naxtYPnSunECZpGE",
+    "primaryTokenProgram": "TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb",
+    "primarySymbol": "SDICE",
+    "secondarySymbol": "pSDICE",
+    "primaryLogo": "/tokens/sdice.png",
+    "secondaryLogo": "/acidpump-teal.svg",
+    "requireWalletAdmission": true
+  },
+  {
+    "name": "acidpump-mainnet-production",
+    "programId": "7YWUnPaP5tQjJTC5kZu235P5Qix2VpoJk5rTMgkXeCw7",
+    "admin": "2mqNPWFZo8oLUCYrAsEVgos1SfZJNasfs3LZxKNpvSbX",
+    "publisher": "D2Vpw3rdDCYNZbFGKP85qU4fqPx3oCeZikoKUpStm3hv",
+    "sponsor": "8AcgJzPXtXwA8X2AEYmBK54DiYoNGJPRgwNcZro6fNX9",
+    "validator": "MAS1Dt9qreoRMQ14YQuhg8UTZMMzDdKhmkZMECCzk57",
+    "primaryMint": "4nCmpwne7hCoWTSpAd54uENmCgHJrHTyn4DMPCEMpump",
+    "primaryPool": "B88u4SDr4GdM6nnfeWdDqGE4VaU3naxtYPnSunECZpGE",
+    "primaryTokenProgram": "TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb",
+    "primarySymbol": "SDICE",
+    "secondarySymbol": "pSDICE",
+    "primaryLogo": "/tokens/sdice.png",
+    "secondaryLogo": "/acidpump-teal.svg",
+    "requireWalletAdmission": false
+  }
+]

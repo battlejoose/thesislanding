@@ -1,0 +1,770 @@
+/* Acid glass: decoration never changes the trading layout or intercepts input. */
+:root {
+  --acid: #c6ff52;
+  --acid-soft: #e3ffaf;
+  --mint: #66e9b0;
+  --ice: #a3deff;
+  --muted: #99aa9d;
+  --line: #28382c;
+  --accent: var(--acid);
+  color: #eef6eb;
+  background: #080d0a;
+}
+body {
+  background:
+    radial-gradient(ellipse 560px 480px at 50% 4%, #20351362, transparent 78%),
+    radial-gradient(ellipse 500px 700px at 80% 30%, #17312635, transparent 80%),
+    #080d0a;
+  background-attachment: fixed;
+}
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background-image: radial-gradient(#b7db942b 0.6px, transparent 0.7px);
+  background-size: 22px 22px;
+  opacity: 0.22;
+  mask-image: linear-gradient(
+    90deg,
+    #0008,
+    transparent 30%,
+    transparent 70%,
+    #0008
+  );
+}
+::selection {
+  background: #c6ff5240;
+  color: #efffd2;
+}
+main {
+  position: relative;
+}
+button {
+  background: #18221a;
+  transition:
+    background 0.18s,
+    border-color 0.18s,
+    box-shadow 0.18s;
+}
+button:hover:not(:disabled) {
+  background: #243421;
+  border-color: #7fa344;
+}
+button:active:not(:disabled) {
+  filter: brightness(0.94);
+}
+button:disabled {
+  opacity: 0.42;
+}
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+a:focus-visible {
+  outline-color: #d5ff79;
+  outline-offset: 3px;
+}
+a {
+  color: #caeea0;
+}
+.brand,
+.brand:hover:not(:disabled) {
+  background: none;
+  border-color: transparent;
+  filter: none;
+}
+.top nav button {
+  background: linear-gradient(150deg, #1d291ddd, #101710);
+  border-color: #35472f;
+  color: #d0dfc8;
+  box-shadow:
+    inset 0 1px 0 #eaffc508,
+    0 3px 8px #0002;
+}
+.top nav button:hover {
+  color: #e1ffb6;
+  border-color: #93b653;
+  box-shadow: 0 0 16px #bbff3313;
+}
+.top nav .top-acid-pool {
+  position: relative;
+  isolation: isolate;
+  background: transparent;
+  border-color: transparent;
+  color: #073b36;
+  box-shadow: none;
+  font-weight: 750;
+  white-space: nowrap;
+}
+.top nav .top-acid-pool:hover {
+  background: transparent;
+  border-color: transparent;
+  color: #032e2a;
+  box-shadow: none;
+}
+.top nav .top-acid-pool:focus-visible { outline-color: #91f4d6; }
+.market-select,
+.wallet,
+.input-card {
+  background:
+    linear-gradient(130deg, #c5f5a408, transparent 55%),
+    linear-gradient(160deg, #17211a, #101711);
+  box-shadow:
+    inset 0 1px 0 #dcffc418,
+    inset 0 0 0 1px #74986722,
+    0 7px 18px #0002;
+}
+.market-select:hover:not(:disabled),
+.wallet:hover:not(:disabled) {
+  background: linear-gradient(150deg, #263a20, #17241a);
+  border-color: #698143;
+}
+.market-label {
+  text-transform: uppercase;
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  color: #a7bd9d;
+}
+.market-ticker,
+.wallet-summary {
+  color: #eef9e4;
+}
+.wallet-summary b,
+.wallet-icon {
+  color: #bade97;
+}
+.chevron {
+  color: #a2b68c;
+}
+.input-card {
+  transition:
+    box-shadow 0.25s,
+    background 0.25s;
+}
+.input-card:focus-within {
+  box-shadow:
+    inset 0 0 0 1px #b4df5f,
+    0 0 0 3px #c6ff520c,
+    0 5px 22px #0003;
+}
+.input-title {
+  color: #bfd4b3;
+}
+.inputs input:not([type="range"]),
+.leverage-value {
+  color: #f0fae6;
+  text-shadow: 0 1px 10px #a9ec3420;
+}
+.inputs small {
+  color: #93ad95;
+}
+.collateral-select {
+  color: #e1edda;
+}
+.collateral-select:hover:not(:disabled) {
+  color: #d6ff94;
+  background: transparent;
+  border-color: transparent;
+}
+.leverage-value span {
+  color: var(--acid);
+}
+.leverage-track {
+  background: #384734;
+  box-shadow: inset 0 1px 2px #0006;
+}
+.leverage-fill {
+  background: linear-gradient(90deg, #81b550, #d2ff64);
+  box-shadow: 0 0 10px #c6ff5230;
+}
+.leverage-node {
+  background: #607155;
+  box-shadow: 0 0 0 2px #152016;
+}
+.leverage-node.reached {
+  background: #cef889;
+}
+.leverage-node.snapped {
+  box-shadow: 0 0 0 3px #c6ff5220;
+}
+.leverage-range::-webkit-slider-thumb {
+  background: radial-gradient(circle at 35% 28%, #fffde2, #d3ff70 45%, #95c448);
+  border-color: #617e3b;
+  box-shadow:
+    0 0 0 3px #c6ff5216,
+    0 0 18px #adf34145;
+}
+.leverage-range::-moz-range-thumb {
+  background: radial-gradient(circle at 35% 28%, #fffde2, #d3ff70 45%, #95c448);
+  border-color: #617e3b;
+  box-shadow:
+    0 0 0 3px #c6ff5216,
+    0 0 18px #adf34145;
+}
+.leverage-limits {
+  color: #96b17b;
+}
+
+/* The hero's vapor is a small composited layer, never a filter over its text. */
+.hero-main {
+  position: relative;
+  isolation: isolate;
+}
+.hero-main::before {
+  content: "";
+  position: absolute;
+  pointer-events: none;
+  z-index: -1;
+  width: min(220px, 85%);
+  height: 104px;
+  top: -20px;
+  left: 24px;
+  background:
+    radial-gradient(ellipse at 35% 65%, #b5fc353d, transparent 60%),
+    radial-gradient(ellipse at 70% 30%, #5ed6a71e, transparent 55%);
+  filter: blur(14px);
+  opacity: 0.6;
+  animation: acid-hero-vapor 12s ease-in-out infinite alternate;
+}
+.hero-value strong {
+  color: #edf8df;
+  letter-spacing: -0.055em;
+  text-shadow: 0 0 24px #caff6010;
+}
+.hero-value .cents {
+  color: #a7cc6b;
+}
+.hero-value .coin {
+  box-shadow:
+    0 0 0 1px #b3df7c25,
+    0 6px 22px #0005;
+}
+.hero-caption {
+  color: #98b197;
+}
+.hero-market-status b {
+  color: #daebca;
+}
+.status.live {
+  background: #c6ff52;
+  box-shadow: 0 0 8px #baff5070;
+  animation: acid-live-breathe 3s ease-in-out infinite;
+}
+.sparkline {
+  filter: drop-shadow(0 0 3px #68ffbc35);
+}
+.sparkline path {
+  stroke-width: 1.8;
+}
+.price-changes {
+  padding-right: 1px;
+}
+.price-changes li:first-child::before {
+  background: #cbff6d;
+  box-shadow: 0 0 5px #c6ff5280;
+}
+.positive {
+  color: #66e9b0 !important;
+}
+.negative {
+  color: #ff837c !important;
+}
+
+/* Two equally legible directional actions, with a slow liquid light pass. */
+.trade-buttons > button {
+  overflow: hidden;
+  isolation: isolate;
+  border-color: #d7ff8980;
+  background: linear-gradient(125deg, #dcff90, #b2ed4d 75%, #c5ff67);
+  color: #18230d;
+  box-shadow:
+    inset 0 1px 0 #ffffff7a,
+    0 4px 22px #a8ef3010;
+}
+.trade-buttons > button:last-child {
+  background: linear-gradient(125deg, #d2f1e3, #a2d5bd 75%, #c2efda);
+  border-color: #d2ffe180;
+  color: #14271f;
+  box-shadow:
+    inset 0 1px 0 #ffffff7a,
+    0 4px 22px #55cc9910;
+}
+.trade-buttons > button::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset: -100% auto -100% 0;
+  width: 40%;
+  background: linear-gradient(90deg, transparent, #ffffff70, transparent);
+  transform: translateX(-250%) rotate(25deg);
+  pointer-events: none;
+  animation: acid-light-pass 10s ease-in-out infinite;
+}
+.trade-buttons > button:last-child::before {
+  animation-delay: -5s;
+}
+.trade-buttons > button:hover:not(:disabled) {
+  background: linear-gradient(120deg, #efffc2, #caff62);
+  box-shadow:
+    inset 0 1px 0 #fff9,
+    0 0 24px #c6ff5230;
+}
+.trade-buttons > button:last-child:hover:not(:disabled) {
+  background: linear-gradient(120deg, #ecfff5, #b1eed0);
+  box-shadow:
+    inset 0 1px 0 #fff9,
+    0 0 24px #67edb124;
+}
+.trade-buttons small {
+  color: #415434;
+}
+.trade-buttons > button:last-child small {
+  color: #3b5c4d;
+}
+.trade-buttons > button:disabled::before {
+  animation: none;
+  opacity: 0;
+}
+.trade-buttons > button.is-progress:disabled {
+  opacity: 1;
+}
+.under p {
+  color: #a4b6a2;
+}
+.under .accent {
+  color: #b8d985;
+}
+.under .ownership-info {
+  color: #7cebc0;
+}
+.pool-button {
+  background: linear-gradient(150deg, #22311c, #121e14);
+  border-color: #526c37;
+  box-shadow:
+    inset 0 1px 0 #e8ffc916,
+    0 0 18px #c6ff5206;
+}
+.pool-button span {
+  color: #d0f696;
+}
+.pool-button .pool-button-label {
+  color: #b6c9a7;
+}
+.pool-button:hover:not(:disabled) {
+  border-color: #b8ec55;
+  background: #263d1e;
+}
+
+/* Position cards remain stable while only their thin edge catches light. */
+.positions {
+  border-color: #34432b;
+}
+.position {
+  border-color: #354333;
+  background: linear-gradient(115deg, #141d16, #101613 65%, #101912);
+  box-shadow:
+    inset 0 1px 0 #d9ffc609,
+    0 6px 14px #0002;
+}
+.position.open {
+  border-color: #7e9e47;
+  box-shadow:
+    inset 2px 0 0 #ceff65,
+    inset 0 1px 0 #e2ff9812,
+    0 0 20px #a8e03b0b;
+}
+.position.open::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 60%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #e5ffab, transparent);
+  pointer-events: none;
+  opacity: 0.55;
+  animation: acid-rim-flow 9s ease-in-out infinite alternate;
+}
+.position h3 {
+  color: #e6f2dc;
+}
+.position .bet {
+  color: #dce7d5;
+}
+.position-top > div > small,
+.close-control small,
+.position-bottom small {
+  color: #97ac95;
+}
+.result .pnl-value.positive {
+  text-shadow: 0 0 15px #66e9b01c;
+}
+.result .pnl-value.negative {
+  text-shadow: 0 0 15px #ff837c12;
+}
+.ownership-reward {
+  color: var(--ice);
+}
+.ownership-reward:hover:not(:disabled) {
+  color: #d2f4ff;
+  background: transparent;
+  border-color: transparent;
+}
+.close-control button {
+  background: linear-gradient(140deg, #b8484c, #90333b);
+  border-color: #e8887933;
+}
+.close-control button:hover:not(:disabled) {
+  background: #c04e52;
+  border-color: #f4a09a;
+}
+.close-control button:disabled {
+  color: #a0b095;
+  background: #222c21;
+  border-color: #45503d55;
+}
+.position-pool-flow {
+  color: #c6ff52;
+}
+.position-exposure-value b {
+  color: #c6ff77;
+}
+.position-entry-price {
+  color: #bdd1a9;
+}
+.position-share-button {
+  color: #bbd1ac;
+  border-color: #43553a;
+  background: #1d2b1c;
+}
+.position-share-button:hover:not(:disabled) {
+  color: #d6ff9c;
+  border-color: #9ecb5f;
+}
+.ws-meter-track {
+  background: #27322a;
+  box-shadow: inset 0 0 0 1px #6171565c;
+}
+.ws-meter-limit .ws-meter-quote {
+  color: #b5c9a3;
+}
+.ws-meter-limit > span,
+.ws-meter-marker > span {
+  text-shadow:
+    0 0 3px #101811,
+    0 0 3px #101811;
+}
+.position-overlay {
+  background: #0f1b13f5;
+  backdrop-filter: blur(8px);
+}
+.position-overlay > b {
+  color: #d6ff99;
+}
+.transaction-progress {
+  background: #152416fa;
+  border-color: #9ebd62;
+  color: #e6f8cf;
+  box-shadow: 0 0 18px #a1d34615;
+}
+.transaction-progress > span > span {
+  color: #b5cda1;
+}
+.spinner {
+  border-color: #53683c;
+  border-top-color: #ddff8d;
+}
+.empty {
+  color: #95ad89;
+}
+.empty > span {
+  color: #a4c662;
+}
+footer {
+  color: #788c70;
+}
+footer a {
+  color: #94ad81;
+}
+
+/* The same glass and color language carries into every existing panel. */
+.scrim {
+  background: #030a05b8;
+  backdrop-filter: blur(7px);
+}
+.modal,
+.wallet-dropdown,
+.wallet-adapter-modal-wrapper {
+  background: linear-gradient(140deg, #1b271c, #101912 70%);
+  border-color: #4a603a;
+  box-shadow:
+    inset 0 1px 0 #e1ffb818,
+    0 22px 85px #000b,
+    0 0 50px #92cf2910;
+}
+.modal {
+  animation: acid-panel-in 0.2s ease-out;
+}
+.modal h2 {
+  color: #edffdf;
+}
+.icon-button,
+.wallet-panel-heading > button {
+  color: #b9ceaa;
+  background: #263423;
+}
+.tabs button {
+  border-color: #435338;
+  color: #afc6a0;
+}
+.tabs .selected,
+.token-options button[aria-pressed="true"] {
+  color: #d7ff9a;
+  background: #314324;
+  border-color: #a3c85b;
+}
+.token-options button {
+  background: #1c291c;
+}
+.token-options button:hover:not(:disabled) {
+  background: #2b3f25;
+}
+.token-options .chosen {
+  color: #c6ff52;
+}
+.primary,
+.wallet-connect,
+.sol-funding-continue {
+  color: #203012;
+  background: #c6ef84;
+  border-color: #e0ffa970;
+}
+.primary:hover:not(:disabled),
+.wallet-connect:hover:not(:disabled),
+.sol-funding-continue:hover:not(:disabled) {
+  color: #16210b;
+  background: #deffa2;
+  border-color: #c6ff52;
+}
+.metric-card,
+.inventory-card {
+  background: linear-gradient(145deg, #233121, #19251b);
+  box-shadow: inset 0 1px 0 #f4ffcd0a;
+}
+.list-row {
+  border-color: #36482f;
+}
+.payout-input,
+.wallet-deposit-inputs label,
+.wallet-recipient input,
+.token-import input,
+.sol-funding-address,
+.sol-funding-transfer input {
+  background: #101b12;
+  border-color: #405336;
+}
+.conversion {
+  border-color: #6a8d42;
+}
+.how li,
+.ownership-note,
+.ownership-balances dt {
+  color: #a8bea0;
+}
+.how b {
+  color: #e2f7d2;
+}
+.pool-treasury-amount > span {
+  color: #caf78c;
+}
+.ownership-balances header b,
+.ownership-blue {
+  color: #a3deff;
+}
+.ownership-balances section + section header b {
+  color: #81edb5;
+}
+.ownership-balances section + section {
+  border-color: #3b4c31;
+}
+.ownership-balances header button {
+  color: #d1eeff;
+  background: #22383b;
+  border-color: #628b85;
+}
+.ownership-balances section + section header button {
+  background: #273e27;
+  color: #d4ffc4;
+  border-color: #71995a;
+}
+.ownership-balances header button:disabled {
+  color: #7f9278;
+  background: #1a231b;
+  border-color: #3a4732;
+}
+.your-pools select,
+.your-pools option {
+  background: #22311f;
+  color: #d8e8cb;
+  border-color: #4d6240;
+}
+.your-pools > span {
+  color: #b1cd94;
+}
+.wallet-actions button,
+.wallet-receive-address button,
+.wallet-faucets button {
+  background: #2b3d23;
+  color: #d2edb6;
+}
+.wallet-receive-address code,
+.wallet-panel-heading .wallet-back {
+  color: #e4f2da;
+}
+.wallet-balance-row,
+.wallet-faucets,
+.wallet-balance-details {
+  border-color: #33462c;
+}
+.wallet-deposit-divider::before,
+.wallet-deposit-divider::after {
+  background: #3e512e;
+}
+.wallet-deposit .wallet-deposit-status {
+  color: #cfeab3;
+}
+.wallet-deposit-token option {
+  background: #19271b;
+}
+.balance-arrow {
+  color: #9eb683;
+}
+.position-share-text {
+  color: #e0eed5;
+}
+.position-share-tools button,
+.position-share-tools a,
+.position-share-actions button {
+  color: #d0e2be;
+  background: #293b22;
+  border-color: #4b6138;
+}
+.position-share-actions .share-open-x {
+  background: #d5f69d;
+  color: #1e2a12;
+  border-color: #dcffaa;
+}
+.position-share-notice {
+  color: #c6ff52;
+}
+.position-capture-caption {
+  color: #9db28b;
+}
+.position-capture .position-bottom {
+  grid-template-columns: minmax(0, 1fr);
+}
+.position-capture .position.open::before {
+  animation: none;
+  transform: none;
+}
+.message,
+.close-error {
+  color: #ffc2aa;
+  background: #33251f;
+}
+.message .message-funding {
+  color: #e9f5ce;
+  background: #3d482b;
+  border-color: #69754b;
+}
+.notice {
+  color: #d2c887;
+}
+.sol-refill {
+  background: #232f20;
+  border-color: #52683c;
+}
+.sol-funding .sol-funding-status {
+  color: #c9e8a7;
+}
+.scroll-list,
+.modal,
+.wallet-dropdown {
+  scrollbar-color: #668542 #142016;
+  scrollbar-width: thin;
+}
+
+@keyframes acid-hero-vapor {
+  from {
+    transform: translate3d(-6px, 4px, 0) scale(0.96);
+    opacity: 0.45;
+  }
+  to {
+    transform: translate3d(12px, -6px, 0) scale(1.14);
+    opacity: 0.8;
+  }
+}
+@keyframes acid-live-breathe {
+  0%,
+  100% {
+    opacity: 0.65;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+@keyframes acid-light-pass {
+  0%,
+  65% {
+    transform: translateX(-250%) rotate(25deg);
+  }
+  95%,
+  100% {
+    transform: translateX(550%) rotate(25deg);
+  }
+}
+@keyframes acid-rim-flow {
+  from {
+    transform: translateX(-25%);
+    opacity: 0.25;
+  }
+  to {
+    transform: translateX(100%);
+    opacity: 0.8;
+  }
+}
+@keyframes acid-panel-in {
+  from {
+    opacity: 0;
+    transform: translateY(5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@media (max-width: 360px) {
+  .top {
+    gap: 4px;
+  }
+  .top nav {
+    gap: 4px;
+  }
+  .top nav button {
+    padding-inline: 6px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+  .hero-main::before {
+    opacity: 0.45;
+  }
+  .trade-buttons > button::before {
+    display: none;
+  }
+}

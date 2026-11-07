@@ -1,0 +1,1441 @@
+{
+  "sourceCommit": "edf937dca39f6894cb0edad233eb59acdf269c90",
+  "exportedAt": "2026-11-07T01:48:04.406Z",
+  "purpose": "Standalone Thesis PERPS browser application for thesis.casino",
+  "notes": [
+    "Existing trading UI, styling, timing and wallet checks retained.",
+    "Root hosting and direct Thesis API paths replace the original subdirectory mount.",
+    "Only frontend dependencies are exported; signing implementations, keys, runtime state and private RPC endpoints are excluded.",
+    "Two server modules contain only their exported request types; oracle module contains only browser feed constants."
+  ],
+  "files": [
+    {
+      "path": "src/main.tsx",
+      "sourceSha256": "21dadafe1e31d4c562f47688e23ee77c51d0813cb62b9b049557c3de3e282cda",
+      "sha256": "a71882e581640a9342a1693fb8ce6cbce124071b593a91a88fefbe9083341d9c",
+      "adapted": true
+    },
+    {
+      "path": "scripts/public-docs.ts",
+      "sourceSha256": "1e95f6de9987a8d36023a063438d0a2b954b33ab3bc86b6e4c7d987b2444ba7b",
+      "sha256": "dbe411b0a6bf124475a4b51c71214d398424b870ed7b7904b1220d8042e7c581",
+      "adapted": true
+    },
+    {
+      "path": "src/app-url.ts",
+      "sourceSha256": "09b6463f31abcf971105f22fe6314593ccb1d7abfdac422437a669f050a6b4f2",
+      "sha256": "bfb9c11ed8adf2d840c0ccfeae11839b35cb7fe5fca7def458a9c7ace8ec047a",
+      "adapted": true
+    },
+    {
+      "path": "src/sdice-theme.css",
+      "sourceSha256": "7c3b67e5e84ad4f15e16b9be43a89b39cce2efdd7005b0cf8c9ce03ec58c38b5",
+      "sha256": "593dfcd997bc36003a0d77f6c4f283147b183c5535f9ba703e1fdcdd4243fabb",
+      "adapted": true
+    },
+    {
+      "path": "src/polyfills.ts",
+      "sourceSha256": "be268b34f19cf3dfe58cfb01ff35c904452bc9f3d0ed4ac7704eed9f870a069c",
+      "sha256": "be268b34f19cf3dfe58cfb01ff35c904452bc9f3d0ed4ac7704eed9f870a069c",
+      "adapted": false
+    },
+    {
+      "path": "src/public-route.ts",
+      "sourceSha256": "694dd83c4b0f82fee1f9df846b919e852465dd54d35f26e9dfc3b551b3085e50",
+      "sha256": "694dd83c4b0f82fee1f9df846b919e852465dd54d35f26e9dfc3b551b3085e50",
+      "adapted": false
+    },
+    {
+      "path": "src/style.css",
+      "sourceSha256": "97d7e790d6dd600e597d4f40f72fc0fa07e9d1a024062e26e36bb5f836535806",
+      "sha256": "97d7e790d6dd600e597d4f40f72fc0fa07e9d1a024062e26e36bb5f836535806",
+      "adapted": false
+    },
+    {
+      "path": "src/acid-theme.css",
+      "sourceSha256": "9a3c32ed851d2227cb5bdacb88343d2845754ae816405ebf9e59dc803af0ce2e",
+      "sha256": "9a3c32ed851d2227cb5bdacb88343d2845754ae816405ebf9e59dc803af0ce2e",
+      "adapted": false
+    },
+    {
+      "path": "src/acid-reactive.css",
+      "sourceSha256": "6b457222ec184bd92d60d0e888a6f38a769bfabdb28957007f2a5b0b95d65545",
+      "sha256": "6b457222ec184bd92d60d0e888a6f38a769bfabdb28957007f2a5b0b95d65545",
+      "adapted": false
+    },
+    {
+      "path": "src/thesis-theme.css",
+      "sourceSha256": "533719dda934e656fcea0fae33f009a83f937cdd46a9736ed473cb4c63856105",
+      "sha256": "533719dda934e656fcea0fae33f009a83f937cdd46a9736ed473cb4c63856105",
+      "adapted": false
+    },
+    {
+      "path": "src/page-motion.ts",
+      "sourceSha256": "0a82b1206e7976fb3a3a89232134b8b3eb1c2772294693ad8a3fc9dd556190ef",
+      "sha256": "0a82b1206e7976fb3a3a89232134b8b3eb1c2772294693ad8a3fc9dd556190ef",
+      "adapted": false
+    },
+    {
+      "path": "src/market-route.ts",
+      "sourceSha256": "2e53a318055209636242bbcdba6a5672de9c77374b6a526a64951b1a006b92da",
+      "sha256": "2e53a318055209636242bbcdba6a5672de9c77374b6a526a64951b1a006b92da",
+      "adapted": false
+    },
+    {
+      "path": "src/mount-trading.tsx",
+      "sourceSha256": "d153bc036ccde7aa7d3414356f384bbf52ef5b513f2fdfc878498fb14d39ddd9",
+      "sha256": "d153bc036ccde7aa7d3414356f384bbf52ef5b513f2fdfc878498fb14d39ddd9",
+      "adapted": false
+    },
+    {
+      "path": "src/PublicPages.tsx",
+      "sourceSha256": "85d51a2f04c6d68dae17bf92c03be2a9336d4c81e4f5f787332a8ea9d09780fa",
+      "sha256": "85d51a2f04c6d68dae17bf92c03be2a9336d4c81e4f5f787332a8ea9d09780fa",
+      "adapted": false
+    },
+    {
+      "path": "src/docs-content.ts",
+      "sourceSha256": "1d60d5f431821adbe5a71d56cceec32bbbb27e764a77f4294414dad7a61812e4",
+      "sha256": "1d60d5f431821adbe5a71d56cceec32bbbb27e764a77f4294414dad7a61812e4",
+      "adapted": false
+    },
+    {
+      "path": "src/page-motion.css",
+      "sourceSha256": "23ab59c7d3f7f32335753dc0521ee632ec3e3016ef74dc31b7ae805885fe8210",
+      "sha256": "23ab59c7d3f7f32335753dc0521ee632ec3e3016ef74dc31b7ae805885fe8210",
+      "adapted": false
+    },
+    {
+      "path": "src/BrowserWalletProvider.tsx",
+      "sourceSha256": "4dd8d06b88afa69c009f05cb09627e5d6cda7171035866fec72c6028d4710ab5",
+      "sha256": "4dd8d06b88afa69c009f05cb09627e5d6cda7171035866fec72c6028d4710ab5",
+      "adapted": false
+    },
+    {
+      "path": "src/ui.tsx",
+      "sourceSha256": "94f37f862239fcd7fc9083bb89a4d2cee2deacae3ee25d973bc1ca7f87297a15",
+      "sha256": "94f37f862239fcd7fc9083bb89a4d2cee2deacae3ee25d973bc1ca7f87297a15",
+      "adapted": false
+    },
+    {
+      "path": "src/BlinkApp.tsx",
+      "sourceSha256": "9b8af7e653ad5445bd4e95a5193f38af893095229218d3b20f261d3947684582",
+      "sha256": "9b8af7e653ad5445bd4e95a5193f38af893095229218d3b20f261d3947684582",
+      "adapted": false
+    },
+    {
+      "path": "src/browser-deployment.ts",
+      "sourceSha256": "d7ee91ac056be8a3a2cc706c61b589c5ceff990d466b424cb1329b0c34d8204c",
+      "sha256": "d7ee91ac056be8a3a2cc706c61b589c5ceff990d466b424cb1329b0c34d8204c",
+      "adapted": false
+    },
+    {
+      "path": "src/PlatformTokens.tsx",
+      "sourceSha256": "38e4e8f713c493f8baf601ce8afbe4939dec0d25b936e69eecf110426afb0361",
+      "sha256": "38e4e8f713c493f8baf601ce8afbe4939dec0d25b936e69eecf110426afb0361",
+      "adapted": false
+    },
+    {
+      "path": "src/platform-tokens.ts",
+      "sourceSha256": "d2d7bdf25c77867e4b67f763e7d92391ab8eb2c51ac5aeba10c0b4549cec15e2",
+      "sha256": "d2d7bdf25c77867e4b67f763e7d92391ab8eb2c51ac5aeba10c0b4549cec15e2",
+      "adapted": false
+    },
+    {
+      "path": "src/perps-market.ts",
+      "sourceSha256": "19f524c6355e0278af7254bca606af9ed6e47246462def918870ab6bced26faa",
+      "sha256": "19f524c6355e0278af7254bca606af9ed6e47246462def918870ab6bced26faa",
+      "adapted": false
+    },
+    {
+      "path": "src/AcidBackdrop.tsx",
+      "sourceSha256": "ef63577ac0d1dbe79c423277fd259c9aab8db62e39de88f4bca2d64060de99a4",
+      "sha256": "ef63577ac0d1dbe79c423277fd259c9aab8db62e39de88f4bca2d64060de99a4",
+      "adapted": false
+    },
+    {
+      "path": "src/AcidBrand.tsx",
+      "sourceSha256": "602e8230bbd6405fd8fe2ae331b0b9de6ef73a726d288b3013b8d5498c1c82c0",
+      "sha256": "602e8230bbd6405fd8fe2ae331b0b9de6ef73a726d288b3013b8d5498c1c82c0",
+      "adapted": false
+    },
+    {
+      "path": "src/AcidTradeSkin.tsx",
+      "sourceSha256": "8e3cb2b040384e5a934d6aaffefc3a1d9ceb5f402fa7e5d4f1dcf84215af339c",
+      "sha256": "8e3cb2b040384e5a934d6aaffefc3a1d9ceb5f402fa7e5d4f1dcf84215af339c",
+      "adapted": false
+    },
+    {
+      "path": "src/AcidInfoBorder.tsx",
+      "sourceSha256": "9c336679ae5f832bd463b558e55edf4caeafdfd214b1ef1af9b9b72df2c42e8c",
+      "sha256": "9c336679ae5f832bd463b558e55edf4caeafdfd214b1ef1af9b9b72df2c42e8c",
+      "adapted": false
+    },
+    {
+      "path": "src/LandingPreview.tsx",
+      "sourceSha256": "5b2a913a6488784187953739bbd98212445d81465f1a363b9d96fdf4225405dc",
+      "sha256": "5b2a913a6488784187953739bbd98212445d81465f1a363b9d96fdf4225405dc",
+      "adapted": false
+    },
+    {
+      "path": "src/DocsFlow.tsx",
+      "sourceSha256": "8b2d15e54ca1d36c9bcd43957b31e94d85f09807fdcb6315ee02934e26eee68f",
+      "sha256": "8b2d15e54ca1d36c9bcd43957b31e94d85f09807fdcb6315ee02934e26eee68f",
+      "adapted": false
+    },
+    {
+      "path": "src/docs-route.ts",
+      "sourceSha256": "e169bf2ce8e4807e68ba441d7ce1835324b1bf587cf7c739175bcee9d42a616a",
+      "sha256": "e169bf2ce8e4807e68ba441d7ce1835324b1bf587cf7c739175bcee9d42a616a",
+      "adapted": false
+    },
+    {
+      "path": "src/generated/mainnet-releases.json",
+      "sourceSha256": "7cb46954c1c8c5b234f77525c7978a9d51cc3f3ee107dad9fb12753f884b0d4a",
+      "sha256": "7cb46954c1c8c5b234f77525c7978a9d51cc3f3ee107dad9fb12753f884b0d4a",
+      "adapted": false
+    },
+    {
+      "path": "src/public-pages.css",
+      "sourceSha256": "276bb1f942636128b9e7f6aca1642c389b4978965a03367ef3380f2bd7b28ac0",
+      "sha256": "276bb1f942636128b9e7f6aca1642c389b4978965a03367ef3380f2bd7b28ac0",
+      "adapted": false
+    },
+    {
+      "path": "src/sdice-landing.css",
+      "sourceSha256": "743cf12b644e68ac377a82f75c65142fa034ede889c94afb4f6ad6171ee84240",
+      "sha256": "743cf12b644e68ac377a82f75c65142fa034ede889c94afb4f6ad6171ee84240",
+      "adapted": false
+    },
+    {
+      "path": "src/sdice-docs.css",
+      "sourceSha256": "c1d5efd34effd9b5d415c077d28889009912d36bc3ffbdf9a99de633910763d6",
+      "sha256": "c1d5efd34effd9b5d415c077d28889009912d36bc3ffbdf9a99de633910763d6",
+      "adapted": false
+    },
+    {
+      "path": "src/wallet-connection.ts",
+      "sourceSha256": "513e3ae4d23a84f214d06c6f21a9d024bbf58329fcb0e54eee15e9b746248a75",
+      "sha256": "513e3ae4d23a84f214d06c6f21a9d024bbf58329fcb0e54eee15e9b746248a75",
+      "adapted": false
+    },
+    {
+      "path": "src/backing-assets.ts",
+      "sourceSha256": "79204841865a6b690320889c3391b68cd593dca14ad3255ccb819a089eeab710",
+      "sha256": "79204841865a6b690320889c3391b68cd593dca14ad3255ccb819a089eeab710",
+      "adapted": false
+    },
+    {
+      "path": "src/Leaderboard.tsx",
+      "sourceSha256": "01ce43eb703eadb5670026a746b87232dfadb5dda6d34e6c5c24e2b296cc978e",
+      "sha256": "01ce43eb703eadb5670026a746b87232dfadb5dda6d34e6c5c24e2b296cc978e",
+      "adapted": false
+    },
+    {
+      "path": "src/InstantActivation.tsx",
+      "sourceSha256": "270b7c8c1cd199160610fc0341ccf02bd38e6807cffdfaa19fd5b7755cbd18e6",
+      "sha256": "270b7c8c1cd199160610fc0341ccf02bd38e6807cffdfaa19fd5b7755cbd18e6",
+      "adapted": false
+    },
+    {
+      "path": "src/BrowserGas.tsx",
+      "sourceSha256": "d0f446ab46d81bb1e4b8f82ce068e98edd95583ab4d6bd6e2c7435ed38aa1514",
+      "sha256": "d0f446ab46d81bb1e4b8f82ce068e98edd95583ab4d6bd6e2c7435ed38aa1514",
+      "adapted": false
+    },
+    {
+      "path": "src/browser-gas-status.ts",
+      "sourceSha256": "4a40f8ce5581b5d82f2a964ed6f2af051f18c8190118c9b8ae168ef58277a190",
+      "sha256": "4a40f8ce5581b5d82f2a964ed6f2af051f18c8190118c9b8ae168ef58277a190",
+      "adapted": false
+    },
+    {
+      "path": "src/blink-wallet.ts",
+      "sourceSha256": "d6b34ed0733f063c3b1b4ea30cd8e336f105685d35783ffb7bb63909c0ffc3df",
+      "sha256": "d6b34ed0733f063c3b1b4ea30cd8e336f105685d35783ffb7bb63909c0ffc3df",
+      "adapted": false
+    },
+    {
+      "path": "src/wallet-approval.ts",
+      "sourceSha256": "50fbae5e3a363213d4b464356da4eb7be41a5a3fda2f2d4f0af45331ddb81666",
+      "sha256": "50fbae5e3a363213d4b464356da4eb7be41a5a3fda2f2d4f0af45331ddb81666",
+      "adapted": false
+    },
+    {
+      "path": "src/wallet-mode.ts",
+      "sourceSha256": "146bef9cdffffe8bc6802caf05898c1f278969e5355c3b571843885522967607",
+      "sha256": "146bef9cdffffe8bc6802caf05898c1f278969e5355c3b571843885522967607",
+      "adapted": false
+    },
+    {
+      "path": "src/wallet-preference.ts",
+      "sourceSha256": "dd9b171c44ce7571c252338d240e392884a5ce09de88f7371a67fae79a6f8a47",
+      "sha256": "dd9b171c44ce7571c252338d240e392884a5ce09de88f7371a67fae79a6f8a47",
+      "adapted": false
+    },
+    {
+      "path": "src/wallet-mode.css",
+      "sourceSha256": "566d567ea740048939ad89e7af2368625729ca214c50237e1bc271bd0aa11168",
+      "sha256": "566d567ea740048939ad89e7af2368625729ca214c50237e1bc271bd0aa11168",
+      "adapted": false
+    },
+    {
+      "path": "src/TradeActivityBar.tsx",
+      "sourceSha256": "2427cc4ecad27ea5cc2ac9c2463d4bcf9a883a1e8f6b963130ea0060974d7690",
+      "sha256": "2427cc4ecad27ea5cc2ac9c2463d4bcf9a883a1e8f6b963130ea0060974d7690",
+      "adapted": false
+    },
+    {
+      "path": "src/deposit-approval.ts",
+      "sourceSha256": "1ebb8a46f508dd824900be5a99d242295494d6b148dbb371232410d53fd3b653",
+      "sha256": "1ebb8a46f508dd824900be5a99d242295494d6b148dbb371232410d53fd3b653",
+      "adapted": false
+    },
+    {
+      "path": "src/deposit-wallet.ts",
+      "sourceSha256": "bed76556ff398beab4c12127effc165ff2a05df68793aaa3f0cdaa21837cd328",
+      "sha256": "bed76556ff398beab4c12127effc165ff2a05df68793aaa3f0cdaa21837cd328",
+      "adapted": false
+    },
+    {
+      "path": "src/visible-value.ts",
+      "sourceSha256": "b701ccc010605903a72e9406ed0649fb6f78ed4e9aa066b516c6f7e3dcaf7c2c",
+      "sha256": "b701ccc010605903a72e9406ed0649fb6f78ed4e9aa066b516c6f7e3dcaf7c2c",
+      "adapted": false
+    },
+    {
+      "path": "src/client.ts",
+      "sourceSha256": "cf15f81d5d626bbb3e774c916829a7eaaa961815a966e17939e021c45d62bde9",
+      "sha256": "cf15f81d5d626bbb3e774c916829a7eaaa961815a966e17939e021c45d62bde9",
+      "adapted": false
+    },
+    {
+      "path": "src/math.ts",
+      "sourceSha256": "e6686c1874075494e17c167d096d4bf6fe3bd502db4a779ae0096f42658e38b4",
+      "sha256": "e6686c1874075494e17c167d096d4bf6fe3bd502db4a779ae0096f42658e38b4",
+      "adapted": false
+    },
+    {
+      "path": "src/collateral-value.ts",
+      "sourceSha256": "3f716410ebd4af2fdb3f221172cce0c8d73f29141da00a8f3e2d6e3e1e0b57aa",
+      "sha256": "3f716410ebd4af2fdb3f221172cce0c8d73f29141da00a8f3e2d6e3e1e0b57aa",
+      "adapted": false
+    },
+    {
+      "path": "src/position-order.ts",
+      "sourceSha256": "813dea45b632fb447c2cf23dcc201625ef75a107f0d2d528d5ea9458915151b3",
+      "sha256": "813dea45b632fb447c2cf23dcc201625ef75a107f0d2d528d5ea9458915151b3",
+      "adapted": false
+    },
+    {
+      "path": "src/history-limit.ts",
+      "sourceSha256": "7364281f2e728a8b6b6ec272aa8203a4a43042bb48f8bec7ea07aad45f66652c",
+      "sha256": "7364281f2e728a8b6b6ec272aa8203a4a43042bb48f8bec7ea07aad45f66652c",
+      "adapted": false
+    },
+    {
+      "path": "src/PositionResult.tsx",
+      "sourceSha256": "519e357064af92445cd736f3eee2aae9aad95eb755564ad341f2715e97b16a8d",
+      "sha256": "519e357064af92445cd736f3eee2aae9aad95eb755564ad341f2715e97b16a8d",
+      "adapted": false
+    },
+    {
+      "path": "src/position-lock.ts",
+      "sourceSha256": "93293b4b339ae67f0805e6a74c04478a26a419df9a9f9ac86bf14e3cca8a3ae3",
+      "sha256": "93293b4b339ae67f0805e6a74c04478a26a419df9a9f9ac86bf14e3cca8a3ae3",
+      "adapted": false
+    },
+    {
+      "path": "src/position-hold.ts",
+      "sourceSha256": "f72d6395373873ea291c01f69cd12e2918c100673ec433a55db1e7ec21f568ab",
+      "sha256": "f72d6395373873ea291c01f69cd12e2918c100673ec433a55db1e7ec21f568ab",
+      "adapted": false
+    },
+    {
+      "path": "src/PositionCloseButton.tsx",
+      "sourceSha256": "a7fa8fceb27191d52a22338e4c88eb0be1f9016cde72125789c4706733bca241",
+      "sha256": "a7fa8fceb27191d52a22338e4c88eb0be1f9016cde72125789c4706733bca241",
+      "adapted": false
+    },
+    {
+      "path": "src/usePositionOrder.ts",
+      "sourceSha256": "d18c2348ad06a96eb05f1ef45f57164914a9d96428b48eb7cbaafae1e53a65f0",
+      "sha256": "d18c2348ad06a96eb05f1ef45f57164914a9d96428b48eb7cbaafae1e53a65f0",
+      "adapted": false
+    },
+    {
+      "path": "src/position-interactions.css",
+      "sourceSha256": "ce2c2be82219eff16aef365fd3d845dcd058488af39d5849c1e055a69585cc7a",
+      "sha256": "ce2c2be82219eff16aef365fd3d845dcd058488af39d5849c1e055a69585cc7a",
+      "adapted": false
+    },
+    {
+      "path": "src/wallet-funding.css",
+      "sourceSha256": "5ffa31f9176a74b6a35795898a39bdf5d93dc334e9be9910b62cb49f917fb457",
+      "sha256": "5ffa31f9176a74b6a35795898a39bdf5d93dc334e9be9910b62cb49f917fb457",
+      "adapted": false
+    },
+    {
+      "path": "src/AcidPoolButton.tsx",
+      "sourceSha256": "1f1f33ddb0f81e0037c8ac2714eb6320cf217a0e3137889ae33aea6ae003a784",
+      "sha256": "1f1f33ddb0f81e0037c8ac2714eb6320cf217a0e3137889ae33aea6ae003a784",
+      "adapted": false
+    },
+    {
+      "path": "src/RewardBeaker.tsx",
+      "sourceSha256": "62679eb4af576d95b54367b3c01c3f19c0313d63203e37313c2693e305c357d2",
+      "sha256": "62679eb4af576d95b54367b3c01c3f19c0313d63203e37313c2693e305c357d2",
+      "adapted": false
+    },
+    {
+      "path": "src/ActivePositionAcid.tsx",
+      "sourceSha256": "ca3aebb5b832c839ca692c79ca8789ffdcccf02af6a1d0e9f5e833f8c7e68acf",
+      "sha256": "ca3aebb5b832c839ca692c79ca8789ffdcccf02af6a1d0e9f5e833f8c7e68acf",
+      "adapted": false
+    },
+    {
+      "path": "src/usePositionArrival.ts",
+      "sourceSha256": "588e92f39f129bd562a52b136010e4d68fc7f463a624486c4109282151c4ebd6",
+      "sha256": "588e92f39f129bd562a52b136010e4d68fc7f463a624486c4109282151c4ebd6",
+      "adapted": false
+    },
+    {
+      "path": "src/AcidHow.tsx",
+      "sourceSha256": "0032f505e712cb4bc06ff272b1badb23d162b81a3fed667140b21f2f895bbb7f",
+      "sha256": "0032f505e712cb4bc06ff272b1badb23d162b81a3fed667140b21f2f895bbb7f",
+      "adapted": false
+    },
+    {
+      "path": "src/AcidMetrics.tsx",
+      "sourceSha256": "86ee71458f62a86eca9eb519a63ebabfc5dd7eb8b663ee10f314cda8d6d2b50c",
+      "sha256": "86ee71458f62a86eca9eb519a63ebabfc5dd7eb8b663ee10f314cda8d6d2b50c",
+      "adapted": false
+    },
+    {
+      "path": "src/metrics-model.ts",
+      "sourceSha256": "bb966c621851e929de6c4d4bfc3381c1e15c9c9ed3d4eedb1550556a9b05c580",
+      "sha256": "bb966c621851e929de6c4d4bfc3381c1e15c9c9ed3d4eedb1550556a9b05c580",
+      "adapted": false
+    },
+    {
+      "path": "src/display-clock.ts",
+      "sourceSha256": "cc97c96643e10e554d9898b14c69264a7d2bca51df4cdd3201cbf93d2039a33c",
+      "sha256": "cc97c96643e10e554d9898b14c69264a7d2bca51df4cdd3201cbf93d2039a33c",
+      "adapted": false
+    },
+    {
+      "path": "src/entry-maintenance.css",
+      "sourceSha256": "9620305b80a248b276e7d4643bf2d99a9c7dca195b25c2d0001a87ab80651a8f",
+      "sha256": "9620305b80a248b276e7d4643bf2d99a9c7dca195b25c2d0001a87ab80651a8f",
+      "adapted": false
+    },
+    {
+      "path": "src/confirmation.ts",
+      "sourceSha256": "d8bdb44d852146012d7b6c85f062c7a615026461540412450514447974ec0ec4",
+      "sha256": "d8bdb44d852146012d7b6c85f062c7a615026461540412450514447974ec0ec4",
+      "adapted": false
+    },
+    {
+      "path": "src/snapshot-order.ts",
+      "sourceSha256": "481ef825396e4c3c63b9eb3faec0112f1158fa1e2dce00d4bbc0b474ad957bc3",
+      "sha256": "481ef825396e4c3c63b9eb3faec0112f1158fa1e2dce00d4bbc0b474ad957bc3",
+      "adapted": false
+    },
+    {
+      "path": "src/sponsored-confirmation.ts",
+      "sourceSha256": "e2f8950884384d3c7494b4b12d85e603676086d9d0bd8fd59960cb43e78a87d7",
+      "sha256": "e2f8950884384d3c7494b4b12d85e603676086d9d0bd8fd59960cb43e78a87d7",
+      "adapted": false
+    },
+    {
+      "path": "src/TransactionProgress.tsx",
+      "sourceSha256": "4db068e98d3f2d5c739ae1ff17342c35f92c9af7b45ffac1451e18893e1dd9a7",
+      "sha256": "4db068e98d3f2d5c739ae1ff17342c35f92c9af7b45ffac1451e18893e1dd9a7",
+      "adapted": false
+    },
+    {
+      "path": "src/transaction-progress.ts",
+      "sourceSha256": "985b6f8b9fb65f518f4cc0c1767fc0012d3e1431986dde5201a39aa8b3bf1fc7",
+      "sha256": "985b6f8b9fb65f518f4cc0c1767fc0012d3e1431986dde5201a39aa8b3bf1fc7",
+      "adapted": false
+    },
+    {
+      "path": "src/components.tsx",
+      "sourceSha256": "ffcdbe824c29b7e55c36185e57a6cf9a3051ddbea822411a16ef4faf3a519943",
+      "sha256": "ffcdbe824c29b7e55c36185e57a6cf9a3051ddbea822411a16ef4faf3a519943",
+      "adapted": false
+    },
+    {
+      "path": "src/core-markets.ts",
+      "sourceSha256": "bc5324fecd7f9a8813ce9877fb3d2a83ab54168398356e03aa4ca4d1997ce35a",
+      "sha256": "bc5324fecd7f9a8813ce9877fb3d2a83ab54168398356e03aa4ca4d1997ce35a",
+      "adapted": false
+    },
+    {
+      "path": "src/market-view.ts",
+      "sourceSha256": "3b28957c1e748e7274f8877b8216412fbd79fd3b335a82e992aad9d8689ce4d2",
+      "sha256": "3b28957c1e748e7274f8877b8216412fbd79fd3b335a82e992aad9d8689ce4d2",
+      "adapted": false
+    },
+    {
+      "path": "src/PriceHero.tsx",
+      "sourceSha256": "628db6e017e8e3a5aaaed6a3a98e9df82d6d1d24258c8e44f134b87bd8d47098",
+      "sha256": "628db6e017e8e3a5aaaed6a3a98e9df82d6d1d24258c8e44f134b87bd8d47098",
+      "adapted": false
+    },
+    {
+      "path": "src/live-market-prices.ts",
+      "sourceSha256": "89135b17bf5f30b13300b6f0c212e050a1d703bf2b68cc8928725bb5c887ad0d",
+      "sha256": "89135b17bf5f30b13300b6f0c212e050a1d703bf2b68cc8928725bb5c887ad0d",
+      "adapted": false
+    },
+    {
+      "path": "src/event-source.ts",
+      "sourceSha256": "5b125c16054373b60342156664b637b4abc7a9a4f9ad0e310d05a675fbfe6426",
+      "sha256": "5b125c16054373b60342156664b637b4abc7a9a4f9ad0e310d05a675fbfe6426",
+      "adapted": false
+    },
+    {
+      "path": "src/state-refresh.ts",
+      "sourceSha256": "4e3c7efbab63c97a304bd1b13b4eb034d5b2b449f61a1718598925b7f59ef43c",
+      "sha256": "4e3c7efbab63c97a304bd1b13b4eb034d5b2b449f61a1718598925b7f59ef43c",
+      "adapted": false
+    },
+    {
+      "path": "src/snapshot-stream.ts",
+      "sourceSha256": "f9c192a1ac4e47695cfcba8115fb3c64ef0e6f49f61ebb1c99950928bf19a58a",
+      "sha256": "f9c192a1ac4e47695cfcba8115fb3c64ef0e6f49f61ebb1c99950928bf19a58a",
+      "adapted": false
+    },
+    {
+      "path": "src/LiquidationMeter.tsx",
+      "sourceSha256": "dbbfde5c3b99eddd7f617a64f352b2d6f7a592398fefdef38e9b5f67d18873ed",
+      "sha256": "dbbfde5c3b99eddd7f617a64f352b2d6f7a592398fefdef38e9b5f67d18873ed",
+      "adapted": false
+    },
+    {
+      "path": "src/PositionShare.tsx",
+      "sourceSha256": "d61c81bdc238c3f74e575bb7ecc1edcbbad53401d76950c5aa926740be5d3ad3",
+      "sha256": "d61c81bdc238c3f74e575bb7ecc1edcbbad53401d76950c5aa926740be5d3ad3",
+      "adapted": false
+    },
+    {
+      "path": "src/LeverageSlider.tsx",
+      "sourceSha256": "665040188db3bc49aaee1dbfd57c52cc57e91c40fd478c9e64e1658bb8f9784f",
+      "sha256": "665040188db3bc49aaee1dbfd57c52cc57e91c40fd478c9e64e1658bb8f9784f",
+      "adapted": false
+    },
+    {
+      "path": "src/WalletDropdown.tsx",
+      "sourceSha256": "aaaf39b61e4273dc8afe5c4930282132fbc402edd754305b981ff65aad3cda01",
+      "sha256": "aaaf39b61e4273dc8afe5c4930282132fbc402edd754305b981ff65aad3cda01",
+      "adapted": false
+    },
+    {
+      "path": "src/BetTokenList.tsx",
+      "sourceSha256": "2f05ce9d777555fc11c00ac08d0bd757128493417066160d733776fa09e5fa48",
+      "sha256": "2f05ce9d777555fc11c00ac08d0bd757128493417066160d733776fa09e5fa48",
+      "adapted": false
+    },
+    {
+      "path": "src/TokenRegistration.tsx",
+      "sourceSha256": "1195aad3f1021916cddc05c8c0e8fff40c9135ef3d57bb12cfddc4d14b10f338",
+      "sha256": "1195aad3f1021916cddc05c8c0e8fff40c9135ef3d57bb12cfddc4d14b10f338",
+      "adapted": false
+    },
+    {
+      "path": "src/wallet-discovery.ts",
+      "sourceSha256": "191442f2f3a4968ca65c36f4dbf6fcdacbaff13d7ed8b8f7baab28dead363b47",
+      "sha256": "191442f2f3a4968ca65c36f4dbf6fcdacbaff13d7ed8b8f7baab28dead363b47",
+      "adapted": false
+    },
+    {
+      "path": "src/useWalletDiscovery.ts",
+      "sourceSha256": "e7345a59e264a8880d2398dbf70e6c041176e08bd6be1ff1d4a9f9b0482d3fe5",
+      "sha256": "e7345a59e264a8880d2398dbf70e6c041176e08bd6be1ff1d4a9f9b0482d3fe5",
+      "adapted": false
+    },
+    {
+      "path": "src/useTokenDisplays.ts",
+      "sourceSha256": "87626622dd1d11b664ba79cf4b6a69ee8d69fca35694ff3e102e976ab84cbbb2",
+      "sha256": "87626622dd1d11b664ba79cf4b6a69ee8d69fca35694ff3e102e976ab84cbbb2",
+      "adapted": false
+    },
+    {
+      "path": "src/token-display.ts",
+      "sourceSha256": "db7407f243a630c15868b1b193262c9afeb3c115b7f8b00120d2a3c30eb2976b",
+      "sha256": "db7407f243a630c15868b1b193262c9afeb3c115b7f8b00120d2a3c30eb2976b",
+      "adapted": false
+    },
+    {
+      "path": "src/bet-backing-label.ts",
+      "sourceSha256": "09fc1bf8b92375d32d6f3fa57bc72384080f2929966ff8c992fc5c314055ad1c",
+      "sha256": "09fc1bf8b92375d32d6f3fa57bc72384080f2929966ff8c992fc5c314055ad1c",
+      "adapted": false
+    },
+    {
+      "path": "src/BetAmountPresets.tsx",
+      "sourceSha256": "6de6fedd469a0ed29d09c9e2108515ddb428172d55969312730702459b094e90",
+      "sha256": "6de6fedd469a0ed29d09c9e2108515ddb428172d55969312730702459b094e90",
+      "adapted": false
+    },
+    {
+      "path": "src/core-backing.ts",
+      "sourceSha256": "6aea31aba03e8e25099731df0f2e07d9fabcae98740eccf0acdad4453ffd18f6",
+      "sha256": "6aea31aba03e8e25099731df0f2e07d9fabcae98740eccf0acdad4453ffd18f6",
+      "adapted": false
+    },
+    {
+      "path": "src/CoreBacking.tsx",
+      "sourceSha256": "426782ba4a620d2884cea614fca2d88bc3ed07989f580977dea6b3a716fcd187",
+      "sha256": "426782ba4a620d2884cea614fca2d88bc3ed07989f580977dea6b3a716fcd187",
+      "adapted": false
+    },
+    {
+      "path": "src/backing-display.ts",
+      "sourceSha256": "c8427120b94f47b73cc5bfe22ef4ef987e4b5f74a25d09832cde99bfa2efc2af",
+      "sha256": "c8427120b94f47b73cc5bfe22ef4ef987e4b5f74a25d09832cde99bfa2efc2af",
+      "adapted": false
+    },
+    {
+      "path": "src/BackingCountdown.tsx",
+      "sourceSha256": "e1a778cded321106a04ce435fcec1328ce424c8ffd1327739cf6a32fde6a8420",
+      "sha256": "e1a778cded321106a04ce435fcec1328ce424c8ffd1327739cf6a32fde6a8420",
+      "adapted": false
+    },
+    {
+      "path": "src/AcidHowButtonSkin.tsx",
+      "sourceSha256": "2fbbcc691ac9c5ef1c543b6a27ff35e69caf35b580ab12dbe673a546d9c00fb0",
+      "sha256": "2fbbcc691ac9c5ef1c543b6a27ff35e69caf35b580ab12dbe673a546d9c00fb0",
+      "adapted": false
+    },
+    {
+      "path": "src/AcidPoolButtonSkin.tsx",
+      "sourceSha256": "2e07eee1e5a1d4fb619cf7aafa6b3659d691c1a89aac19b0df435b9361594e99",
+      "sha256": "2e07eee1e5a1d4fb619cf7aafa6b3659d691c1a89aac19b0df435b9361594e99",
+      "adapted": false
+    },
+    {
+      "path": "src/unified-wallet-changes.ts",
+      "sourceSha256": "4489c8c4d75678586d789036f477f55de1f94dc1cdbd7029e4c832f42396a3d6",
+      "sha256": "4489c8c4d75678586d789036f477f55de1f94dc1cdbd7029e4c832f42396a3d6",
+      "adapted": false
+    },
+    {
+      "path": "src/SwapEffects.tsx",
+      "sourceSha256": "bfdcd3e407b98db3ba011c96f3952ea6ad4e05d1e203a4c2bf5208bc0f2b2781",
+      "sha256": "bfdcd3e407b98db3ba011c96f3952ea6ad4e05d1e203a4c2bf5208bc0f2b2781",
+      "adapted": false
+    },
+    {
+      "path": "src/wallet-balance-polling.ts",
+      "sourceSha256": "18e124ee8358176f9d5be756396ec4493bad6dea49b5bac1a0fdbea571869ee0",
+      "sha256": "18e124ee8358176f9d5be756396ec4493bad6dea49b5bac1a0fdbea571869ee0",
+      "adapted": false
+    },
+    {
+      "path": "src/WalletEffects.tsx",
+      "sourceSha256": "1deac2d51b835f3b348b78ca9bac766e4c269725ae1cb236bb3f0579cc72b006",
+      "sha256": "1deac2d51b835f3b348b78ca9bac766e4c269725ae1cb236bb3f0579cc72b006",
+      "adapted": false
+    },
+    {
+      "path": "src/AcidRewards.tsx",
+      "sourceSha256": "5b2643b7a3abe63d0abcbfbcfd60496fe4355352b5afe7c1be4b44c3598d68be",
+      "sha256": "5b2643b7a3abe63d0abcbfbcfd60496fe4355352b5afe7c1be4b44c3598d68be",
+      "adapted": false
+    },
+    {
+      "path": "src/reward-confirmation.ts",
+      "sourceSha256": "a8069ff921471fa049c4e0dcfb61e60c045bfde117d051f5daf396fa97f1b076",
+      "sha256": "a8069ff921471fa049c4e0dcfb61e60c045bfde117d051f5daf396fa97f1b076",
+      "adapted": false
+    },
+    {
+      "path": "src/SettlementReceipt.tsx",
+      "sourceSha256": "bad5b33daa8883dfe5b0969c62afe529ef14079014fbda95bdae6cfc29c2d643",
+      "sha256": "bad5b33daa8883dfe5b0969c62afe529ef14079014fbda95bdae6cfc29c2d643",
+      "adapted": false
+    },
+    {
+      "path": "src/settlement-transactions.ts",
+      "sourceSha256": "a0fb503c6715ddb9a6cf8926900f5bcfd0ad4fd84cc20765f69fc9bff378b2df",
+      "sha256": "a0fb503c6715ddb9a6cf8926900f5bcfd0ad4fd84cc20765f69fc9bff378b2df",
+      "adapted": false
+    },
+    {
+      "path": "src/SolFunding.tsx",
+      "sourceSha256": "8e8fa10438023204f5ba5b05dd22acd15bd4a9c01bee56dcbe00e9746dd66266",
+      "sha256": "8e8fa10438023204f5ba5b05dd22acd15bd4a9c01bee56dcbe00e9746dd66266",
+      "adapted": false
+    },
+    {
+      "path": "src/wallet-deposit.ts",
+      "sourceSha256": "f010fcefbbbd46fc0c535fc0fca9cc1d8f0bd09cc3516b290f539284cb122d9c",
+      "sha256": "f010fcefbbbd46fc0c535fc0fca9cc1d8f0bd09cc3516b290f539284cb122d9c",
+      "adapted": false
+    },
+    {
+      "path": "src/WalletDeposit.tsx",
+      "sourceSha256": "a8030728e1c044ac970d0e15f7943d3b9a1b829e3569314111d4f4a4335a21fe",
+      "sha256": "a8030728e1c044ac970d0e15f7943d3b9a1b829e3569314111d4f4a4335a21fe",
+      "adapted": false
+    },
+    {
+      "path": "src/funding-wallet.ts",
+      "sourceSha256": "7a9973970cb31d851e92607720ed43f3f61b4b149bd967c2f7c1318d131dcee1",
+      "sha256": "7a9973970cb31d851e92607720ed43f3f61b4b149bd967c2f7c1318d131dcee1",
+      "adapted": false
+    },
+    {
+      "path": "src/WalletWithdraw.tsx",
+      "sourceSha256": "a0dcb8c923b93f3443dd046efbdf5ecc0a30e7688256f61400cc0a961bc03392",
+      "sha256": "a0dcb8c923b93f3443dd046efbdf5ecc0a30e7688256f61400cc0a961bc03392",
+      "adapted": false
+    },
+    {
+      "path": "src/withdrawal.ts",
+      "sourceSha256": "34d3e3fd7b8360eba82c3ac64839faf6201bc65a39425f875e186b704a11e215",
+      "sha256": "34d3e3fd7b8360eba82c3ac64839faf6201bc65a39425f875e186b704a11e215",
+      "adapted": false
+    },
+    {
+      "path": "src/withdrawal-plan.ts",
+      "sourceSha256": "518a9c1a1fa49cee83eddcd65d985a467ab9a2c70af1ff3e3390ec3eb557a1a4",
+      "sha256": "518a9c1a1fa49cee83eddcd65d985a467ab9a2c70af1ff3e3390ec3eb557a1a4",
+      "adapted": false
+    },
+    {
+      "path": "src/ownership.ts",
+      "sourceSha256": "79b64db95261b7ab0b6dee5cd11c84a001fdd3e41a5a2ee3f8c348c6b1f0d859",
+      "sha256": "79b64db95261b7ab0b6dee5cd11c84a001fdd3e41a5a2ee3f8c348c6b1f0d859",
+      "adapted": false
+    },
+    {
+      "path": "src/risk.ts",
+      "sourceSha256": "92fc43d08d929f8c8b306dbbf73015fc68f208bbee585ddceb05e26a492cb639",
+      "sha256": "92fc43d08d929f8c8b306dbbf73015fc68f208bbee585ddceb05e26a492cb639",
+      "adapted": false
+    },
+    {
+      "path": "src/PoolContribution.tsx",
+      "sourceSha256": "cede19eef9e597fdbe648659c66caf26faac4569362655a907c24ab61b79ac1c",
+      "sha256": "cede19eef9e597fdbe648659c66caf26faac4569362655a907c24ab61b79ac1c",
+      "adapted": false
+    },
+    {
+      "path": "server/sponsor.ts",
+      "sourceSha256": "6f11e58741ddb7746fba3e922a451dce5078243d1107f6fa098af42a228a734b",
+      "sha256": "fad53bf96a2a20e64073e14a1a7c83ce4b26a1a6fc6be3eaeb2b860b2435919d",
+      "adapted": true
+    },
+    {
+      "path": "server/er-transactions.ts",
+      "sourceSha256": "17a9ba11bc04f47fe3971e26c1b74c340368c97c5c86de625f991de9ff4aa717",
+      "sha256": "8d234670ac55ca7e19bad69015de91ab05510f7d3fdb15fa53945c1ea75ae64a",
+      "adapted": true
+    },
+    {
+      "path": "src/er-state.ts",
+      "sourceSha256": "a2383c01d365e4bd833c038385a231445d22cfe13af5a352afd01aeffa8a0d5a",
+      "sha256": "a2383c01d365e4bd833c038385a231445d22cfe13af5a352afd01aeffa8a0d5a",
+      "adapted": false
+    },
+    {
+      "path": "src/execution-layer.ts",
+      "sourceSha256": "a0e5410f62bd45c46c1eae223b41450bd703db0f2d3600e512836ff99a57f889",
+      "sha256": "a0e5410f62bd45c46c1eae223b41450bd703db0f2d3600e512836ff99a57f889",
+      "adapted": false
+    },
+    {
+      "path": "src/deployment-profile.ts",
+      "sourceSha256": "df2a44d339e75e0eda434dfef38d4e0cff657d4acfdda702bf9007501c7ff2d6",
+      "sha256": "df2a44d339e75e0eda434dfef38d4e0cff657d4acfdda702bf9007501c7ff2d6",
+      "adapted": false
+    },
+    {
+      "path": "src/wallet-recovery.ts",
+      "sourceSha256": "d8801d18e429ece39ffc5ad6931cd98bd77ab5de465ab0824690158a12b49240",
+      "sha256": "d8801d18e429ece39ffc5ad6931cd98bd77ab5de465ab0824690158a12b49240",
+      "adapted": false
+    },
+    {
+      "path": "src/wallet-balances.ts",
+      "sourceSha256": "b9bf5fba84c4a4d5e4c0afe8980862fe36d4e94a2e94adeac20fc3008b27507a",
+      "sha256": "b9bf5fba84c4a4d5e4c0afe8980862fe36d4e94a2e94adeac20fc3008b27507a",
+      "adapted": false
+    },
+    {
+      "path": "src/trading-withdrawal.ts",
+      "sourceSha256": "cd0d1d78f209cac4af76f6bf5c94892493271791f856194f2315698f97760ef0",
+      "sha256": "cd0d1d78f209cac4af76f6bf5c94892493271791f856194f2315698f97760ef0",
+      "adapted": false
+    },
+    {
+      "path": "src/trading-funding.ts",
+      "sourceSha256": "7d6779882b18ac044f1e50cf3bc25f5d01ecac4021718633f4eb2929e0e76ac4",
+      "sha256": "7d6779882b18ac044f1e50cf3bc25f5d01ecac4021718633f4eb2929e0e76ac4",
+      "adapted": false
+    },
+    {
+      "path": "src/trading-request.ts",
+      "sourceSha256": "b57a0e57cb614057afc204aa15d302e790127c5802e1dae7bd13dba4f7af5e5c",
+      "sha256": "b57a0e57cb614057afc204aa15d302e790127c5802e1dae7bd13dba4f7af5e5c",
+      "adapted": false
+    },
+    {
+      "path": "src/collateral-capacity.ts",
+      "sourceSha256": "7b2c3ac5def1cab992efa6617519772b756219aacbaf0a69ccd0250952095850",
+      "sha256": "7b2c3ac5def1cab992efa6617519772b756219aacbaf0a69ccd0250952095850",
+      "adapted": false
+    },
+    {
+      "path": "src/opening-prices.ts",
+      "sourceSha256": "4cab4f79afdd5199c694aeb84dc69ad089a081aafc91865e4b460f3a0973c9fe",
+      "sha256": "4cab4f79afdd5199c694aeb84dc69ad089a081aafc91865e4b460f3a0973c9fe",
+      "adapted": false
+    },
+    {
+      "path": "src/price-retry.ts",
+      "sourceSha256": "da53e1ebd1b8e52121762b876a8fafd599c9886b62fdd320ba4ca8e0f8889bb5",
+      "sha256": "da53e1ebd1b8e52121762b876a8fafd599c9886b62fdd320ba4ca8e0f8889bb5",
+      "adapted": false
+    },
+    {
+      "path": "src/funding.ts",
+      "sourceSha256": "d28645b7a792db1da60c96a44df7909d7186db8d30053f32833346a94a03b68f",
+      "sha256": "d28645b7a792db1da60c96a44df7909d7186db8d30053f32833346a94a03b68f",
+      "adapted": false
+    },
+    {
+      "path": "src/blink-client.ts",
+      "sourceSha256": "2daa80292e473ac4dfaf96938251194cf51e7fb224224cb5748529b7e22995dd",
+      "sha256": "2daa80292e473ac4dfaf96938251194cf51e7fb224224cb5748529b7e22995dd",
+      "adapted": false
+    },
+    {
+      "path": "src/blink.css",
+      "sourceSha256": "ef7ce6e8f3aad4f5c44b674040f00482fd076a23b7761a0d3faa1706c4eef76b",
+      "sha256": "ef7ce6e8f3aad4f5c44b674040f00482fd076a23b7761a0d3faa1706c4eef76b",
+      "adapted": false
+    },
+    {
+      "path": "src/mainnet-release.ts",
+      "sourceSha256": "f17b2d71cfbdba0516abb18aa0ee1659581b901a8c133b6a6f3e5f0d7d61b919",
+      "sha256": "f17b2d71cfbdba0516abb18aa0ee1659581b901a8c133b6a6f3e5f0d7d61b919",
+      "adapted": false
+    },
+    {
+      "path": "src/program-addresses.ts",
+      "sourceSha256": "68f27850245ea34eabedc788d8faf5fcc739d05c0fbeec1c7c37715c46106d51",
+      "sha256": "68f27850245ea34eabedc788d8faf5fcc739d05c0fbeec1c7c37715c46106d51",
+      "adapted": false
+    },
+    {
+      "path": "src/acid-scene.ts",
+      "sourceSha256": "f496dbdf94fdd97c8b6fead7f9faaec1c4fa1d2b0e68fdda4283bdb7b199db42",
+      "sha256": "f496dbdf94fdd97c8b6fead7f9faaec1c4fa1d2b0e68fdda4283bdb7b199db42",
+      "adapted": false
+    },
+    {
+      "path": "src/acid-scene.worker.ts",
+      "sourceSha256": "61ae1bf0130282e1732af11d55590062354e4dcb5d35505158747e9cb452b0c6",
+      "sha256": "61ae1bf0130282e1732af11d55590062354e4dcb5d35505158747e9cb452b0c6",
+      "adapted": false
+    },
+    {
+      "path": "src/acid-backdrop.css",
+      "sourceSha256": "def1229d42998f6350b5c194619845e0b348d9834b8b93d5454d777533078bbb",
+      "sha256": "def1229d42998f6350b5c194619845e0b348d9834b8b93d5454d777533078bbb",
+      "adapted": false
+    },
+    {
+      "path": "src/AcidpumpLogo.tsx",
+      "sourceSha256": "e3f7019a0e507018ab02cbe3f6f91e0c4929855340087241b2a7ef5020788343",
+      "sha256": "e3f7019a0e507018ab02cbe3f6f91e0c4929855340087241b2a7ef5020788343",
+      "adapted": false
+    },
+    {
+      "path": "src/acid-brand.css",
+      "sourceSha256": "45fdb3eef292f72dabb998b0b70aae33b82a6482f96f7fa62634b78d0f66e1be",
+      "sha256": "45fdb3eef292f72dabb998b0b70aae33b82a6482f96f7fa62634b78d0f66e1be",
+      "adapted": false
+    },
+    {
+      "path": "src/acid-info-border.css",
+      "sourceSha256": "30cac37ad287f2bf5bb0bdba7ca8e8fe1c6fa6e570a292624f0785d92cfa13fb",
+      "sha256": "30cac37ad287f2bf5bb0bdba7ca8e8fe1c6fa6e570a292624f0785d92cfa13fb",
+      "adapted": false
+    },
+    {
+      "path": "src/landing-prices.ts",
+      "sourceSha256": "440ad4d8ad745c287da587df085aec383cbfe618a3a02ebb4df9a20f79efebe7",
+      "sha256": "440ad4d8ad745c287da587df085aec383cbfe618a3a02ebb4df9a20f79efebe7",
+      "adapted": false
+    },
+    {
+      "path": "src/leaderboard.ts",
+      "sourceSha256": "ce40b5f0b8d969aafacc49a2659de5c9c635e699b4bbfbbd9cb2b7d24b0e5f5d",
+      "sha256": "ce40b5f0b8d969aafacc49a2659de5c9c635e699b4bbfbbd9cb2b7d24b0e5f5d",
+      "adapted": false
+    },
+    {
+      "path": "src/LeaderboardLivePosition.tsx",
+      "sourceSha256": "809bb3b3264785e05d8777d2c023f73393a80c7df1bad2faf0a5fbe1a3786522",
+      "sha256": "809bb3b3264785e05d8777d2c023f73393a80c7df1bad2faf0a5fbe1a3786522",
+      "adapted": false
+    },
+    {
+      "path": "src/leaderboard.css",
+      "sourceSha256": "df6bfb4425ce83b5997374c2abd5f516d4972ff5f06f34c9321b820da4cfb399",
+      "sha256": "df6bfb4425ce83b5997374c2abd5f516d4972ff5f06f34c9321b820da4cfb399",
+      "adapted": false
+    },
+    {
+      "path": "src/browser-funding.ts",
+      "sourceSha256": "939e46fcd839f3971c869c63eb4d5f2aaab4260cabf0cd1e2dc0417ccf882c9c",
+      "sha256": "939e46fcd839f3971c869c63eb4d5f2aaab4260cabf0cd1e2dc0417ccf882c9c",
+      "adapted": false
+    },
+    {
+      "path": "src/WalletTokenIcon.tsx",
+      "sourceSha256": "9b7ee0e194824b89628e131229bef55863f92043afcbdf38ad5d558a932b3cf2",
+      "sha256": "9b7ee0e194824b89628e131229bef55863f92043afcbdf38ad5d558a932b3cf2",
+      "adapted": false
+    },
+    {
+      "path": "src/TradeVolume.tsx",
+      "sourceSha256": "02cbff85f0dbdf2fbdd955558463fe7f5ffc85ce9a0ad5445a9c8acd25d50cbe",
+      "sha256": "02cbff85f0dbdf2fbdd955558463fe7f5ffc85ce9a0ad5445a9c8acd25d50cbe",
+      "adapted": false
+    },
+    {
+      "path": "src/metrics-volume.ts",
+      "sourceSha256": "42e16bc24e8a00a5bfd35cf8bff359fbda97517b8e64bda734a02fc572a9d976",
+      "sha256": "42e16bc24e8a00a5bfd35cf8bff359fbda97517b8e64bda734a02fc572a9d976",
+      "adapted": false
+    },
+    {
+      "path": "src/trade-activity.ts",
+      "sourceSha256": "85c655f6bf6f1aab41f28e344be777d04a12f7774cf2bdeb69d2b21be99f2437",
+      "sha256": "85c655f6bf6f1aab41f28e344be777d04a12f7774cf2bdeb69d2b21be99f2437",
+      "adapted": false
+    },
+    {
+      "path": "src/trade-activity.css",
+      "sourceSha256": "6cdb263783ed639986299cc3661ce32cae774ccd1c9e6fe6e8a5c68d7dd86706",
+      "sha256": "6cdb263783ed639986299cc3661ce32cae774ccd1c9e6fe6e8a5c68d7dd86706",
+      "adapted": false
+    },
+    {
+      "path": "src/rpc-cache.ts",
+      "sourceSha256": "5be9cfd851a53788ebcd62717f16d62b6b95c3c87b90e4758a4b89a2943a4dd3",
+      "sha256": "5be9cfd851a53788ebcd62717f16d62b6b95c3c87b90e4758a4b89a2943a4dd3",
+      "adapted": false
+    },
+    {
+      "path": "src/mainnet-routes.ts",
+      "sourceSha256": "1088b26359b04f493b72fa8f068e245feafddf75913a5862eb15ef5ee7be4c0c",
+      "sha256": "1088b26359b04f493b72fa8f068e245feafddf75913a5862eb15ef5ee7be4c0c",
+      "adapted": false
+    },
+    {
+      "path": "src/pump.ts",
+      "sourceSha256": "0e34ce8cd970c48c506cd1d89105f89a494e2ec65bffd1600e363e0d070a9f0d",
+      "sha256": "0e34ce8cd970c48c506cd1d89105f89a494e2ec65bffd1600e363e0d070a9f0d",
+      "adapted": false
+    },
+    {
+      "path": "src/pump-quote-path.ts",
+      "sourceSha256": "3e8004eb0012b25a489c8d76ec4ac419faa34478bb64246cb54604fcaa9a127c",
+      "sha256": "3e8004eb0012b25a489c8d76ec4ac419faa34478bb64246cb54604fcaa9a127c",
+      "adapted": false
+    },
+    {
+      "path": "src/quote-context.ts",
+      "sourceSha256": "d76317cb6ecb2b8de8c892c8b13ec7309e47f5a80f9b1be88e609e43215a2382",
+      "sha256": "d76317cb6ecb2b8de8c892c8b13ec7309e47f5a80f9b1be88e609e43215a2382",
+      "adapted": false
+    },
+    {
+      "path": "src/economics.ts",
+      "sourceSha256": "6392ee0d37d8aebecc162010d453eb87963044b519b2d9ee974132f9bd95a4f8",
+      "sha256": "6392ee0d37d8aebecc162010d453eb87963044b519b2d9ee974132f9bd95a4f8",
+      "adapted": false
+    },
+    {
+      "path": "src/relative-collateral.ts",
+      "sourceSha256": "e0a5494b2aba2f68e4006a52aafacd063e70296792b8913bde390d121cea24b1",
+      "sha256": "e0a5494b2aba2f68e4006a52aafacd063e70296792b8913bde390d121cea24b1",
+      "adapted": false
+    },
+    {
+      "path": "src/PnlLock.tsx",
+      "sourceSha256": "0593088de12ad412613355ac8740c7f40fe1cbbd5460dcfde4204abff5cb8f62",
+      "sha256": "0593088de12ad412613355ac8740c7f40fe1cbbd5460dcfde4204abff5cb8f62",
+      "adapted": false
+    },
+    {
+      "path": "src/position-profit-display.ts",
+      "sourceSha256": "a45313c78cf6d76090fc2f13325221b38757e89e325e1f948e5ca39c5d32a1bc",
+      "sha256": "a45313c78cf6d76090fc2f13325221b38757e89e325e1f948e5ca39c5d32a1bc",
+      "adapted": false
+    },
+    {
+      "path": "src/settlement-story.ts",
+      "sourceSha256": "4c4ffb6edf33f5a45c7075d7b37392e1ae13f4e618e39f2f7ff8ced1b74f17f5",
+      "sha256": "4c4ffb6edf33f5a45c7075d7b37392e1ae13f4e618e39f2f7ff8ced1b74f17f5",
+      "adapted": false
+    },
+    {
+      "path": "src/position-close-button.css",
+      "sourceSha256": "980484591a7fadb3e95b253c293eb5cf790bad7c05f360220d3de0fc07186679",
+      "sha256": "980484591a7fadb3e95b253c293eb5cf790bad7c05f360220d3de0fc07186679",
+      "adapted": false
+    },
+    {
+      "path": "src/acid-pool-button.css",
+      "sourceSha256": "5dc5579d519fc26d906282686365d4e0564618834baac8a07f95e2421c49425c",
+      "sha256": "5dc5579d519fc26d906282686365d4e0564618834baac8a07f95e2421c49425c",
+      "adapted": false
+    },
+    {
+      "path": "src/PlatformTokenImage.tsx",
+      "sourceSha256": "217837a4cc7e01f100809ea5ceb8da79f907b9e695f0d3b5dbcb6fb117743a95",
+      "sha256": "217837a4cc7e01f100809ea5ceb8da79f907b9e695f0d3b5dbcb6fb117743a95",
+      "adapted": false
+    },
+    {
+      "path": "src/reward-beaker.css",
+      "sourceSha256": "771409b9ae08b4a708e7771ee33f66588afe0fddae47d1b17fb08b898b7488a6",
+      "sha256": "771409b9ae08b4a708e7771ee33f66588afe0fddae47d1b17fb08b898b7488a6",
+      "adapted": false
+    },
+    {
+      "path": "src/RewardDie.tsx",
+      "sourceSha256": "245263ff9b4bec8ffb82e49173a10099a06643c21a994c5f76ee15c2836796ce",
+      "sha256": "245263ff9b4bec8ffb82e49173a10099a06643c21a994c5f76ee15c2836796ce",
+      "adapted": false
+    },
+    {
+      "path": "src/active-position-acid.css",
+      "sourceSha256": "bad32f5311cbbcb04af5ae3d3890e3e2eda185eb2d0a86d7ceae90c7d195e988",
+      "sha256": "bad32f5311cbbcb04af5ae3d3890e3e2eda185eb2d0a86d7ceae90c7d195e988",
+      "adapted": false
+    },
+    {
+      "path": "src/position-arrival.ts",
+      "sourceSha256": "3f5c32862ebecec80deb30bf1bfc4f8605ae99af6ead403e4f7d0ff32d13598e",
+      "sha256": "3f5c32862ebecec80deb30bf1bfc4f8605ae99af6ead403e4f7d0ff32d13598e",
+      "adapted": false
+    },
+    {
+      "path": "src/acid-position-arrival.css",
+      "sourceSha256": "9914f01fadb2ed04487e33824fa40796e57bb0505733120b2a9b5c3afde4acde",
+      "sha256": "9914f01fadb2ed04487e33824fa40796e57bb0505733120b2a9b5c3afde4acde",
+      "adapted": false
+    },
+    {
+      "path": "src/AcidTutorialFilm.tsx",
+      "sourceSha256": "09c14ed5d2d1b5c4ce88c9f0ba2e3deb3b7ff39ef50a691db73d2c48afa0d29d",
+      "sha256": "09c14ed5d2d1b5c4ce88c9f0ba2e3deb3b7ff39ef50a691db73d2c48afa0d29d",
+      "adapted": false
+    },
+    {
+      "path": "src/acid-how.css",
+      "sourceSha256": "4d583ae9f452406b5d3d5e25d01309a14425c634c205d3b85c6a1f8419baed61",
+      "sha256": "4d583ae9f452406b5d3d5e25d01309a14425c634c205d3b85c6a1f8419baed61",
+      "adapted": false
+    },
+    {
+      "path": "src/production-policy.ts",
+      "sourceSha256": "fefc81cdd2458915d603332657fbecee8fbf7f6a1d675cc37829d2be380761c9",
+      "sha256": "fefc81cdd2458915d603332657fbecee8fbf7f6a1d675cc37829d2be380761c9",
+      "adapted": false
+    },
+    {
+      "path": "src/treasury-chart.ts",
+      "sourceSha256": "b107e1dc5c60d9cdc8f1eec404e25691d885d5212f0e95521667439aa4d123d7",
+      "sha256": "b107e1dc5c60d9cdc8f1eec404e25691d885d5212f0e95521667439aa4d123d7",
+      "adapted": false
+    },
+    {
+      "path": "src/acid-metrics.css",
+      "sourceSha256": "d33fc93f6b04cb6752d91668b7fbeb38b9b442cda977d78bd1bafbcdd686d16a",
+      "sha256": "d33fc93f6b04cb6752d91668b7fbeb38b9b442cda977d78bd1bafbcdd686d16a",
+      "adapted": false
+    },
+    {
+      "path": "src/spot-value.ts",
+      "sourceSha256": "e9bfed464a0072f579d674c51d09aeb70ad933f17d8a0a780c1718bb1b2ea2dc",
+      "sha256": "e9bfed464a0072f579d674c51d09aeb70ad933f17d8a0a780c1718bb1b2ea2dc",
+      "adapted": false
+    },
+    {
+      "path": "server/position-history.ts",
+      "sourceSha256": "14376f31e0aeb147c8ffd5b47af0f161d0a73240ce2e494e6763358b052e02bc",
+      "sha256": "14376f31e0aeb147c8ffd5b47af0f161d0a73240ce2e494e6763358b052e02bc",
+      "adapted": false
+    },
+    {
+      "path": "src/MarketLogo.tsx",
+      "sourceSha256": "8d806ac8f70a5945f389e654d8526c2643a9073d68dc570a604e4bc63b68f738",
+      "sha256": "8d806ac8f70a5945f389e654d8526c2643a9073d68dc570a604e4bc63b68f738",
+      "adapted": false
+    },
+    {
+      "path": "src/PriceChangeTape.tsx",
+      "sourceSha256": "e7224130e69d093cd02d44de593cb5cd3af3016539d7800ac23245c3e6aaecc2",
+      "sha256": "e7224130e69d093cd02d44de593cb5cd3af3016539d7800ac23245c3e6aaecc2",
+      "adapted": false
+    },
+    {
+      "path": "src/SimplePriceChart.tsx",
+      "sourceSha256": "9d6f9ec907b4680455015452f1c34793edf71f94c1991166e6b8663c4965e403",
+      "sha256": "9d6f9ec907b4680455015452f1c34793edf71f94c1991166e6b8663c4965e403",
+      "adapted": false
+    },
+    {
+      "path": "src/acid-price-fx.css",
+      "sourceSha256": "da90967cb4329783c7aed464cbf88799f265233279cf92751fcdfd7421e2f3d9",
+      "sha256": "da90967cb4329783c7aed464cbf88799f265233279cf92751fcdfd7421e2f3d9",
+      "adapted": false
+    },
+    {
+      "path": "src/snapshot-rows.ts",
+      "sourceSha256": "9a4ecfc48ed4d9b6f0d6920377ff1f52cab1bf1c28643676f25cd3fe2b364a29",
+      "sha256": "9a4ecfc48ed4d9b6f0d6920377ff1f52cab1bf1c28643676f25cd3fe2b364a29",
+      "adapted": false
+    },
+    {
+      "path": "src/liquidation-meter.ts",
+      "sourceSha256": "85057bf2136e7c587e23b82c5b90be4c019afa464f681114805e20dbe97b3450",
+      "sha256": "85057bf2136e7c587e23b82c5b90be4c019afa464f681114805e20dbe97b3450",
+      "adapted": false
+    },
+    {
+      "path": "src/liquidation-meter.css",
+      "sourceSha256": "5d5697bef58e7eceaa8a2a5f9d0e4ceca11c0160cb47c0e7fa4759460ac0042f",
+      "sha256": "5d5697bef58e7eceaa8a2a5f9d0e4ceca11c0160cb47c0e7fa4759460ac0042f",
+      "adapted": false
+    },
+    {
+      "path": "src/position-share.ts",
+      "sourceSha256": "b9348e188a0e2972a1323cc6fc70410c9b8590328f50443bc294da23ef8ca2db",
+      "sha256": "b9348e188a0e2972a1323cc6fc70410c9b8590328f50443bc294da23ef8ca2db",
+      "adapted": false
+    },
+    {
+      "path": "src/position-share.css",
+      "sourceSha256": "d4f686484319b3e3bba5ad9366ac9797a18d8ce3377665a080363f0939737074",
+      "sha256": "c7f8a28280fb8ac487f4a6c7365d0f6888c4bf72c753f64abbeb8b446f3388d9",
+      "adapted": true
+    },
+    {
+      "path": "src/position-raster.ts",
+      "sourceSha256": "57d14c6bed7b89f06aabc42eedc4772f93bbd8585858fe9c2c1ce4e5d5a3ea98",
+      "sha256": "57d14c6bed7b89f06aabc42eedc4772f93bbd8585858fe9c2c1ce4e5d5a3ea98",
+      "adapted": false
+    },
+    {
+      "path": "src/position-share-images.ts",
+      "sourceSha256": "9024b73c3ecff6f08aa89edadd345d3399e8085180a23311b7b7e2f7ec144caa",
+      "sha256": "9024b73c3ecff6f08aa89edadd345d3399e8085180a23311b7b7e2f7ec144caa",
+      "adapted": false
+    },
+    {
+      "path": "src/leverage.ts",
+      "sourceSha256": "fbfaf1dd469471f17e9c88867caf464c276ca7b3d7b0bdfcd83a960cb4300db6",
+      "sha256": "fbfaf1dd469471f17e9c88867caf464c276ca7b3d7b0bdfcd83a960cb4300db6",
+      "adapted": false
+    },
+    {
+      "path": "src/acid-leverage.css",
+      "sourceSha256": "d0445d2ebf7041ba4363480f93ac73ea75755e25eb84bf0d16b7cc083dae38cb",
+      "sha256": "d0445d2ebf7041ba4363480f93ac73ea75755e25eb84bf0d16b7cc083dae38cb",
+      "adapted": false
+    },
+    {
+      "path": "src/compact-balance.ts",
+      "sourceSha256": "73dc235e027f30ae7270bc12fcf1f2af22062882431c866b6579a4b529e4fce5",
+      "sha256": "73dc235e027f30ae7270bc12fcf1f2af22062882431c866b6579a4b529e4fce5",
+      "adapted": false
+    },
+    {
+      "path": "src/WalletHistory.tsx",
+      "sourceSha256": "7c522b68000472c70f1ec82f9ae69f03726a20b03eaa34707415770596c2c442",
+      "sha256": "7c522b68000472c70f1ec82f9ae69f03726a20b03eaa34707415770596c2c442",
+      "adapted": false
+    },
+    {
+      "path": "src/wallet-token-list.ts",
+      "sourceSha256": "5fba50b4ebe6267453b31e4c40103922bcc288328587c9eecb9ec81ee21e6874",
+      "sha256": "5fba50b4ebe6267453b31e4c40103922bcc288328587c9eecb9ec81ee21e6874",
+      "adapted": false
+    },
+    {
+      "path": "src/WalletReturn.tsx",
+      "sourceSha256": "e893aa601a2302cc1b5b85dd46bdb28fae44cfe7bf7455e18401b199cb43cb9d",
+      "sha256": "e893aa601a2302cc1b5b85dd46bdb28fae44cfe7bf7455e18401b199cb43cb9d",
+      "adapted": false
+    },
+    {
+      "path": "src/WalletRecovery.tsx",
+      "sourceSha256": "b063db203fe2f9ace78f08c4988bf21c5705ab3ef4cc18aff904a6063c2ef0a9",
+      "sha256": "b063db203fe2f9ace78f08c4988bf21c5705ab3ef4cc18aff904a6063c2ef0a9",
+      "adapted": false
+    },
+    {
+      "path": "src/token-registration.ts",
+      "sourceSha256": "5294f464bb8bde97a98095d8097c2058e5360df7820e86af27bf9f33b2ae14a6",
+      "sha256": "5294f464bb8bde97a98095d8097c2058e5360df7820e86af27bf9f33b2ae14a6",
+      "adapted": false
+    },
+    {
+      "path": "src/RegistrationProgress.tsx",
+      "sourceSha256": "ad97ca3bdf888f492690688d8fad12c8b8e47b7ffbaa3b81189f99f50d403f5e",
+      "sha256": "ad97ca3bdf888f492690688d8fad12c8b8e47b7ffbaa3b81189f99f50d403f5e",
+      "adapted": false
+    },
+    {
+      "path": "src/registration-progress.ts",
+      "sourceSha256": "346b28cd499ef9d01f284bc578078ee52f8a94d45f4e157ff9289dfbd2c079be",
+      "sha256": "346b28cd499ef9d01f284bc578078ee52f8a94d45f4e157ff9289dfbd2c079be",
+      "adapted": false
+    },
+    {
+      "path": "src/token-registration.css",
+      "sourceSha256": "dddb2aa26833463edf0000fe9368147c8150e60a075612e4be74b3a17ff26c05",
+      "sha256": "dddb2aa26833463edf0000fe9368147c8150e60a075612e4be74b3a17ff26c05",
+      "adapted": false
+    },
+    {
+      "path": "src/core-backing.css",
+      "sourceSha256": "1e35dfd70edb509b655343174c61494f7b68fa20a958f15af01a3276fe749203",
+      "sha256": "1e35dfd70edb509b655343174c61494f7b68fa20a958f15af01a3276fe749203",
+      "adapted": false
+    },
+    {
+      "path": "src/acid-pool-header.css",
+      "sourceSha256": "2d9eb2e7c8d30f87ea1382dd85c27816df757e2825eb368420c9ef185d2ab2b3",
+      "sha256": "2d9eb2e7c8d30f87ea1382dd85c27816df757e2825eb368420c9ef185d2ab2b3",
+      "adapted": false
+    },
+    {
+      "path": "src/wallet-changes.ts",
+      "sourceSha256": "b586ea70614e68c706398f79fbb1e8ae41eb548e9bf70efc6f124d323af2fd4a",
+      "sha256": "b586ea70614e68c706398f79fbb1e8ae41eb548e9bf70efc6f124d323af2fd4a",
+      "adapted": false
+    },
+    {
+      "path": "src/collateral-generations.ts",
+      "sourceSha256": "f62af209c22c0e06ca93fe0fc15c9b4f0441458fa513b9f8258a1f6bfac16f46",
+      "sha256": "f62af209c22c0e06ca93fe0fc15c9b4f0441458fa513b9f8258a1f6bfac16f46",
+      "adapted": false
+    },
+    {
+      "path": "src/ActivityToastStack.tsx",
+      "sourceSha256": "498fcb6bdc9fb9316b5e1af53707cee55f657384b912dafe59d6bd0c1edef4fd",
+      "sha256": "498fcb6bdc9fb9316b5e1af53707cee55f657384b912dafe59d6bd0c1edef4fd",
+      "adapted": false
+    },
+    {
+      "path": "src/swap-notices.ts",
+      "sourceSha256": "a5b11b58d754a03cd79196d93ba94f0439cddf95dc23d868ececd82dc2a909d4",
+      "sha256": "a5b11b58d754a03cd79196d93ba94f0439cddf95dc23d868ececd82dc2a909d4",
+      "adapted": false
+    },
+    {
+      "path": "src/wallet-notices.ts",
+      "sourceSha256": "5ccc6ef2ecfe58464d4d97c833b0dd3f36b84120d7ac33fa3a806102d0826ca7",
+      "sha256": "5ccc6ef2ecfe58464d4d97c833b0dd3f36b84120d7ac33fa3a806102d0826ca7",
+      "adapted": false
+    },
+    {
+      "path": "src/wallet-effects.css",
+      "sourceSha256": "cf65e9742dcebc9bd67a0c2fcb13e1b7f50d5ae665a05fa6e362856818ad3fc0",
+      "sha256": "cf65e9742dcebc9bd67a0c2fcb13e1b7f50d5ae665a05fa6e362856818ad3fc0",
+      "adapted": false
+    },
+    {
+      "path": "src/LiquidReactor.tsx",
+      "sourceSha256": "846eb71eaa1a50c5bb42bce59908bcfc1f1e02acd02546d5e6a4eca30ee05125",
+      "sha256": "846eb71eaa1a50c5bb42bce59908bcfc1f1e02acd02546d5e6a4eca30ee05125",
+      "adapted": false
+    },
+    {
+      "path": "src/RewardCelebration.tsx",
+      "sourceSha256": "8a9f1eaec3c184eff31f1630d4199516fb699c851235984aa6c4b488cbeb731c",
+      "sha256": "8a9f1eaec3c184eff31f1630d4199516fb699c851235984aa6c4b488cbeb731c",
+      "adapted": false
+    },
+    {
+      "path": "src/acid-rewards.css",
+      "sourceSha256": "d33fd0920d19bb61569cfa7a7102cd847fbe6c5c1a3c3c172a5f17a9016e2f2e",
+      "sha256": "d33fd0920d19bb61569cfa7a7102cd847fbe6c5c1a3c3c172a5f17a9016e2f2e",
+      "adapted": false
+    },
+    {
+      "path": "src/SettlementIcons.tsx",
+      "sourceSha256": "f69d7540fda2ac78c4d85ae9511af0cc7d96d64bddc2fa9abd738f58c4319ec2",
+      "sha256": "f69d7540fda2ac78c4d85ae9511af0cc7d96d64bddc2fa9abd738f58c4319ec2",
+      "adapted": false
+    },
+    {
+      "path": "src/SettlementTxLinks.tsx",
+      "sourceSha256": "14e60feffcc45cb8a843130b778b1fb4d3ae306ca402332bb4893ecab8758726",
+      "sha256": "14e60feffcc45cb8a843130b778b1fb4d3ae306ca402332bb4893ecab8758726",
+      "adapted": false
+    },
+    {
+      "path": "src/settlement-receipt.css",
+      "sourceSha256": "079a9d16265c25c74e0253e803016743641c66a069da18b21e7937d0c121ba5e",
+      "sha256": "079a9d16265c25c74e0253e803016743641c66a069da18b21e7937d0c121ba5e",
+      "adapted": false
+    },
+    {
+      "path": "src/withdrawal-batch.ts",
+      "sourceSha256": "427e9c339b9fbeff9751d5a419b6fc31f332327ebb64eb7dd4b75058b2bbbdb4",
+      "sha256": "427e9c339b9fbeff9751d5a419b6fc31f332327ebb64eb7dd4b75058b2bbbdb4",
+      "adapted": false
+    },
+    {
+      "path": "src/emissions.ts",
+      "sourceSha256": "b97218b5aa0ec72bec948a586f7d2b30dcda4f17cb79dafbd131b61777ae8504",
+      "sha256": "b97218b5aa0ec72bec948a586f7d2b30dcda4f17cb79dafbd131b61777ae8504",
+      "adapted": false
+    },
+    {
+      "path": "src/pool-contribution.ts",
+      "sourceSha256": "33d98c784881a3e652e4b49b45307daddd0f6eafe7ab7606fb3a521101bb9c0a",
+      "sha256": "33d98c784881a3e652e4b49b45307daddd0f6eafe7ab7606fb3a521101bb9c0a",
+      "adapted": false
+    },
+    {
+      "path": "src/pool-contribution.css",
+      "sourceSha256": "3b9eb8190d73cd8d0caa5350b3678c6737afa5fa9d95f31938280cde1a728ce5",
+      "sha256": "3b9eb8190d73cd8d0caa5350b3678c6737afa5fa9d95f31938280cde1a728ce5",
+      "adapted": false
+    },
+    {
+      "path": "idl.json",
+      "sourceSha256": "3515a733a4957f36abb99fd20ca9552180eaa52a2d4e64f2a4c7afe6e77a78c2",
+      "sha256": "3515a733a4957f36abb99fd20ca9552180eaa52a2d4e64f2a4c7afe6e77a78c2",
+      "adapted": false
+    },
+    {
+      "path": "idl.mainnet-test.json",
+      "sourceSha256": "bc2e539df50eeb0e381300be88cb5da66154f46deb01080c16a3a0938067c1a6",
+      "sha256": "bc2e539df50eeb0e381300be88cb5da66154f46deb01080c16a3a0938067c1a6",
+      "adapted": false
+    },
+    {
+      "path": "idl.modular.json",
+      "sourceSha256": "bb08b1d6772ee6907674f3a7e2072906ccc73278059f811c034f10a7b1287da8",
+      "sha256": "bb08b1d6772ee6907674f3a7e2072906ccc73278059f811c034f10a7b1287da8",
+      "adapted": false
+    },
+    {
+      "path": "src/decoration-cadence.ts",
+      "sourceSha256": "98736677bc8549153e4e3bdab6b8cf64f0d8f40a59ed0ed5424c933af1e4a462",
+      "sha256": "98736677bc8549153e4e3bdab6b8cf64f0d8f40a59ed0ed5424c933af1e4a462",
+      "adapted": false
+    },
+    {
+      "path": "src/leaderboard-live.ts",
+      "sourceSha256": "2a14a64a14dcf4c78b7ef509d9427fca88ddb0d45ffe1dbf11f87a2bd53cfe23",
+      "sha256": "2a14a64a14dcf4c78b7ef509d9427fca88ddb0d45ffe1dbf11f87a2bd53cfe23",
+      "adapted": false
+    },
+    {
+      "path": "src/trade-volume.ts",
+      "sourceSha256": "dc07588b0b962e14fa285d5a06b444d29fb11845fb369e7f7ee492ed6fbc6813",
+      "sha256": "dc07588b0b962e14fa285d5a06b444d29fb11845fb369e7f7ee492ed6fbc6813",
+      "adapted": false
+    },
+    {
+      "path": "server/mainnet-pool.ts",
+      "sourceSha256": "93d4ce46e6ffb5ae9cca476b72b3661aec7b62799d44b7e4ddebfc9a405c0130",
+      "sha256": "93d4ce46e6ffb5ae9cca476b72b3661aec7b62799d44b7e4ddebfc9a405c0130",
+      "adapted": false
+    },
+    {
+      "path": "server/mainnet-swap.ts",
+      "sourceSha256": "ca9333f3c4aa97b64b4738c0636a887a46f9540e9ad104d082328c2cbbd429f4",
+      "sha256": "ca9333f3c4aa97b64b4738c0636a887a46f9540e9ad104d082328c2cbbd429f4",
+      "adapted": false
+    },
+    {
+      "path": "server/mainnet-route.ts",
+      "sourceSha256": "bacdd836e20361087eb875b74d6e1ed40ef6ce090a73ea8bf5f1dd9314d01d6e",
+      "sha256": "bacdd836e20361087eb875b74d6e1ed40ef6ce090a73ea8bf5f1dd9314d01d6e",
+      "adapted": false
+    },
+    {
+      "path": "src/pnl-lock.css",
+      "sourceSha256": "1e1c5ef445ab44f6062eca37934fb8cfebcb8e543c5f13819b86cbab10e662cf",
+      "sha256": "1e1c5ef445ab44f6062eca37934fb8cfebcb8e543c5f13819b86cbab10e662cf",
+      "adapted": false
+    },
+    {
+      "path": "src/acid-tutorial-film.css",
+      "sourceSha256": "6bc9b67790b1d1fba6335afbb97a4be9ca64bad29e2a29d1cc7f50d583ee4de4",
+      "sha256": "6bc9b67790b1d1fba6335afbb97a4be9ca64bad29e2a29d1cc7f50d583ee4de4",
+      "adapted": false
+    },
+    {
+      "path": "src/production-policy.json",
+      "sourceSha256": "0913c48848fa31a3954fd34749d155198730035a5f68e1836ce4df1455e6cc3a",
+      "sha256": "0913c48848fa31a3954fd34749d155198730035a5f68e1836ce4df1455e6cc3a",
+      "adapted": false
+    },
+    {
+      "path": "src/price-tape.ts",
+      "sourceSha256": "a854d49d08992e49180e5be59d12ae6efa205e336fc82d3ec6f9439ae7c1a233",
+      "sha256": "a854d49d08992e49180e5be59d12ae6efa205e336fc82d3ec6f9439ae7c1a233",
+      "adapted": false
+    },
+    {
+      "path": "src/price-timeline.ts",
+      "sourceSha256": "bacdb766bf7ac30208ee04be6fa7f4b9405047ecab678659ab704b0c166493e5",
+      "sha256": "bacdb766bf7ac30208ee04be6fa7f4b9405047ecab678659ab704b0c166493e5",
+      "adapted": false
+    },
+    {
+      "path": "src/price-timeline.css",
+      "sourceSha256": "9668827f0365315e7a09a9dacc7e46ddccc525920026902684180b126349197b",
+      "sha256": "9668827f0365315e7a09a9dacc7e46ddccc525920026902684180b126349197b",
+      "adapted": false
+    },
+    {
+      "path": "src/wallet-history.ts",
+      "sourceSha256": "81a1279aa357f924ccb47d0dd7fa09566f014110b8aaba0a273f48b80d183135",
+      "sha256": "81a1279aa357f924ccb47d0dd7fa09566f014110b8aaba0a273f48b80d183135",
+      "adapted": false
+    },
+    {
+      "path": "src/wallet-history.css",
+      "sourceSha256": "2c48c0607ec1939b8b3c9b516b421e70a259281a5f5466a125c00d39329b0da8",
+      "sha256": "2c48c0607ec1939b8b3c9b516b421e70a259281a5f5466a125c00d39329b0da8",
+      "adapted": false
+    },
+    {
+      "path": "src/wallet-rows.ts",
+      "sourceSha256": "c612c92720f74aa96ab3d7fb0526f78f83b11e02e019f10d807a8819096bbe22",
+      "sha256": "c612c92720f74aa96ab3d7fb0526f78f83b11e02e019f10d807a8819096bbe22",
+      "adapted": false
+    },
+    {
+      "path": "src/wallet-recovery.css",
+      "sourceSha256": "ad7a09e7881ac09760dac34f5f14cad2b01cf061a303596b67ceb64f18ef18a6",
+      "sha256": "ad7a09e7881ac09760dac34f5f14cad2b01cf061a303596b67ceb64f18ef18a6",
+      "adapted": false
+    },
+    {
+      "path": "src/reward-celebration.css",
+      "sourceSha256": "b98d842cfea3b713e5faddf63cae57b55e94b7e6ebbc90013a43c1a7bee1f9a9",
+      "sha256": "b98d842cfea3b713e5faddf63cae57b55e94b7e6ebbc90013a43c1a7bee1f9a9",
+      "adapted": false
+    }
+  ]
+}

@@ -1,0 +1,62 @@
+.simple-price-chart {
+  container-type: inline-size;
+  min-width: 0;
+  align-self: start;
+  /* Borrow 10px from the hero's existing bottom margin. Keep its grid row
+     unchanged so the price, tape and trading controls stay exactly in place. */
+  height: 42px;
+}
+.simple-price-chart .sparkline {
+  display: block;
+  overflow: hidden;
+  height: 34px;
+}
+.simple-chart-live-point[data-direction="up"] { color: #64ffc5; }
+.simple-chart-live-point[data-direction="down"] { color: #ff8d80; }
+.simple-chart-tick-pulse {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.2;
+  animation: simple-chart-tick .22s ease-out both;
+}
+@keyframes simple-chart-tick {
+  from { r: 2.5; opacity: .95; }
+  to { r: 5.5; opacity: 0; }
+}
+.price-timeline {
+  height: 18px;
+  position: relative;
+  overflow: hidden;
+  border-top: 1px solid #b6ee6221;
+  color: #92aa89;
+  font-size: 8px;
+  line-height: 12px;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: .02em;
+  mask-image: linear-gradient(90deg, transparent, #000 12px, #000 calc(100% - 12px), transparent);
+}
+.price-timeline-tick {
+  position: absolute;
+  top: 0;
+  transform: translateX(-50%);
+  text-align: center;
+  transition: left .45s linear;
+}
+.price-timeline-tick i {
+  display: block;
+  width: 1px;
+  height: 3px;
+  margin: 0 auto 1px;
+  background: #b6ee6240;
+}
+.price-timeline-tick time { display: none; }
+.price-timeline-tick[data-wide-label="true"] time { display: block; }
+.hero-caption:has(.simple-price-chart) .hero-market-status { align-self: start; padding-top: 5px; }
+@container (max-width: 179px) {
+  .price-timeline-tick[data-wide-label="true"] time { display: none; }
+  .price-timeline-tick[data-narrow-label="true"] time { display: block; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .price-timeline-tick { transition: none; }
+  .simple-chart-tick-pulse { display: none; }
+}

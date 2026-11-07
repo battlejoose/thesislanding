@@ -1,0 +1,37 @@
+.core-backing{margin-top:12px;padding:13px;border:1px solid #acfa4370;border-radius:14px;background:linear-gradient(145deg,#202e13,#07140f);color:#e7f3dd}
+.backing-countdown{display:inline-block;margin-left:5px;color:#a0b38c;font-size:8px!important;line-height:1.2;font-weight:500;white-space:nowrap;font-variant-numeric:tabular-nums}
+.core-capacity strong{display:flex!important;align-items:baseline;flex-wrap:wrap;gap:2px}
+.backing-trigger .backing-countdown{font-size:7px!important;margin-left:4px}
+.wallet-unlisted-row{color:inherit;text-decoration:none}
+.wallet-token-image{overflow:hidden;border-radius:50%;flex-shrink:0}.wallet-token-image img{width:100%;height:100%;object-fit:cover}
+.wallet-balance-row:disabled{opacity:.75;cursor:default}
+.wallet-unlisted-icon{display:grid;place-items:center;width:34px;height:34px;flex:0 0 34px;border:1px solid #baff4738;border-radius:50%;background:#263a22;color:#d0eeaa;font-size:9px;font-weight:700}
+.wallet-unlisted-row .wallet-token b{overflow-wrap:anywhere}.wallet-discovery-status{display:block;margin:8px 0;color:#b4bea4;font-size:10px}
+.token-backing-required{color:#d7e692!important;font-size:9px!important}
+.bet-token-options .unavailable-bet-token:disabled{opacity:.7;cursor:not-allowed;background:#101b11}
+.bet-token-options .unavailable-bet-token .bet-token-details>small:last-child{color:#bdc6b6;font-size:10px}
+.toolbar .backing-trigger{align-self:center;margin-left:auto;flex-shrink:0;padding:5px 9px;border:1px solid #aaff4855;border-radius:11px;background:linear-gradient(145deg,#19240c,#090f07);box-shadow:inset 0 0 12px #baff4710;color:#caff65;line-height:1.25;text-align:center}
+.backing-trigger span{display:block;font-size:9px;font-weight:600;color:#b5c8a8}.backing-trigger strong{display:block;font-size:12px;font-variant-numeric:tabular-nums;margin-top:2px}
+.toolbar .backing-trigger:hover{background:#243711;border-color:#baff47;box-shadow:0 0 12px #baff4725}
+.toolbar .backing-trigger{position:relative;padding-bottom:9px}
+.backing-trigger .backing-trigger-usage{position:absolute;left:7px;right:7px;bottom:3px;height:3px;overflow:hidden;border-radius:4px;background:#baff47;box-shadow:0 0 5px #baff4740}
+.backing-trigger-usage i{display:block;height:100%;border-radius:inherit;background:#ff922e;transition:width .25s}
+.wallet .wallet-summary{gap:4px}.wallet .wallet-selected-balance{font-size:20px;font-weight:800;letter-spacing:-.025em;line-height:1.12}.wallet .wallet-selected-balance b{font-size:.76em;font-weight:700}
+.wallet .wallet-core-balance{color:#baff47;font-size:10px;font-weight:700;white-space:nowrap}.wallet-balance-count{display:block;margin:10px 0 7px;color:#adbd9c;font-size:10px}
+.wallet-row-values{display:flex;align-items:flex-end;flex-direction:column;gap:3px;margin-left:auto;font-variant-numeric:tabular-nums}.wallet-row-values small{color:#afc4a0;font-size:10px;white-space:nowrap}.wallet-balances .wallet-core-row{border-color:#a8ff465a;background:linear-gradient(110deg,#baff4710,transparent)}.wallet-core-row .wallet-row-values strong,.wallet-core-row .wallet-row-values small{color:#c0ff55}
+.core-backing .core-exempt{color:#c6f797}.modal .core-backing{margin-top:0}
+.core-explainer{margin-top:14px;padding-top:10px;border-top:1px solid #baff4726}
+.core-explainer p:first-child{margin-top:0}.core-explainer p:last-child{margin-bottom:0}
+.core-exempt-token{display:inline-flex;align-items:center;gap:3px;white-space:nowrap;vertical-align:middle}
+.core-exempt-token .coin{width:16px;height:16px;flex:0 0 16px}
+@media(max-width:440px){.toolbar{gap:6px}.toolbar .wallet{padding:8px;gap:4px}.toolbar .wallet-icon{display:none}.wallet .wallet-selected-balance{font-size:17px}.wallet .wallet-core-balance{font-size:9px}.toolbar .backing-trigger{padding:5px 6px 9px}.toolbar .market-select{padding:8px;gap:2px 5px}.wallet-container{min-width:0}.wallet-summary{max-width:100%}}
+.core-backing header,.core-backing header>span,.core-capacity,.core-stake-mode,.core-stake-input{display:flex;align-items:center;gap:8px}
+.core-backing header{justify-content:space-between;flex-wrap:wrap;font-weight:700}.core-backing header .coin{width:22px;height:22px}.core-backing header strong{color:#c5ff63}
+.core-backing p,.core-backing>small{font-size:11px;line-height:1.4;color:#b6c6ae;margin:7px 0}.core-backing small{font-size:10px}
+.core-capacity{justify-content:space-between;font-size:10px;margin-top:10px}.core-capacity strong{display:block;font-size:18px;color:#c5ff63;font-variant-numeric:tabular-nums;margin-top:3px}
+.core-usage{height:5px;background:#050b04;border-radius:6px;overflow:hidden;margin:10px 0}.core-usage i{display:block;height:100%;background:linear-gradient(90deg,#66e4c0,#c5ff63);transition:width .25s}
+.core-stake-mode button{flex:1;padding:6px;background:#ffffff08;color:#b6c6ae;border:1px solid #bdff4720;font-size:12px}.core-stake-mode button[aria-pressed=true]{background:#b7ff4720;color:#d6ff93;border-color:#b7ff4780}
+.core-stake-input{margin-top:8px}.core-stake-input input{min-width:0;flex:1;width:100%;background:#0008;border:1px solid #b7ff4730;border-radius:8px;padding:9px;color:#efffde;font-size:14px}.core-stake-input button{flex:0 0 auto;background:#c5ff63;color:#132105;padding:9px 14px;border:0;font-size:12px;font-weight:800}.core-backing button:disabled{opacity:.5}.core-backing [role=alert]{color:#ffac92}
+.core-wallet-balance,.core-amount-presets,.core-amount-value{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:11px;color:#aabd9c}.core-wallet-balance{margin:12px 0;padding:9px 0;border-bottom:1px solid #baff4720}.core-wallet-balance strong{color:#e6f4d7;font-size:13px;text-align:right;overflow-wrap:anywhere}.core-wallet-balance small{white-space:nowrap;color:#adce97}.core-amount-presets>div{display:flex;gap:5px}.core-amount-presets button{border:1px solid #baff4755;border-radius:7px;padding:4px 9px;background:#baff4712;color:#d3ff90;font-size:11px;font-weight:700}.core-amount-presets button:hover{background:#baff472b;border-color:#c5ff63}.core-amount-value{margin-top:7px;font-size:10px}.core-amount-value strong{color:#8ae8cb;font-size:12px;font-variant-numeric:tabular-nums}
+
+.wallet-market-credit{margin-top:16px;padding-top:12px;border-top:1px solid #a8ff4640}.wallet-market-credit h3{font-size:15px;margin:0 0 6px}.wallet-market-credit p{font-size:12px;line-height:1.5;margin:0 0 10px;color:#afc4a0}.wallet-market-credit .wallet-balance-row{margin-bottom:6px}.wallet-market-credit .wallet-connect{margin-top:8px}

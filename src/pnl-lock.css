@@ -1,0 +1,13 @@
+.pnl-number{position:relative;display:inline-block}
+.pnl-lock{position:absolute;right:calc(100% + .16em);top:50%;width:.65em;height:.8em;transform:translateY(-50%);color:#d6ff77;line-height:1;animation:pnl-lock-pop .65s cubic-bezier(.2,.8,.2,1) both}
+.pnl-lock svg{display:block;width:100%;height:100%;overflow:visible}
+.pnl-lock-shackle{animation:pnl-lock-click .48s cubic-bezier(.3,.8,.2,1) both}
+.pnl-lock-sparks{animation:pnl-lock-spark .85s ease-out both}
+.pnl-lock.is-settled{color:#99e9cd}
+/* Keep the very same P&L node above the replay, in its original grid cell. */
+.position.has-overlay>.position-top>.result{position:relative;z-index:16;pointer-events:none}
+.position.has-overlay>.position-top>.result>.ownership-reward{visibility:hidden}
+@keyframes pnl-lock-pop{0%{opacity:0;filter:drop-shadow(0 0 8px #d7ff67);transform:translateY(-50%) scale(.6)}55%{opacity:1;transform:translateY(-50%) scale(1.22)}100%{opacity:1;filter:none;transform:translateY(-50%) scale(1)}}
+@keyframes pnl-lock-click{0%{transform:translateY(-5px)}60%{transform:translateY(1px)}100%{transform:translateY(0)}}
+@keyframes pnl-lock-spark{0%,100%{opacity:0}35%{opacity:1}}
+@media(prefers-reduced-motion:reduce){.pnl-lock,.pnl-lock *{animation:none!important}.pnl-lock-sparks{opacity:0}}

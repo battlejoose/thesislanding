@@ -1,0 +1,147 @@
+/* The card's isolated stacking context keeps all acid behind live information. */
+.position.open:has(> .active-position-acid) {
+  border-color: #a9cc667d;
+  border-radius: 14px 7px 15px 6px / 12px 9px 12px 8px;
+  box-shadow:
+    inset 2px 0 0 #c5ff4c,
+    inset 0 -1px 0 #deff8770,
+    inset 0 1px 0 #dfff861c,
+    0 5px 14px #0003;
+}
+
+.active-position-acid {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  border-radius: inherit;
+  pointer-events: none;
+  user-select: none;
+  contain: paint;
+}
+
+.position-acid-bottom-glow {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 40px;
+  background: linear-gradient(0deg, #c4ff421c, #c4ff4208 36%, transparent);
+  opacity: 0.8;
+  animation: position-acid-breathe 6s ease-in-out infinite alternate;
+}
+
+.position-acid-puddle {
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  width: 100%;
+  height: 28px;
+  overflow: hidden;
+}
+
+.position-acid-wave {
+  animation: position-acid-slosh 5.6s ease-in-out infinite alternate;
+}
+
+.position-acid-wave.position-acid-wave-back {
+  opacity: 0.12;
+  animation-duration: 7.1s;
+  animation-direction: alternate-reverse;
+}
+
+.position-acid-meniscus {
+  fill: none;
+  stroke: #d8ff73;
+  stroke-width: 0.65;
+  opacity: 0.55;
+}
+
+.position-acid-reflection {
+  fill: none;
+  stroke-width: 0.8;
+  stroke-linecap: round;
+}
+
+.position-acid-bubble {
+  position: absolute;
+  left: var(--bubble-x);
+  bottom: var(--bubble-bottom);
+  width: var(--bubble-size);
+  height: var(--bubble-size);
+  border: 0.75px solid #dcff84a6;
+  border-radius: 48% 52% 55% 45%;
+  background: radial-gradient(
+    circle at 30% 24%,
+    #f0ffba9c 0 11%,
+    #c4ff4014 32%
+  );
+  box-shadow: inset 0 -1px 0 #b7f34018;
+  opacity: 0;
+  animation: position-acid-bubble-rise var(--bubble-duration) ease-in infinite;
+  animation-delay: var(--bubble-delay);
+}
+
+.position.has-overlay .active-position-acid {
+  opacity: 0.15;
+}
+
+@keyframes position-acid-slosh {
+  from {
+    transform: translate(-24px, 1px);
+  }
+  to {
+    transform: translate(24px, -1px);
+  }
+}
+
+@keyframes position-acid-breathe {
+  from {
+    opacity: 0.6;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes position-acid-bubble-rise {
+  0%,
+  12% {
+    opacity: 0;
+    transform: translate(0, 3px) scale(0.65);
+  }
+  24% {
+    opacity: 0.48;
+  }
+  72% {
+    opacity: 0.3;
+  }
+  90%,
+  100% {
+    opacity: 0;
+    transform: translate(var(--bubble-drift), var(--bubble-rise)) scale(1.1);
+  }
+}
+
+/* A shared image is a still trade slip, and reduced motion keeps the same skin. */
+.position-capture .active-position-acid *,
+.position-capture .active-position-acid *::before,
+.position-capture .active-position-acid *::after {
+  animation: none !important;
+  transition: none !important;
+}
+.position-capture .position-acid-bubble {
+  opacity: 0.32;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .active-position-acid *,
+  .active-position-acid *::before,
+  .active-position-acid *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+  .position-acid-bubble {
+    opacity: 0.32;
+  }
+}

@@ -1,0 +1,343 @@
+.reward-beaker {
+  --beaker-color: #b9ff28;
+  --beaker-light: #edffb8;
+  position: relative;
+  display: block;
+  flex: 0 0 auto;
+  width: min(100%, var(--reward-beaker-width, 46px));
+  height: 72px;
+  min-width: 0;
+  min-height: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 9px;
+  color: var(--beaker-color);
+  background: transparent;
+  box-shadow: none;
+  cursor: default;
+  overflow: visible;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.reward-beaker--teal {
+  --beaker-color: #3fe0ce;
+  --beaker-light: #c2fff2;
+}
+
+/* SDICE staking is blue; revenue is green, in both the shortcut and panel. */
+html[data-sdice] .reward-beaker--teal {
+  --beaker-color: #54bdff;
+  --beaker-light: #c5f1ff;
+  --dice-light: #c5f1ff;
+  --dice-face: #48b7ff;
+  --dice-deep: #1866cb;
+  --dice-edge: #07366d;
+}
+html[data-sdice] .reward-beaker--lime {
+  --beaker-color: #45ef9c;
+  --beaker-light: #ceffe3;
+  --dice-light: #ceffe3;
+  --dice-face: #42ec99;
+  --dice-deep: #119766;
+  --dice-edge: #075b40;
+}
+html[data-sdice] .reward-beaker-glass { stroke-opacity: .7; }
+.reward-beaker-dice { filter: drop-shadow(0 0 2px var(--beaker-color)); }
+
+/* A bounded, CSS-only particle chamber above the liquid. It exists only while
+ * this particular beaker has rewards; no timers or per-frame React updates. */
+.reward-beaker-charge-spark {
+  fill:var(--charge-color); stroke:var(--charge-color); stroke-width:.8;
+  stroke-linecap:round; transform-box:fill-box; transform-origin:center;
+  animation:reward-beaker-charge 1.6s ease-out infinite;
+}
+@keyframes reward-beaker-charge {
+  0% { opacity:.2; transform:translate(0,4px) scale(.3) rotate(-40deg); }
+  30% { opacity:1; transform:translate(calc(var(--charge-x) * -.4),0) scale(1.1) rotate(20deg); }
+  70% { opacity:.85; }
+  100% { opacity:0; transform:translate(var(--charge-x),var(--charge-y)) scale(.35) rotate(100deg); }
+}
+
+.reward-beaker-claim {
+  position: absolute;
+  left: 50%;
+  top: 5px;
+  transform: translateX(-50%);
+  z-index: 2;
+  font-size: 7px;
+  line-height: 1;
+  font-weight: 800;
+  letter-spacing: .015em;
+  white-space: nowrap;
+  color: var(--beaker-light);
+  text-shadow: 0 1px 3px #020b07, 0 0 6px var(--beaker-color);
+  pointer-events: none;
+}
+
+button.reward-beaker {
+  cursor: pointer;
+}
+
+button.reward-beaker:hover:not(:disabled),
+button.reward-beaker:active:not(:disabled) {
+  border: 0;
+  color: var(--beaker-color);
+  background: transparent;
+  box-shadow: none;
+  filter: none;
+}
+
+button.reward-beaker:focus-visible {
+  outline: 2px solid var(--beaker-color);
+  outline-offset: 3px;
+}
+
+.reward-beaker-vessel {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  transform-origin: 50% 87%;
+  pointer-events: none;
+}
+
+.reward-beaker-glass {
+  stroke: currentColor;
+  stroke-width: 1.4;
+  stroke-opacity: .48;
+  transition: stroke-opacity 200ms;
+}
+
+.reward-beaker-lip {
+  fill: #152820;
+  stroke: currentColor;
+  stroke-width: 1.1;
+  stroke-linejoin: round;
+  stroke-opacity: .62;
+}
+
+.reward-beaker-rim,
+.reward-beaker-reflection {
+  stroke: var(--beaker-light);
+  stroke-width: 1.2;
+  stroke-linecap: round;
+  opacity: .32;
+}
+
+.reward-beaker-measures {
+  stroke: currentColor;
+  stroke-width: 1;
+  stroke-linecap: round;
+  opacity: .38;
+}
+
+.reward-beaker-logo {
+  opacity: .7;
+  transition: opacity 200ms;
+}
+
+.reward-beaker:hover .reward-beaker-glass,
+.reward-beaker.is-active .reward-beaker-glass,
+.reward-beaker.is-active .reward-beaker-lip {
+  stroke-opacity: .95;
+}
+
+.reward-beaker:hover .reward-beaker-logo,
+.reward-beaker.is-active .reward-beaker-logo {
+  opacity: 1;
+}
+
+.reward-beaker.is-active .reward-beaker-rim,
+.reward-beaker.is-active .reward-beaker-reflection {
+  opacity: .72;
+}
+
+.reward-beaker.is-active .reward-beaker-vessel {
+  animation: reward-beaker-shiver 2.4s ease-in-out infinite;
+}
+
+.reward-beaker--lime.is-active .reward-beaker-vessel {
+  animation-delay: -1.2s;
+}
+
+.reward-beaker.is-pouring {
+  --beaker-fill-after: 0;
+  --beaker-fizz-after: 0;
+}
+
+.reward-beaker.is-pouring.is-active {
+  --beaker-fill-after: 1;
+  --beaker-fizz-after: 1;
+}
+
+.reward-beaker.is-pouring .reward-beaker-vessel {
+  animation: none;
+}
+
+.reward-beaker.is-pouring .reward-beaker-body {
+  /* Pivot at the measured spout so the outgoing stream remains attached. */
+  transform-box: view-box;
+  transform-origin: 44px 20px;
+  animation: reward-beaker-pour 2.4s ease-in-out both;
+}
+
+.reward-beaker.is-pouring .reward-beaker-fill {
+  animation: reward-beaker-drain 2.4s ease-in-out both;
+}
+
+.reward-beaker.is-pouring:not(.is-active) .reward-beaker-aura,
+.reward-beaker.is-pouring .reward-beaker-fizz {
+  animation: reward-beaker-pour-fizz 2.4s ease-in-out both;
+}
+
+.reward-beaker-aura {
+  stroke: currentColor;
+  stroke-width: 2;
+  opacity: .3;
+  filter: blur(3px);
+  animation: reward-beaker-glow 2.4s ease-in-out infinite alternate;
+}
+
+.reward-beaker-fill {
+  transform-origin: 26px 72px;
+  animation: reward-beaker-fill 450ms ease-out both;
+}
+
+.reward-beaker-wave {
+  animation: reward-beaker-slosh 2.2s ease-in-out infinite alternate;
+}
+
+.reward-beaker-wave-back {
+  fill: currentColor;
+  opacity: .26;
+  animation-direction: alternate-reverse;
+  animation-duration: 2.9s;
+}
+
+.reward-beaker-surface {
+  stroke: var(--beaker-light);
+  stroke-width: 1.1;
+  stroke-opacity: .85;
+}
+
+.reward-beaker-bubbles circle {
+  fill: var(--beaker-light);
+  opacity: 0;
+  animation: reward-beaker-bubble 2s ease-in infinite;
+}
+
+.reward-beaker-bubbles circle:nth-child(2) { animation-delay: -.7s; }
+.reward-beaker-bubbles circle:nth-child(3) { animation-delay: -1.3s; }
+.reward-beaker-bubbles circle:nth-child(4) { animation-delay: -1.7s; }
+
+.reward-beaker-escape {
+  fill: currentColor;
+  stroke: var(--beaker-light);
+  stroke-width: .5;
+  opacity: 0;
+  animation: reward-beaker-fizz 1.65s ease-out infinite;
+}
+
+.reward-beaker-escape:nth-child(2) { animation-delay: -.8s; }
+.reward-beaker-escape:nth-child(3) { animation-delay: -.3s; }
+.reward-beaker-escape:nth-child(4) { animation-delay: -1.2s; }
+
+.reward-beaker-spark {
+  stroke: var(--spark-color, #baff38);
+  stroke-width: 1.2;
+  stroke-linecap: round;
+  opacity: 0;
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: reward-beaker-spark 1.8s ease-out infinite;
+}
+
+.reward-beaker-spark:nth-child(1) { --spark-x: -23px; --spark-y: -20px; --spark-color: #ff7beb; animation-delay: -.1s; }
+.reward-beaker-spark:nth-child(2) { --spark-x: 24px; --spark-y: -18px; --spark-color: #65fff0; animation-delay: -.9s; }
+.reward-beaker-spark:nth-child(3) { --spark-x: -9px; --spark-y: -31px; --spark-color: #ffe578; animation-delay: -1.4s; }
+.reward-beaker-spark:nth-child(4) { --spark-x: 17px; --spark-y: -27px; --spark-color: #b39aff; animation-delay: -.5s; }
+.reward-beaker-spark:nth-child(5) { --spark-x: -28px; --spark-y: -8px; --spark-color: #7cfbff; animation-delay: -1.2s; }
+.reward-beaker-spark:nth-child(6) { --spark-x: 29px; --spark-y: -10px; --spark-color: #ffad73; animation-delay: -.3s; }
+.reward-beaker-spark:nth-child(7) { --spark-x: 4px; --spark-y: -35px; --spark-color: #c3ff58; animation-delay: -1.6s; }
+.reward-beaker-spark:nth-child(8) { --spark-x: -17px; --spark-y: -25px; --spark-color: #ff81a4; animation-delay: -.7s; }
+
+@keyframes reward-beaker-fill {
+  from { transform: scaleY(.04); opacity: 0; }
+  to { transform: scaleY(1); opacity: 1; }
+}
+
+@keyframes reward-beaker-slosh {
+  from { transform: translateX(-5px); }
+  to { transform: translateX(5px); }
+}
+
+@keyframes reward-beaker-bubble {
+  0% { transform: translateY(0); opacity: 0; }
+  15% { opacity: .8; }
+  85%, 100% { transform: translateY(-22px); opacity: 0; }
+}
+
+@keyframes reward-beaker-fizz {
+  0% { transform: translate(0, 0); opacity: 0; }
+  12% { opacity: .95; }
+  80%, 100% { transform: translate(2px, -15px); opacity: 0; }
+}
+
+@keyframes reward-beaker-spark {
+  0% { opacity: 0; transform: translate(0, 0) scale(.35) rotate(0); }
+  12% { opacity: 1; }
+  70%, 100% { opacity: 0; transform: translate(var(--spark-x), var(--spark-y)) scale(.6) rotate(140deg); }
+}
+
+@keyframes reward-beaker-glow {
+  from { opacity: .28; }
+  to { opacity: .7; }
+}
+
+@keyframes reward-beaker-shiver {
+  0%, 52%, 100% { transform: translate(0, 0) rotate(0); }
+  6%, 18%, 30%, 42% { transform: translate(-2px, -1px) rotate(-8deg); }
+  12%, 24%, 36%, 48% { transform: translate(2px, -2px) rotate(8deg); }
+}
+
+@keyframes reward-beaker-pour {
+  0%, 100% { transform: rotate(0); }
+  15%, 65% { transform: rotate(34deg); }
+  75% { transform: rotate(28deg); }
+}
+
+@keyframes reward-beaker-drain {
+  0%, 12% { transform: scaleY(1); opacity: 1; }
+  75%, 84% { transform: scaleY(.015); opacity: .2; }
+  100% { transform: scaleY(var(--beaker-fill-after)); opacity: var(--beaker-fill-after); }
+}
+
+@keyframes reward-beaker-pour-fizz {
+  0%, 60% { opacity: 1; }
+  84% { opacity: 0; }
+  100% { opacity: var(--beaker-fizz-after); }
+}
+
+@media (max-width: 600px) {
+  .reward-beaker {
+    width: min(100%, var(--reward-beaker-width, 32px));
+    height: 62px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reward-beaker *,
+  .reward-beaker.is-active .reward-beaker-vessel {
+    animation: none !important;
+    transition: none !important;
+  }
+
+  .reward-beaker-aura { opacity: .48; }
+  .reward-beaker-bubbles circle { opacity: .6; }
+  .reward-beaker-escape { opacity: 0; }
+  .reward-beaker-spark { opacity: 0; }
+  .reward-beaker-charge-spark { opacity:.85; }
+  .reward-beaker.is-pouring:not(.is-active) .reward-beaker-fill,
+  .reward-beaker.is-pouring:not(.is-active) .reward-beaker-aura,
+  .reward-beaker.is-pouring:not(.is-active) .reward-beaker-fizz { display: none; }
+}

@@ -1,0 +1,29 @@
+main:has(> .acid-backdrop) {
+  isolation: isolate;
+  z-index: 0;
+}
+
+.acid-backdrop {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  z-index: -1;
+  pointer-events: none;
+  user-select: none;
+  contain: strict;
+  /* The low sea, bursting bubbles and emitted smoke are only ASCII on black. */
+  background: #000;
+}
+
+.acid-ascii-field {
+  display: block;
+  width: 100%;
+  height: 100%;
+  opacity: 1;
+}
+
+@media (max-width: 759px) {
+  .acid-ascii-field {
+    opacity: 1;
+  }
+}

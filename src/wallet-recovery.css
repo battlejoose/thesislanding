@@ -1,0 +1,21 @@
+.wallet-recovery {display:grid;gap:12px;color:#e7f7d9;font-size:14px;}
+.wallet-recovery .wallet-backup-heading {margin:0;padding:12px 14px;border:1px solid #bbff42;border-left:4px solid #caff58;border-radius:12px;background:#baff4010;color:#d0ff62;font-size:clamp(19px,5vw,24px);font-weight:900;line-height:1.15;letter-spacing:-.02em;text-shadow:0 0 18px #baff4040;}
+.wallet-recovery p {margin:0;line-height:1.45;}
+.wallet-recovery small {color:#a6b6a0;line-height:1.4;}
+.wallet-recovery label {display:grid;gap:5px;font-weight:600;}
+.wallet-recovery input {width:100%;box-sizing:border-box;padding:10px;background:#080e09;color:#ecffdf;border:1px solid #536b34;border-radius:10px;font:inherit;}
+.wallet-recovery input[type=file] {font-size:12px;}
+.wallet-recovery .wallet-password-toggle {display:flex;align-items:center;gap:9px;flex-wrap:wrap;cursor:pointer;}
+.wallet-recovery .wallet-password-toggle input {width:17px;height:17px;padding:0;margin:0;accent-color:#c8ff70;cursor:pointer;}
+.wallet-recovery .wallet-password-toggle small {font-weight:400;}
+.wallet-recovery-tabs {display:flex;gap:8px;}
+.wallet-recovery-tabs button {flex:1;padding:8px;border:1px solid #536b34;border-radius:10px;}
+.wallet-recovery-tabs button[aria-pressed=true] {color:#c7ff65;border-color:#b5ec52;background:#27371b;}
+.wallet-recovery button.primary {padding:12px;border-radius:12px;background:#c8ff70;color:#122008;font-weight:700;}
+.wallet-recovery button:disabled {opacity:.5;cursor:wait;}
+.wallet-recovery .wallet-recovery-link {font-size:12px;text-decoration:underline;color:#b7d593;background:transparent;padding:4px;}
+.wallet-recovery .wallet-recovery-success {color:#c8ff70;}
+.wallet-recovery .wallet-recovery-error {color:#ffb29f;}
+.wallet-recovery-confirm {display:grid;gap:10px;border:1px solid #82a849;border-radius:12px;padding:12px;background:#0b150c;}
+.wallet-recovery-confirm code {overflow-wrap:anywhere;font-size:12px;}
+.wallet-backup-link {display:block;width:100%;padding:10px;margin-top:8px;background:#152110;color:#c7ed99;border:1px solid #42562c;border-radius:10px;font-size:13px;}

@@ -1,0 +1,499 @@
+/* Acid is a material, not a green filter. Ink, etched metal, liquid controls. */
+:root {
+  background: #090c0b;
+}
+body {
+  background:
+    radial-gradient(ellipse 390px 340px at 50% 10%, #c6ff520a, transparent 78%),
+    radial-gradient(ellipse 620px 580px at 85% 12%, #5fffbb08, transparent 80%),
+    #090c0b;
+}
+.hero-main::before {
+  opacity: 0.3;
+}
+.market-select,
+.wallet,
+.input-card {
+  background: linear-gradient(140deg, #1b211d, #121714);
+  box-shadow:
+    inset 0 1px 0 #f1ffe616,
+    inset 0 0 0 1px #cadfba16,
+    0 5px 12px #0003;
+}
+.input-card {
+  position: relative;
+  isolation: isolate;
+}
+.bet-input {
+  border-radius: 17px 17px 8px 17px;
+}
+.leverage-card {
+  border-radius: 17px 17px 17px 8px;
+}
+.input-card::after {
+  content: "";
+  position: absolute;
+  pointer-events: none;
+  height: 2px;
+  bottom: 0;
+  left: 18px;
+  width: 32px;
+  background: #c4ff49;
+  border-radius: 100%;
+  opacity: 0.4;
+  transform-origin: left;
+  transition:
+    transform 0.3s,
+    opacity 0.3s;
+}
+.leverage-card::after {
+  left: auto;
+  right: 18px;
+  transform-origin: right;
+  background: #7aefc3;
+}
+.input-card:focus-within::after {
+  transform: scaleX(2.3);
+  opacity: 1;
+}
+.input-title {
+  color: #d0d9c9;
+}
+.hero-value strong {
+  color: #f0f5e9;
+  text-shadow: none;
+}
+.hero-value .cents {
+  color: #b0c09d;
+}
+.top nav button {
+  background: #161c17;
+  box-shadow: inset 0 1px 0 #e8ffd115;
+}
+.top-intro {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+.top .top-how {
+  position: relative;
+  isolation: isolate;
+  flex: none;
+  padding: 8px 10px;
+  border-color: transparent;
+  background: transparent;
+  box-shadow: none;
+  color: #192d08;
+  font-size: 11px;
+  font-weight: 750;
+  white-space: nowrap;
+}
+.top .top-how:hover:not(:disabled) {
+  color: #102005;
+  border-color: transparent;
+  background: transparent;
+  box-shadow: none;
+}
+.how-slime-label {
+  position: relative;
+  z-index: 1;
+  text-shadow: 0 1px 0 #f3ffd952;
+}
+.how-slime-skin {
+  position: absolute;
+  inset: -4px;
+  width: calc(100% + 8px);
+  height: calc(100% + 8px);
+  pointer-events: none;
+  overflow: visible;
+}
+.how-slime-skin path { vector-effect: non-scaling-stroke; }
+.how-slime-body,
+.how-slime-halo,
+.how-slime-rim { animation: how-slime-wriggle 4.8s ease-in-out infinite; }
+.how-slime-halo {
+  fill: none;
+  stroke: #b7ff35;
+  stroke-width: 5;
+  opacity: .13;
+  transition: opacity .2s;
+}
+.top-how:hover .how-slime-halo,
+.top-how:focus-visible .how-slime-halo { opacity: .32; }
+.how-slime-body { stroke: #cfff74; stroke-width: .7; }
+.how-slime-rim {
+  fill: none;
+  stroke: #f2ffd1;
+  stroke-width: 1.2;
+  stroke-linecap: round;
+  stroke-dasharray: 12 19 3 66;
+  animation: how-slime-wriggle 4.8s ease-in-out infinite, how-slime-circulate 9s linear infinite;
+}
+.how-slime-gloss { fill: none; stroke: #f4ffd9; stroke-width: 1.1; opacity: .65; }
+.how-slime-drip {
+  fill: #a5e82c;
+  transform-box: fill-box;
+  transform-origin: center top;
+  animation: how-slime-drip 5s ease-in-out infinite;
+}
+.how-slime-drip-two { animation-delay: -2.6s; }
+.how-slime-bubbles circle {
+  fill: #f0ffb544;
+  stroke: #f2ffc3;
+  stroke-width: .65;
+  animation: how-slime-fizz 3.4s ease-in-out infinite;
+}
+.how-slime-bubbles circle:nth-child(2) { animation-delay: -1.5s; }
+.how-slime-bubbles circle:nth-child(3) { animation-delay: -2.4s; }
+@keyframes how-slime-wriggle {
+  50% { d: path("M15 5C35 8 45 2 65 5S105 7 124 5C133 3 137 11 136 19S135 33 132 36C126 37 108 41 91 38S57 41 39 38S18 40 11 37C5 34 2 28 4 21S5 5 15 5Z"); }
+}
+@keyframes how-slime-circulate { to { stroke-dashoffset: -100; } }
+@keyframes how-slime-drip {
+  0%,100% { transform: scaleY(.35); }
+  60% { transform: scaleY(1); }
+  85% { transform: scaleY(.7); }
+}
+@keyframes how-slime-fizz {
+  0%,100% { opacity: 0; transform: translateY(2px); }
+  25% { opacity: .8; }
+  80% { opacity: .5; transform: translateY(-10px); }
+  95% { opacity: 0; transform: translateY(-12px); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .how-slime-skin path,
+  .how-slime-skin circle { animation: none; }
+  .how-slime-drip { transform: scaleY(.4); }
+}
+@media (max-width: 420px) {
+  .top-intro { gap: 7px; }
+  .top .top-how { padding: 7px; font-size: 10px; }
+}
+@media (max-width: 360px) {
+  .top-intro { gap: 5px; }
+  .top .top-how { padding-inline: 6px; }
+  .top-intro .acid-wordmark { font-size: 17px; gap: 3px; }
+  .top-intro .acid-wordmark-symbol { width: 23px; flex-basis: 23px; }
+  .top-intro .acidpump-mark { width: 23px; height: 23px; }
+}
+
+/* Soft membranes, asymmetrical edges and little pockets of trapped gas. */
+.trade-buttons {
+  position: relative;
+}
+.trade-buttons.has-insufficient-balance > button:disabled {
+  opacity: 1;
+}
+.trade-balance-overlay {
+  position: absolute;
+  z-index: 4;
+  inset: 0;
+  width: min(330px, 82%);
+  height: max-content;
+  margin: auto;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 9px 13px;
+  border: 1px solid #d6ff6e;
+  border-radius: 12px 6px 12px 6px;
+  background: #11190b;
+  box-shadow: 0 3px 15px #0008, inset 0 1px 0 #f3ffcf25;
+  color: #f1f8e6;
+  text-align: left;
+  pointer-events: none;
+}
+.trade-balance-overlay > span {
+  flex: 0 0 20px;
+  height: 20px;
+  border: 1px solid #d6ff6e;
+  border-radius: 50%;
+  color: #d6ff6e;
+  font-size: 13px;
+  font-weight: 800;
+  line-height: 18px;
+  text-align: center;
+}
+.trade-balance-overlay p {
+  margin: 0;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.35;
+}
+.trade-buttons > button,
+.trade-buttons > button:last-child,
+.trade-buttons > button:hover:not(:disabled),
+.trade-buttons > button:last-child:hover:not(:disabled) {
+  background: transparent;
+  border-color: transparent;
+  box-shadow: none;
+  overflow: visible;
+  min-height: 58px;
+  color: #192a0e;
+  border-radius: 17px;
+  transform: translateZ(0);
+}
+.trade-buttons > button:last-child {
+  color: #102c20;
+}
+.trade-buttons > button::before {
+  display: none;
+}
+.acid-trade-skin {
+  position: absolute;
+  pointer-events: none;
+  inset: -2px 0;
+  width: 100%;
+  height: calc(100% + 4px);
+  z-index: -1;
+  overflow: hidden;
+  border-radius: 18px;
+  filter: drop-shadow(0 3px 1px #0008);
+  transition:
+    filter 0.2s,
+    transform 0.2s;
+}
+.acid-trade-body {
+  stroke: #eaffac;
+  stroke-width: 0.5;
+}
+.acid-trade-highlight {
+  fill: none;
+  stroke: #fcffdd;
+  stroke-width: 1;
+  opacity: 0.7;
+  stroke-linecap: round;
+}
+.acid-trade-underflow {
+  fill: #588c0033;
+  animation: acid-button-tide 6s ease-in-out infinite alternate;
+}
+.trade-buttons > button:last-child .acid-trade-underflow {
+  fill: #127b5440;
+  animation-delay: -2s;
+}
+.acid-trade-crease {
+  fill: none;
+  stroke: #fffbd4;
+  stroke-width: 1;
+  opacity: 0.55;
+  stroke-linecap: round;
+}
+.acid-trade-bubbles circle {
+  fill: #fcffe544;
+  stroke: #efffbaaa;
+  stroke-width: 0.7;
+  animation: acid-button-bubble 3.5s ease-in-out infinite;
+}
+.acid-trade-bubbles circle:nth-child(2) {
+  animation-delay: -1.1s;
+}
+.acid-trade-bubbles circle:nth-child(3) {
+  animation-delay: -2.4s;
+}
+.trade-buttons .acid-trade-label {
+  position: relative;
+  display: block;
+  font-weight: 750;
+  letter-spacing: -0.7px;
+}
+.acid-trade-label > span {
+  display: inline-block;
+  font-weight: 500;
+  transition: transform 0.2s cubic-bezier(0.2, 0.8, 0.2, 1.4);
+}
+.trade-buttons > button:hover:not(:disabled) .acid-trade-label > span {
+  transform: translateY(-3px);
+}
+.trade-buttons > button:last-child:hover:not(:disabled) .acid-trade-label > span {
+  transform: translateY(3px);
+}
+.trade-buttons > button:hover:not(:disabled) .acid-trade-skin {
+  filter: drop-shadow(0 2px 8px #c6ff5244);
+  transform: scale(1.02, 1.035);
+}
+.trade-buttons > button:last-child:hover:not(:disabled) .acid-trade-skin {
+  filter: drop-shadow(0 2px 8px #86ffd444);
+}
+.trade-buttons > button:active:not(:disabled) .acid-trade-skin {
+  transform: scale(0.97, 0.93);
+}
+.trade-buttons small {
+  position: relative;
+  font-size: 10px;
+  font-weight: 600;
+  color: #294016;
+}
+.trade-buttons > button:last-child small {
+  color: #173e2c;
+}
+.trade-buttons > button:disabled .acid-trade-skin * {
+  animation-play-state: paused;
+}
+.trade-buttons > button.is-progress .acid-trade-skin {
+  opacity: 0.45;
+  animation: acid-formation 1.5s ease-in-out infinite;
+}
+.trade-buttons > button.is-progress .transaction-progress {
+  border: 1px solid #d1ff5d;
+  border-radius: 18px 11px 17px 10px;
+  background: #10200cf5;
+  box-shadow: inset 0 -3px 0 #b9f8483b;
+}
+.trade-buttons > button.is-progress:last-child .transaction-progress {
+  border-color: #99f9d0;
+  box-shadow: inset 0 -3px 0 #7bf3b940;
+}
+
+/* Exact half-column alignment matches the Long and Short controls above. */
+main .under {
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 10px;
+  margin: 7px 0 9px;
+  min-height: 64px;
+}
+.under .trade-info {
+  position: relative;
+  text-align: center;
+  align-self: center;
+  container-type: inline-size;
+  padding: 4px 5px;
+  border: 1px solid #b8e27324;
+  border-radius: 12px;
+  background: #030403;
+  box-shadow: 0 3px 10px #0007, inset 0 1px 0 #ecffc207;
+}
+.under .trade-info p {
+  font-size: clamp(8.8px, 6.2cqi, 11px);
+  line-height: 1.65;
+  white-space: nowrap;
+}
+.under .trade-info .accent {
+  color: #cee89a;
+}
+.under .trade-info p:first-of-type {
+  color: #cbd6c4;
+}
+.under .trade-info .ownership-info {
+  color: #91eac6;
+}
+.under .acid-reactor-pool {
+  justify-self: center;
+}
+
+/* The central pool control keeps its alignment under Short. Its two reward
+ * vessels share this column, never taking space from the information on Long. */
+.pool-reward-station {
+  display: grid;
+  grid-template-columns: 20% minmax(0, 60%) 20%;
+  align-items: center;
+  justify-items: center;
+  width: 100%;
+  max-width: 244px;
+  min-width: 0;
+  height: 70px;
+  justify-self: center;
+  container-type: inline-size;
+}
+.pool-reward-station .acid-reactor-pool {
+  width: 100%;
+  padding-inline: 2px;
+}
+.pool-reward-station .acid-pool-copy .pool-button-label {
+  font-size: clamp(9px, 5.5cqi, 13.5px);
+  letter-spacing: 0;
+}
+.pool-reward-station .acid-pool-copy .acid-pool-ticker {
+  font-size: clamp(10px, 5.8cqi, 14px);
+}
+
+/* Positions read as physical trade slips, with a luminous acid seam. */
+.positions {
+  position: relative;
+  border-color: #a7d15c30;
+  overflow-anchor: none;
+}
+.position {
+  background: linear-gradient(110deg, #1b231b0f, #121914 65%), #101512;
+  border-color: #606b583f;
+  border-radius: 13px 5px 13px 5px;
+  box-shadow:
+    inset 0 1px 0 #f1ffe40b,
+    0 4px 10px #0003;
+}
+.position.open {
+  border-color: #97b65587;
+  box-shadow:
+    inset 2px 0 0 #c5ff4c,
+    0 5px 14px #0003;
+}
+.position.open::before {
+  height: 1px;
+}
+.position .pnl-value {
+  letter-spacing: -0.06em;
+}
+.close-control button {
+  border-radius: 9px 4px 9px 4px;
+}
+.position-share-button {
+  border-radius: 6px 2px 6px 2px;
+}
+.position-exposure-value b {
+  color: #d3f98f;
+}
+.position-overlay {
+  background: #101c10f8;
+}
+.position-overlay > b {
+  color: #d9ff7c;
+}
+.modal {
+  border-radius: 22px 9px 22px 9px;
+  background: linear-gradient(145deg, #202a1d, #111912 60%);
+}
+.wallet-dropdown {
+  border-radius: 17px 6px 17px 6px;
+}
+
+@keyframes acid-button-tide {
+  from {
+    transform: translate(-9px, 1px);
+  }
+  to {
+    transform: translate(9px, -2px);
+  }
+}
+@keyframes acid-button-bubble {
+  0%,
+  100% {
+    transform: translateY(0);
+    opacity: 0.3;
+  }
+  55% {
+    transform: translateY(-7px);
+    opacity: 0.8;
+  }
+}
+@keyframes acid-formation {
+  0%,
+  100% {
+    transform: scale(0.97, 1.02);
+  }
+  50% {
+    transform: scale(1.025, 0.95);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .acid-trade-skin,
+  .acid-trade-skin *,
+  .trade-buttons > button.is-progress .acid-trade-skin {
+    animation: none !important;
+    transition: none;
+  }
+  .trade-buttons > button:hover:not(:disabled) .acid-trade-skin,
+  .trade-buttons > button:hover:not(:disabled) .acid-trade-label > span {
+    transform: none;
+  }
+}

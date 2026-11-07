@@ -1,0 +1,127 @@
+.position-overlay.settlement-receipt{position:absolute;inset:0;display:flex;flex-direction:column;align-items:stretch;justify-content:flex-start;gap:2px;padding:7px 10px;min-width:0;min-height:0;border-radius:inherit;isolation:isolate;overflow:hidden;z-index:15;text-align:left;background:radial-gradient(ellipse at 62% 95%,#1e310b70,transparent 70%),#07100efc;container-type:inline-size;--journey-color:#d7ff78}
+.tone-acid{--journey-color:#d7ff78}.tone-ice{--journey-color:#a2f2dd}.tone-loss{--journey-color:#ff837a}.tone-collateral{--journey-color:#f0d797}.tone-ownership{--journey-color:#9cddff}.tone-burn{--journey-color:#ffbc81}.tone-queue{--journey-color:#e6d58d}
+.journey-backing-source{position:absolute;left:34%;top:23%;width:25%;z-index:3;text-align:center;color:#d7ff78;container-type:inline-size}.journey-backing-source>span{font-size:9px;color:#c6d9bf}.journey-backing-source>div{display:flex;align-items:center;justify-content:center;gap:3px}.journey-backing-source .coin{width:15px;height:15px;flex:none}.journey-backing-source .journey-amount>strong{font-size:clamp(6px,calc(70cqw / (var(--amount-chars)*.58)),11px)!important}.journey-backing-source .journey-amount>span{font-size:7px}
+.journey-header{height:21px;flex:none;display:flex;align-items:center;justify-content:space-between;gap:5px;position:relative;z-index:3}.journey-result{display:flex;align-items:center;gap:5px;color:var(--journey-color);min-width:0}.journey-result>span:first-child{font-size:10px;color:#c5d4bc;font-weight:600}.journey-result .journey-amount>strong{font-size:17px!important}.journey-result>.coin{width:15px;height:15px;flex:none}.journey-controls{display:flex;align-items:center;gap:3px}.journey-controls>button,.journey-controls>a{display:grid;place-items:center;width:21px;height:21px;padding:0;border:1px solid #b7e58620;border-radius:6px;background:#d6ff9308;color:#c8dabd;font-size:13px;line-height:1;text-decoration:none}.journey-controls>button:last-child{font-size:18px}.journey-controls>button:disabled{opacity:.3}.journey-controls>button:hover,.journey-controls>a:hover{color:#e6ffc9;background:#caff6920}
+.settlement-journey{position:relative;flex:1;min-height:0;isolation:isolate}.journey-motion{position:absolute;inset:0;width:100%;height:100%;overflow:visible;pointer-events:none;z-index:2}.journey-transfer{color:var(--journey-color)}.journey-route{fill:none;stroke:currentColor;stroke-width:.5;stroke-dasharray:1 6;opacity:.38;vector-effect:non-scaling-stroke}.journey-pour{fill:none;stroke:currentColor;stroke-width:4.4;stroke-linecap:round;stroke-dasharray:0 100;opacity:0;vector-effect:non-scaling-stroke;filter:drop-shadow(0 0 2px currentColor);animation:journey-liquid-travel var(--travel-time) ease-in-out var(--at) 1 forwards}.journey-token{filter:drop-shadow(0 0 2px #dfff8440)}
+.journey-destination{position:absolute;top:55%;width:18%;transform:translate(-50%,-19px);display:flex;flex-direction:column;align-items:center;color:var(--journey-color);z-index:1;container-type:inline-size;min-width:0}.journey-destination-art{position:relative;width:38px;height:38px;flex:none}.journey-destination-art>.settlement-icon{display:block;width:38px;height:38px}.journey-label{display:block;white-space:nowrap;font-size:10px;line-height:1.05;color:#c6d9bf;font-weight:500;margin-top:1px}.journey-amount{display:flex;align-items:baseline;justify-content:center;gap:3px;max-width:100%;color:var(--journey-color);white-space:nowrap;font-variant-numeric:tabular-nums}.journey-amount>strong{font-size:clamp(5px,calc(96cqw / (var(--amount-chars)*.58)),14px)!important;line-height:1.08!important;color:inherit;letter-spacing:-.025em;white-space:nowrap}.journey-amount>span{font-size:9px;line-height:1;color:inherit}.journey-destination>small{font-size:8px;color:#a7ba9c;line-height:1.1;white-space:nowrap}.journey-destination.journey-empty{opacity:.62}.journey-destination .settlement-icon__liquid{transform-origin:50% 90%;transform:scaleY(.12);opacity:.2}.journey-destination.journey-receives .settlement-icon__liquid{animation:journey-liquid-fill 1s ease-out var(--at) forwards}.journey-destination.journey-receives .settlement-icon__wave{animation:journey-ripple 1.4s ease-in-out var(--at) 3}.journey-destination.journey-receives .settlement-icon__bubble{animation:journey-bubble 1.3s ease-out var(--at) 3}.journey-destination.journey-receives .settlement-icon__flame{transform-origin:50% 90%;animation:journey-flame .4s ease-in-out var(--at) 6 alternate}.journey-destination.journey-receives .settlement-icon__ember{animation:journey-receive .9s ease-out var(--at) 2}.journey-destination.journey-receives .settlement-icon__people,.journey-pocket.journey-receives .settlement-icon__seal{animation:journey-receive .8s ease-out var(--at) 1}.journey-destination.journey-receives>.journey-amount,.journey-pocket.journey-receives .journey-amount{animation:journey-number-arrive .9s ease-out var(--at) 1}
+.journey-pocket{position:absolute;top:0;width:48%;display:flex;align-items:center;gap:4px;min-width:0;z-index:3;color:var(--journey-color)}.pocket-left{left:0}.pocket-right{left:56%;width:44%}.journey-pocket-art{position:relative;width:31px;height:31px;flex:none}.journey-pocket-art>.settlement-icon{display:block}.journey-pocket>div:last-child{min-width:0;flex:1;container-type:inline-size}.journey-pocket .journey-label{font-size:9px;margin:0 0 2px;line-height:1}.journey-pocket .journey-amount{justify-content:flex-start;gap:3px}.journey-pocket .journey-amount>strong{font-size:clamp(5px,calc(96cqw / (var(--amount-chars)*.58)),12px)!important}.journey-pocket .journey-amount>span{font-size:8px}.journey-pocket.journey-empty{opacity:.65}.journey-arrival{position:absolute;left:50%;top:50%;width:30px;height:30px;border:1px solid currentColor;border-radius:50%;transform:translate(-50%,-50%) scale(.5);opacity:0;pointer-events:none}.journey-receives>.journey-destination-art>.journey-arrival,.journey-receives>.journey-pocket-art>.journey-arrival{animation:journey-arrive .8s ease-out var(--at) forwards}
+.journey-loss-caption{position:absolute;top:32%;left:21%;width:30%;transform:translateX(-50%);text-align:center;z-index:3;color:#e7c7a0;container-type:inline-size;pointer-events:none}.journey-loss-caption .journey-amount>strong{font-size:clamp(5px,calc(94cqw / (var(--amount-chars)*.58)),11px)!important}.journey-loss-caption .journey-amount>span{font-size:8px}.journey-loss-caption>span:last-child{display:block;font-size:8px;color:#a7b09c;line-height:1.1}
+.journey-bag-token{position:absolute;inset:16px 10px 7px;display:grid;place-items:center;background:#102218;border-radius:50%}.journey-bag-token>.coin{width:16px;height:16px}.journey-transmute{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:17px;height:17px;display:grid;place-items:center;background:#0a1c12;border-radius:50%;overflow:hidden}.journey-transmute>span{position:absolute;inset:0;display:grid;place-items:center}.journey-transmute .coin{width:17px;height:17px}.journey-after-token{opacity:0;transform:scale(.3);animation:journey-token-created .5s ease-out 2.7s forwards}.journey-before-token{animation:journey-token-sold .4s ease-in 2.4s forwards}.journey-transmute.same-asset .journey-after-token{opacity:1;transform:none;animation:none}.journey-destination.journey-receives .settlement-icon__orbit{transform-origin:24px 24px;animation:journey-transmute-spin 1.3s ease-in-out 2.2s 1}.journey-destination.journey-empty .journey-transmute{display:none}.journey-allocation-unit{position:absolute;left:50%;right:-2%;bottom:0;text-align:center;font-size:8px;line-height:1;color:#9eae8f;pointer-events:none}.journey-note{flex:none;min-height:8px;font-size:8px;line-height:1.1;color:#93a98b;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.position-receipt-button{font-size:10px!important;padding:4px 7px!important;background:#dbff9907!important;border:1px solid #bcfa6930!important;color:#bddba6!important;border-radius:6px;margin-left:auto;white-space:nowrap}.position-bottom-actions{display:flex;align-items:center;gap:6px;flex:none}
+@keyframes journey-liquid-travel{0%{stroke-dasharray:0 100;stroke-dashoffset:0;opacity:0}15%{opacity:.9}45%{stroke-dasharray:42 100;stroke-dashoffset:-20;opacity:.95}85%{stroke-dasharray:24 100;stroke-dashoffset:-76;opacity:.8}100%{stroke-dasharray:0 100;stroke-dashoffset:-100;opacity:0}}
+@keyframes journey-liquid-fill{0%{transform:scaleY(.12);opacity:.2}70%{transform:scaleY(1.15);opacity:1}100%{transform:scaleY(1);opacity:1}}
+@keyframes journey-ripple{0%,100%{transform:translateX(-1px)}50%{transform:translateX(1px)}}
+@keyframes journey-bubble{0%{transform:translateY(5px);opacity:0}25%{opacity:.8}100%{transform:translateY(-8px);opacity:0}}
+@keyframes journey-flame{from{transform:scale(.9,1);opacity:.7}to{transform:scale(1.06,1.12);opacity:1}}
+@keyframes journey-arrive{0%{opacity:0;transform:translate(-50%,-50%) scale(.4)}20%{opacity:.7}100%{opacity:0;transform:translate(-50%,-50%) scale(1.6)}}
+@keyframes journey-receive{0%,100%{filter:none}40%{filter:drop-shadow(0 0 4px currentColor)}}
+@keyframes journey-number-arrive{0%,100%{text-shadow:none}40%{text-shadow:0 0 9px currentColor}}
+@keyframes journey-token-created{to{opacity:1;transform:scale(1)}}
+@keyframes journey-token-sold{to{opacity:0;transform:scale(.2) rotate(100deg)}}
+@keyframes journey-transmute-spin{to{transform:rotate(360deg)}}
+.settlement-receipt.is-paused *{animation-play-state:paused!important}.settlement-receipt.is-reduced *{animation:none!important}.settlement-receipt.is-reduced .journey-before-token{display:none}.settlement-receipt.is-reduced .journey-after-token{opacity:1;transform:none}.settlement-receipt.is-reduced .journey-receives .settlement-icon__liquid{transform:none;opacity:1}
+@media(max-width:430px){.position-overlay.settlement-receipt{padding:6px 8px;gap:2px}.journey-header{height:20px}.journey-result .journey-amount>strong{font-size:15px!important}.journey-label{font-size:8px}.journey-destination{transform:translate(-50%,-17px)}.journey-destination-art,.journey-destination-art>.settlement-icon{width:34px;height:34px}.journey-destination>small{font-size:7px}.journey-pocket{gap:2px}.journey-pocket-art,.journey-pocket-art>.settlement-icon{width:27px;height:27px}.journey-pocket .journey-label{font-size:8px}.journey-pocket .journey-amount>span{font-size:7px}.journey-bag-token{inset:14px 9px 6px}.journey-bag-token>.coin{width:14px;height:14px}.journey-note{font-size:7px}.journey-loss-caption{top:29%;width:31%}.journey-loss-caption>span:last-child{font-size:7px}.journey-allocation-unit{font-size:7px}.position-bottom-actions{gap:3px}.position-receipt-button{font-size:9px!important;padding:3px 5px!important}}
+@media(prefers-reduced-motion:reduce){.settlement-receipt *{animation:none!important}.journey-before-token{display:none}.journey-after-token{opacity:1;transform:none}.journey-receives .settlement-icon__liquid{transform:none;opacity:1}}
+
+
+.journey-destination>.journey-label{font-size:clamp(5px,calc(96cqw / (var(--label-chars)*.53)),10px)}
+
+
+.journey-long-amount{flex-wrap:wrap;column-gap:0;row-gap:0}.journey-long-amount>strong{width:100%}.journey-long-amount>span{width:100%;font-size:7px!important}
+
+
+
+
+/* The winning wallet receipt shows both assets on one line. */
+.journey-wallet-balances{display:flex;align-items:baseline;gap:8px;min-width:0}
+.journey-win .pocket-left .journey-wallet-balances{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr)}
+.journey-win .pocket-left .journey-wallet-balances>.journey-amount,.journey-wallet-profit{container-type:inline-size}
+.journey-wallet-balances>.journey-amount{min-width:0}
+.journey-wallet-profit{min-width:0;color:#c7ff81;white-space:nowrap;flex:none}
+.journey-wallet-profit.has-payout{animation:journey-number-arrive .9s ease-out 7.3s both}
+.journey-win .pocket-left{width:68%}
+.journey-win .pocket-right{left:71%;width:29%}
+.journey-win .pocket-right .journey-label{font-size:8px}
+.journey-win .pocket-left.journey-receives .settlement-icon{animation:journey-receive .8s ease-out 1.6s,journey-receive .8s ease-out 7.3s}
+@media(max-width:430px){.journey-wallet-balances{gap:5px}.journey-win .pocket-right .journey-label{font-size:7px}.journey-win .pocket-right{left:70%;width:30%}}
+
+/* Replay keeps the original market title, direction and P&L in place. */
+.position.has-overlay>.position-top>.position-summary{position:relative;z-index:16;pointer-events:none}
+.position.has-overlay>.position-top>.position-summary>:not(h3){visibility:hidden}
+.position-overlay.settlement-receipt{padding:10px 12px}
+.journey-header{height:34px;display:grid;grid-template-columns:minmax(0,1.18fr) minmax(0,1fr) minmax(0,1fr);gap:7px;align-items:start}
+.journey-controls{justify-content:flex-end;padding-top:3px}
+.journey-player{position:absolute;top:0;left:0;width:100%;display:flex;align-items:center;gap:5px;z-index:3;min-width:0}
+.journey-player-wallet{flex:0 0 31px;color:#a2f2dd;animation:journey-receive .8s ease-out 1.6s,journey-receive .8s ease-out 7.3s}
+.journey-player-wallet>.settlement-icon{display:block}
+.journey-player-body{min-width:0;flex:1;container-type:inline-size}
+.journey-player-amounts{display:flex;align-items:center;justify-content:flex-start;gap:8px;min-width:0;font-size:clamp(8px,calc((100cqw - var(--proceeds-icons)*26px - 8px - var(--proceeds-action-width,0px)) / (var(--proceeds-chars)*.58)),13px)}
+.journey-player-amounts>div{display:flex;align-items:center;gap:3px;min-width:0;flex:0 1 auto}
+.journey-player-amounts>div>.coin{width:16px;height:16px;flex:none}
+.journey-player-amounts>.journey-wallet-profit{container-type:normal}
+.journey-player .journey-amount{justify-content:flex-start;gap:3px}
+.journey-player .journey-amount>strong{font-size:1em!important}
+.journey-player .journey-amount>span{font-size:.64em}
+.journey-player .journey-long-amount{flex-wrap:nowrap;column-gap:3px}
+.journey-player .journey-long-amount>strong,.journey-player .journey-long-amount>span{width:auto}
+.journey-player .journey-long-amount>span{font-size:.64em!important}
+.journey-player-ownership{display:flex;align-items:center;gap:4px;color:#7cebd9}
+.journey-player-ownership>img{width:28px;height:25px;object-fit:contain;flex:none}
+.journey-player-ownership>div{min-width:0}
+.journey-player-ownership .journey-stake{flex:none;min-height:24px;padding:2px 5px;margin-left:2px;border:1px solid #79e5c766;border-radius:6px;background:#234b38;color:#b9ffdc;font-size:9px;font-weight:700;line-height:1;cursor:pointer}
+.journey-player-ownership .journey-stake:hover{background:#36684a;color:#fff}
+.journey-player-ownership .journey-stake:focus-visible{outline:2px solid #9affd1;outline-offset:2px}
+.journey-player-queue{color:var(--journey-color);white-space:nowrap;animation:journey-number-arrive .9s ease-out 7.7s both}
+.journey-player-queue>.coin{animation:journey-receive .9s ease-out 7.7s both}
+.journey-player-queue>span:not(.journey-tx-links){font-size:.72em;font-weight:600}
+.journey-player-ownership.has-ownership{animation:journey-number-arrive .9s ease-out 7.8s both}
+.journey-player-ownership.has-ownership>img{animation:journey-receive .9s ease-out 7.8s both}
+.journey-acid-emblem{position:absolute;object-fit:contain;pointer-events:none;width:25px;height:21px;left:7px;bottom:0;filter:drop-shadow(0 1px 1px #07100e)}
+.emblem-pool{bottom:-1px;width:29px;left:4px}
+.emblem-stakers{bottom:-3px;left:8px;width:23px}
+.emblem-burn{bottom:0;left:8px;width:22px}
+.journey-receives .journey-acid-emblem{animation:journey-receive .9s ease-out var(--at) both}
+.journey-token-emblem{position:absolute;left:14%;top:14%;width:72%;height:72%;pointer-events:none;filter:drop-shadow(0 1px 1px #07100e)}
+.journey-token-emblem>.coin{display:block;width:100%;height:100%;background:none}
+.journey-token-emblem.token-emblem-queue{left:auto;top:auto;right:0;bottom:0;width:50%;height:50%}
+.journey-receives .journey-token-emblem{animation:journey-receive .9s ease-out var(--at) both}
+.journey-loss .journey-destination{top:53%}
+.journey-loss .destination-pool{width:16%}
+.journey-loss .destination-stakers,.journey-loss .destination-burn{width:14%}
+.journey-loss .journey-loss-caption{top:29%}
+/* Proof stays small and outside the animated amount row, with no card resize. */
+.journey-tx-links{display:inline-flex;align-items:center;justify-content:center;gap:3px;max-width:100%;white-space:nowrap;font:7px/1.3 ui-monospace,SFMono-Regular,Consolas,monospace;letter-spacing:0;position:relative;z-index:4;color:#a9bf99}
+.journey-tx-links>a{color:inherit;text-decoration:none;border-bottom:1px dotted #a9bf9959;padding:2px 0;line-height:1.1}
+.journey-tx-links>a>span{margin-left:1px;font-size:7px}
+.journey-tx-links>a:is(:hover,:focus-visible){color:#dcff8d;border-color:#dcff8d;text-shadow:0 0 5px #b5ff4040;outline-offset:2px}
+.journey-tx-links>.journey-tx-more{font:inherit!important;line-height:1.2!important;color:#d8eeaf!important;padding:2px 3px!important;border:1px solid #9bca5740!important;background:#203018!important;border-radius:3px!important;min-width:0;min-height:0}
+.journey-player-amounts>div{position:relative}
+.journey-player-amounts .journey-tx-links{position:absolute;top:calc(50% + 7px);left:19px;font-size:6px}
+.journey-player-ownership .journey-tx-links{left:32px}
+.journey-backing-source>.journey-tx-links{display:flex;margin-top:1px}
+.journey-destination>.journey-tx-links{margin-top:2px}
+.journey-win .journey-destination{top:51%}
+.journey-loss .journey-destination{top:49%}
+.settlement-tx-list{display:flex;flex-direction:column;gap:8px;max-height:55svh;overflow:auto}
+.settlement-tx-list>a{display:flex;align-items:center;gap:14px;padding:12px;border:1px solid #61833d60;border-radius:8px;background:#172511;color:#d5f4ab;text-decoration:none}
+.settlement-tx-list code{font:10px/1.5 ui-monospace,monospace;overflow-wrap:anywhere;min-width:0}
+.settlement-tx-list>a>span{font-size:10px;white-space:nowrap}
+.settlement-tx-list>a:is(:hover,:focus-visible){border-color:#caff52;background:#243713}
+@media(max-width:600px){
+  .position-overlay.settlement-receipt{padding:9px}
+  .journey-header{height:28px;gap:4px}
+  .journey-controls{gap:2px;padding-top:0}
+  .journey-controls>button,.journey-controls>a{width:18px;height:20px;font-size:11px}
+  .journey-player{gap:3px}
+  .journey-player-wallet{flex-basis:25px}
+  .journey-player-wallet>.settlement-icon{width:25px;height:25px}
+  .journey-player-amounts{gap:6px}
+  .journey-player-amounts>div>.coin{width:13px;height:13px}
+  .journey-player-ownership{gap:2px}
+  .journey-player-ownership>img{width:21px;height:21px}
+  .journey-player-amounts .journey-tx-links{left:16px;gap:2px}
+  .journey-player-ownership .journey-tx-links{left:23px}
+  .journey-destination>.journey-tx-links{font-size:6px;gap:2px}
+}
+
+.journey-destination>.journey-token-amount{font-size:clamp(7px,calc(96cqw / (var(--token-chars)*.55)),9px);max-width:100%;white-space:normal;text-align:center;overflow-wrap:anywhere;line-height:1.2}

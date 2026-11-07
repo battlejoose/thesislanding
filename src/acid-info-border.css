@@ -1,0 +1,73 @@
+.acid-info-border {
+  position: absolute;
+  pointer-events: none;
+  inset: -2px;
+  width: calc(100% + 4px);
+  height: calc(100% + 4px);
+  overflow: visible;
+}
+
+.acid-info-border path {
+  vector-effect: non-scaling-stroke;
+}
+
+.acid-info-edge-halo {
+  stroke-width: 4px;
+  opacity: 0.12;
+}
+
+.acid-info-edge {
+  stroke-width: 1.15px;
+  opacity: 0.85;
+}
+
+.acid-info-edge-flow {
+  stroke: #edffb4;
+  stroke-width: 1.7px;
+  stroke-linecap: round;
+  stroke-dasharray: 6 18 2 74;
+  opacity: 0.75;
+  animation: acid-info-circulate 12s linear infinite;
+}
+
+.acid-info-ooze {
+  fill: #b8f858;
+  transform-box: fill-box;
+  transform-origin: 50% 0;
+  animation: acid-info-drip 6.6s ease-in-out infinite;
+  opacity: 0.8;
+}
+
+.acid-info-ooze.info-ooze-two {
+  fill: #b3ee77;
+  transform-origin: 50% 100%;
+  animation-delay: -2.8s;
+}
+
+@keyframes acid-info-circulate {
+  to {
+    stroke-dashoffset: -100;
+  }
+}
+
+@keyframes acid-info-drip {
+  0%,
+  100% {
+    transform: scaleY(0.4) scaleX(1.1);
+  }
+  55% {
+    transform: scaleY(1) scaleX(0.9);
+  }
+  80% {
+    transform: scaleY(0.6);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .acid-info-border path {
+    animation: none;
+  }
+  .acid-info-ooze {
+    transform: scaleY(0.5);
+  }
+}

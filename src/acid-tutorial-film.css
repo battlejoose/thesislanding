@@ -1,0 +1,207 @@
+.acid-tutorial-film {
+  position: relative;
+  isolation: isolate;
+  margin: 0;
+  padding: 7px 9px 10px;
+  border: 1px solid #b3df682c;
+  border-radius: 12px 18px 12px 18px;
+  background:
+    radial-gradient(ellipse at 49% 40%, #2333186b, transparent 72%), #08120e;
+  color: #d8ff68;
+  overflow: hidden;
+}
+.tutorial-film-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  min-height: 23px;
+}
+.tutorial-film-top > span {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 9px;
+  color: #97b58b;
+  letter-spacing: 0.06em;
+}
+.tutorial-film-top > span i {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: #bbeb77;
+  box-shadow: 0 0 6px #bbeb7744;
+}
+.tutorial-film-controls {
+  display: flex;
+  gap: 4px;
+}
+.acid-tutorial-film .tutorial-film-controls button {
+  display: grid;
+  place-items: center;
+  width: 25px;
+  height: 23px;
+  min-height: 0;
+  min-width: 0;
+  padding: 0;
+  margin: 0;
+  border: 1px solid #bbdf6c30;
+  border-radius: 5px;
+  font-size: 15px;
+  line-height: 1;
+  color: #d6eabe;
+  background: #c9ff8209;
+}
+.acid-tutorial-film .tutorial-film-controls button:hover:not(:disabled) {
+  background: #ccff7d23;
+  border-color: #cff99275;
+}
+.acid-tutorial-film .tutorial-film-controls button:disabled {
+  opacity: 0.35;
+}
+.tutorial-film-stage {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+.tutorial-film-stage text {
+  font-family: inherit;
+}
+.tutorial-stage-floor {
+  stroke: #afd77617;
+  stroke-width: 1;
+  stroke-dasharray: 1 8;
+}
+.tutorial-flow-rail {
+  stroke: currentColor;
+  opacity: 0.23;
+  fill: none;
+  stroke-width: 1.2;
+  stroke-dasharray: 2 6;
+}
+.tutorial-flow-arrow {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.2;
+  opacity: 0.45;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.tutorial-liquid-flow {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 4;
+  stroke-linecap: round;
+  filter: drop-shadow(0 0 3px currentColor);
+}
+.tutorial-chip {
+  filter: drop-shadow(0 0 2px #b3ed9455);
+}
+.tutorial-node-label {
+  fill: #e2efd5;
+  font-size: 16px;
+  font-weight: 650;
+  letter-spacing: -0.025em;
+}
+.tutorial-node-sub {
+  fill: #a3b397;
+  font-size: 13px;
+  font-weight: 450;
+}
+.tutorial-market-label {
+  fill: #b9cfaa;
+  font-size: 12px;
+  font-weight: 650;
+}
+.tutorial-short-label {
+  display: none;
+}
+.tutorial-tag {
+  fill: #b9df99;
+  font-size: 14px;
+  font-weight: 650;
+}
+.tutorial-split-number {
+  font-size: 21px;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+}
+.acid-tutorial-film .tutorial-film-caption {
+  min-height: 25px;
+  margin: 3px 0 7px;
+  padding: 0 3px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  font-size: 11px;
+  line-height: 1.25;
+  font-weight: 550;
+  color: #d5e7c6;
+  text-wrap: balance;
+}
+.tutorial-film-timeline {
+  position: relative;
+  height: 3px;
+  margin: 0 3px;
+  border-radius: 3px;
+  overflow: hidden;
+  background: #bdde8d20;
+}
+.tutorial-film-timeline > span {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #5ea87e, #d9ff74);
+  transform-origin: left center;
+}
+.tutorial-film-timeline > i {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: #08120e;
+}
+.tutorial-static .tutorial-flow-rail {
+  opacity: 0.5;
+  stroke-dasharray: none;
+}
+.tutorial-static .tutorial-flow-arrow {
+  opacity: 0.8;
+}
+@media (max-width: 420px) {
+  .tutorial-node-label {
+    font-size: 19px;
+  }
+  .tutorial-node-sub {
+    font-size: 15.5px;
+  }
+  .tutorial-market-label {
+    font-size: 14px;
+  }
+  .tutorial-tag {
+    font-size: 16px;
+  }
+  .tutorial-split-number {
+    font-size: 24px;
+  }
+  .tutorial-full-label {
+    display: none;
+  }
+  .tutorial-short-label {
+    display: inline;
+  }
+}
+@media (max-width: 380px) {
+  .acid-tutorial-film {
+    padding: 5px 5px 9px;
+  }
+  .acid-tutorial-film .tutorial-film-caption {
+    font-size: 10px;
+    min-height: 27px;
+    margin-top: 2px;
+  }
+  .tutorial-film-top > span {
+    font-size: 8px;
+  }
+}

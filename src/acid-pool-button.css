@@ -1,0 +1,461 @@
+.pool-button.acid-reactor-pool {
+  position: relative;
+  isolation: isolate;
+  display: inline-flex;
+  justify-self: center;
+  align-self: center;
+  flex: 0 1 146px;
+  width: min(100%, 146px);
+  min-width: 0;
+  min-height: 60px;
+  padding: 10px 7px 11px;
+  gap: 0;
+  border: 0;
+  border-radius: 16px 21px 17px 23px;
+  color: #f0ffc8;
+  background: transparent;
+  box-shadow: none;
+  overflow: visible;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.pool-button.acid-reactor-pool:hover:not(:disabled),
+.pool-button.acid-reactor-pool:active:not(:disabled) {
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+  filter: none;
+}
+
+.pool-button.acid-reactor-pool:focus-visible {
+  outline: 2px solid #e5ff90;
+  outline-offset: 5px;
+}
+
+.acid-reactor-pool .acid-pool-vessel {
+  position: absolute;
+  inset: -4px -3px -4px;
+  width: calc(100% + 6px);
+  height: calc(100% + 8px);
+  z-index: -1;
+  pointer-events: none;
+  overflow: visible;
+  filter: drop-shadow(0 0 5px #b7ff3e35);
+  transition: filter 180ms;
+}
+
+.acid-reactor-pool:hover .acid-pool-vessel {
+  filter: drop-shadow(0 0 8px #b7ff3e75);
+}
+
+.acid-reactor-pool .acid-pool-copy {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  position: relative;
+  margin-top: -1px;
+  pointer-events: none;
+  white-space: nowrap;
+  text-shadow: 0 1px 3px #071207;
+}
+
+.acid-reactor-pool .acid-pool-copy .pool-button-label {
+  display: block;
+  color: #e1efcf;
+  font-size: 13.5px;
+  font-weight: 750;
+  line-height: 1.15;
+  letter-spacing: 0.015em;
+}
+
+.acid-reactor-pool .acid-pool-copy .acid-pool-ticker {
+  display: block;
+  color: #dbff73;
+  font-size: 14px;
+  font-weight: 850;
+  letter-spacing: -0.035em;
+  line-height: 1.1;
+}
+
+.acid-pool-shell {
+  stroke: #81a947;
+  stroke-width: 1;
+}
+
+.acid-pool-rim {
+  stroke: #ebffb2;
+  stroke-width: 1;
+  stroke-linecap: round;
+  opacity: 0.85;
+}
+
+.acid-pool-rim-bottom {
+  stroke: #c2ff42;
+  stroke-width: 0.7;
+  stroke-linecap: round;
+  opacity: 0.6;
+}
+
+.acid-pool-seam {
+  stroke: #dbff74;
+  stroke-width: 1.4;
+  stroke-linecap: round;
+  opacity: 0.8;
+}
+
+.acid-pool-wash,
+.acid-pool-meniscus {
+  animation: acid-pool-slosh 4s ease-in-out infinite alternate;
+}
+
+.acid-pool-wash-back {
+  opacity: 0.12;
+  animation-duration: 5.8s;
+  animation-direction: alternate-reverse;
+  transform: translateY(-2px);
+}
+
+.acid-pool-meniscus {
+  stroke: #d8ff68;
+  stroke-width: 0.8;
+  opacity: 0.82;
+}
+
+.acid-pool-inner-bubbles {
+  stroke: #e6ffae;
+  stroke-width: 0.8;
+  fill: #c5ff5b22;
+}
+
+.acid-pool-bubble {
+  opacity: 0;
+  animation: acid-pool-rise 3.7s ease-in infinite;
+}
+
+.acid-pool-bubble.bubble-two {
+  animation-delay: -1.3s;
+  animation-duration: 4.3s;
+}
+
+.acid-pool-bubble.bubble-three {
+  animation-delay: -2.4s;
+  animation-duration: 3.2s;
+}
+
+.acid-pool-bubble.bubble-four {
+  animation-delay: -0.7s;
+  animation-duration: 4.7s;
+}
+
+.acid-pool-drip {
+  fill: #c4ff48;
+  transform-box: fill-box;
+  transform-origin: 50% 0;
+  animation: acid-pool-ooze 4.8s ease-in-out infinite;
+}
+
+.acid-pool-drip.drip-two {
+  opacity: 0.7;
+  animation-duration: 6.1s;
+  animation-delay: -2.2s;
+}
+
+.acid-pool-escape {
+  stroke: #d1ff6e;
+  stroke-width: 0.8;
+  fill: #c5ff5b1a;
+  opacity: 0;
+  animation: acid-pool-fizz 4.1s ease-out infinite;
+}
+
+.acid-pool-escape.escape-two {
+  animation-delay: -2.5s;
+  animation-duration: 5.7s;
+}
+
+.acid-pool-spark {
+  stroke: #edffc4;
+  stroke-width: 1.1;
+  stroke-linecap: round;
+  transform-box: fill-box;
+  transform-origin: center;
+  opacity: 0;
+  animation: acid-pool-sputter 3.8s ease-out infinite;
+}
+
+.acid-pool-spark.spark-two {
+  stroke: #b5ff47;
+  animation-delay: -1.4s;
+  animation-duration: 4.6s;
+}
+
+.acid-pool-spark.spark-three {
+  animation-delay: -2.7s;
+  animation-duration: 5.6s;
+}
+
+@keyframes acid-pool-slosh {
+  from {
+    transform: translate(-18px, 1px);
+  }
+  to {
+    transform: translate(18px, -1px);
+  }
+}
+
+@keyframes acid-pool-rise {
+  0%,
+  12% {
+    opacity: 0;
+    transform: translateY(3px);
+  }
+  22% {
+    opacity: 0.85;
+  }
+  75% {
+    opacity: 0.5;
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-37px);
+  }
+}
+
+@keyframes acid-pool-ooze {
+  0%,
+  100% {
+    transform: scaleY(0.35) scaleX(1.1);
+  }
+  57% {
+    transform: scaleY(1.12) scaleX(0.9);
+  }
+  76% {
+    transform: scaleY(0.7);
+  }
+}
+
+@keyframes acid-pool-fizz {
+  0%,
+  44% {
+    opacity: 0;
+    transform: translateY(1px);
+  }
+  54% {
+    opacity: 0.8;
+  }
+  82%,
+  100% {
+    opacity: 0;
+    transform: translateY(-9px);
+  }
+}
+
+@keyframes acid-pool-sputter {
+  0%,
+  66%,
+  91%,
+  100% {
+    opacity: 0;
+    transform: scale(0.4);
+  }
+  72% {
+    opacity: 0.95;
+    transform: scale(0.8);
+  }
+  83% {
+    opacity: 0;
+    transform: scale(1.2);
+  }
+}
+
+/* Available rewards energise the same chamber; its hitbox and label never move. */
+.acid-reactor-pool.has-rewards .acid-pool-vessel {
+  filter: drop-shadow(0 0 5px #b5ff6380) drop-shadow(0 0 9px #7fffe82b);
+}
+
+.acid-reactor-pool.has-rewards:hover .acid-pool-vessel {
+  filter: drop-shadow(0 0 6px #b5ff6399) drop-shadow(0 0 11px #86f8ef45);
+}
+
+.acid-reactor-pool.has-rewards .acid-pool-shell {
+  stroke: #caff70;
+  stroke-width: 1.5;
+}
+
+.acid-reactor-pool.has-rewards .acid-pool-copy .pool-button-label {
+  color: #fffdeb;
+  text-shadow:
+    0 1px 4px #000,
+    0 0 7px #122208;
+}
+
+.acid-reactor-pool.has-rewards .acid-pool-copy .acid-pool-ticker {
+  color: #dfff73;
+  text-shadow:
+    0 1px 4px #000,
+    0 0 8px #11210b;
+}
+
+.acid-pool-ready-dot {
+  position: absolute;
+  top: -6px;
+  left: calc(50% - 2px);
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: #e6ff81;
+  box-shadow:
+    0 0 0 2px #d6ff7722,
+    0 0 6px #c8ff75;
+}
+
+.acid-pool-reward-wave {
+  opacity: 0.4;
+  animation: acid-pool-celebration-wave 5.4s ease-in-out infinite alternate;
+}
+
+.acid-pool-reward-edge {
+  stroke-width: 2;
+  opacity: 0.9;
+}
+
+.acid-pool-reward-chase {
+  stroke: #f7ffe0;
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-dasharray: 8 22 3 67;
+  animation: acid-pool-reward-orbit 7s linear infinite;
+}
+
+.acid-pool-reward-fizz circle {
+  stroke: #baffda;
+  stroke-width: 1;
+  fill: #5affb33b;
+  animation: acid-pool-rise 2.8s ease-in infinite;
+}
+
+.acid-pool-reward-fizz circle:nth-child(2n) {
+  stroke: #90faff;
+  fill: #67efff36;
+  animation-delay: -1.2s;
+  animation-duration: 3.7s;
+}
+
+.acid-pool-reward-fizz circle:nth-child(3n) {
+  stroke: #ffd0f3;
+  fill: #fc7dda2b;
+  animation-delay: -2.1s;
+  animation-duration: 4.3s;
+}
+
+.acid-pool-reward-spark {
+  stroke: #93fbff;
+  stroke-width: 1.2;
+  stroke-linecap: round;
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: acid-pool-reward-spark 4.3s ease-in-out infinite;
+}
+
+.acid-pool-reward-spark.reward-spark-pink {
+  stroke: #ffb0eb;
+  animation-delay: -2.1s;
+  animation-duration: 5.1s;
+}
+
+.acid-pool-reward-orb {
+  stroke: #b9ffd7;
+  stroke-width: 1;
+  fill: #87ffbe33;
+  animation: acid-pool-fizz 3.8s ease-out infinite;
+}
+
+.acid-pool-reward-orb.reward-orb-two {
+  stroke: #ffb1ed;
+  fill: #ff8adb22;
+  animation-delay: -1.6s;
+  animation-duration: 4.7s;
+}
+
+.acid-pool-reward-ooze {
+  fill: #8cf4ee;
+  transform-box: fill-box;
+  transform-origin: 50% 0;
+  animation: acid-pool-ooze 5.3s ease-in-out infinite;
+}
+
+.acid-reactor-pool.has-rewards .acid-pool-drip.drip-two {
+  fill: #ff9be8;
+  opacity: 0.9;
+}
+
+.acid-reactor-pool.has-rewards .acid-pool-spark.spark-one {
+  stroke: #bcffec;
+}
+
+.acid-reactor-pool.has-rewards .acid-pool-spark.spark-three {
+  stroke: #ffa7e8;
+}
+
+@keyframes acid-pool-celebration-wave {
+  from {
+    transform: translate(-13px, 2px);
+  }
+  to {
+    transform: translate(17px, -4px);
+  }
+}
+
+@keyframes acid-pool-reward-orbit {
+  to {
+    stroke-dashoffset: -100;
+  }
+}
+
+@keyframes acid-pool-reward-spark {
+  0%,
+  100% {
+    opacity: 0.15;
+    transform: scale(0.7);
+  }
+  45% {
+    opacity: 0.9;
+    transform: scale(1);
+  }
+  72% {
+    opacity: 0.35;
+    transform: scale(0.85);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .acid-reactor-pool *,
+  .acid-reactor-pool *::before,
+  .acid-reactor-pool *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+  .acid-pool-bubble {
+    opacity: 0.6;
+  }
+  .acid-pool-drip {
+    transform: scaleY(0.7);
+  }
+  .acid-pool-escape,
+  .acid-pool-spark {
+    opacity: 0;
+  }
+  .acid-pool-reward-fizz circle {
+    opacity: 0.7;
+  }
+  .acid-pool-reward-spark,
+  .acid-pool-reward-orb {
+    opacity: 0.65;
+  }
+  .acid-pool-reward-ooze {
+    transform: scaleY(0.7);
+  }
+}

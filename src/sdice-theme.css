@@ -1,0 +1,217 @@
+@import url("https://fonts.googleapis.com/css2?family=Bangers&family=Barlow+Condensed:wght@600;700;800&display=swap");
+/* SDICE skin: decoration and layout only. All amounts and action handlers stay in the existing app. */
+html[data-sdice] { --acid:#ffe144; --acid-soft:#fff0b3; --mint:#6cf0ce; --ice:#81d9ff; --muted:#b8b5ab; --line:#5c5051; --accent:#ffe144; background:#201519; color:#fff0cb; }
+html[data-sdice] body { background:linear-gradient(90deg,#12151bc9,#1a12187a 25%,#14131b99 75%,#141a1cb3),url('/sdice/brick.svg') repeat; background-size:auto,480px 240px; background-attachment:fixed; }
+html[data-sdice] body::before { background:linear-gradient(90deg,#b554ff, #6cf0ce 40%,#ffe144 80%); inset:0 0 auto; height:5px; opacity:1; mask-image:none; z-index:30; }
+html[data-sdice] body::after { content:''; position:fixed; inset:0; pointer-events:none; background:radial-gradient(ellipse at 0 35%,#9544ed20,transparent 40%),radial-gradient(ellipse at 100% 75%,#6cf0ce18,transparent 45%); z-index:-1; }
+html[data-sdice] main:not(.landing):not(.docs-shell) { width:min(100% - 24px,480px); padding-top:16px; }
+html[data-sdice] main { isolation:isolate; }
+.sdice-street-wall { position:fixed; inset:0; z-index:-1; pointer-events:none; overflow:hidden; }
+.sdice-street-wall > span { position:absolute; left:-68px; top:40%; font:200px/.9 Bangers,Impact,sans-serif; color:#9d68f6; opacity:.12; transform:rotate(-12deg); text-shadow:5px 5px #0c1418; }
+.sdice-street-wall > i,.sdice-street-wall > b { position:absolute; right:5vw; top:12%; color:#6cf0ce; font:270px/1 Impact,sans-serif; opacity:.13; transform:rotate(18deg); }
+.sdice-street-wall > b { top:62%; right:6vw; color:#ffe144; font-size:230px; transform:rotate(-14deg); }
+.sdice-brand { display:inline-flex; align-items:center; gap:5px; min-width:0; }
+.sdice-brand img { display:block; flex-shrink:0; width:24px; height:auto; filter:drop-shadow(2px 3px 0 #080c13); }
+.sdice-brand > b { font:21px/1 Bangers,Impact,sans-serif; letter-spacing:-.4px; background:linear-gradient(105deg,#af65ff 5%,#6cf0ce 55%,#ffe144); color:transparent; background-clip:text; -webkit-background-clip:text; white-space:nowrap; }
+.sdice-brand > span { padding:3px 4px; background:#ffe144; color:#17131a; border:1px solid #fff1ac; box-shadow:2px 2px #090d14; font:14px/1 Bangers,Impact,sans-serif; transform:rotate(-4deg); }
+/* Match the original 480px trading column. Skin borders must not turn the
+ * header into a large banner or compete with the trading controls. */
+html[data-sdice] .top { display:flex; gap:8px; padding:7px 8px; margin-bottom:14px; background:linear-gradient(115deg,#35252acc,#172526ef); border:1px solid #9b8479; border-top:3px solid #ffe144; box-shadow:3px 3px 0 #080d12b3; border-radius:0; }
+html[data-sdice] .top-intro { gap:8px; min-width:0; }
+html[data-sdice] .top nav { gap:5px; flex-shrink:0; }
+html[data-sdice] .top nav button,html[data-sdice] .top .top-how { border:1px solid #b6a282; background:#302b2b; color:#fff0cb; border-radius:1px; box-shadow:2px 2px #11131b; font-family:'Barlow Condensed',Impact,sans-serif; font-size:12px; line-height:1.2; padding:6px; min-height:32px; white-space:nowrap; text-transform:uppercase; }
+html[data-sdice] .top nav button:hover,html[data-sdice] .top-how:hover { border-color:#ffe144; background:#413833; }
+html[data-sdice] .how-slime-skin,html[data-sdice] .pool-gel-skin,html[data-sdice] .acid-trade-skin,html[data-sdice] .acid-info-border,html[data-sdice] .acid-pool-vessel { display:none; }
+html[data-sdice] .market-select,html[data-sdice] .wallet,html[data-sdice] .input-card,html[data-sdice] .backing-trigger { border:1px solid #6f8580; border-radius:2px; background:linear-gradient(125deg,#1d3032,#162024); box-shadow:3px 4px 0 #0b1116; }
+html[data-sdice] .market-select:hover,html[data-sdice] .wallet:hover { background:#263b3c; border-color:#6cf0ce; }
+html[data-sdice] .market-ticker,html[data-sdice] .wallet-summary,html[data-sdice] .collateral-select,html[data-sdice] .input-title { color:#fff0cb; }
+html[data-sdice] .market-label { color:#7edbd0; }
+html[data-sdice] .inputs { gap:10px; }
+html[data-sdice] .input-card { border-top:2px solid #ffe144; }
+html[data-sdice] main:not(.landing) .price-hero { margin:16px 0; }
+html[data-sdice] .price-main,html[data-sdice] .price-value { color:#fff0cb; text-shadow:2px 3px #11131b; }
+html[data-sdice] .trade-buttons > button {
+  --trade-fill:#6cf0ce; --trade-ink:#102c29; --trade-border:#c3ffe9;
+  --trade-glow:#6cf0ce50; --trade-skew:-2deg;
+  transition:transform 160ms ease-out,box-shadow 160ms ease-out,filter 160ms ease-out;
+}
+html[data-sdice] .trade-buttons > button:nth-of-type(2) {
+  --trade-fill:#bb8bf5; --trade-ink:#2d173a; --trade-border:#e5d1ff;
+  --trade-glow:#bb8bf550; --trade-skew:2deg;
+}
+/* Cover interaction states explicitly: the legacy skin makes hovered buttons
+ * transparent to reveal its SVG, which this skin intentionally hides. */
+html[data-sdice] .trade-buttons > button,
+html[data-sdice] .trade-buttons > button:is(:hover,:focus-visible,:active):not(:disabled) {
+  border:1px solid var(--trade-border); border-radius:2px;
+  background:var(--trade-fill); color:var(--trade-ink);
+  box-shadow:4px 5px #0a1517; transform:skew(var(--trade-skew)); filter:none;
+}
+@media(hover:hover) and (pointer:fine) {
+  html[data-sdice] .trade-buttons > button:hover:not(:disabled) {
+    transform:translateY(-2px) skew(var(--trade-skew)); filter:brightness(1.06);
+    box-shadow:4px 7px #0a1517,0 0 18px var(--trade-glow);
+  }
+}
+html[data-sdice] .trade-buttons > button:focus-visible:not(:disabled) {
+  box-shadow:4px 5px #0a1517,0 0 18px var(--trade-glow);
+}
+html[data-sdice] .trade-buttons > button:active:not(:disabled) {
+  transform:translateY(1px) skew(var(--trade-skew)); filter:brightness(1.03);
+  box-shadow:2px 3px #0a1517;
+}
+html[data-sdice] .trade-buttons > button:is(:hover,:focus-visible,:active):not(:disabled) .acid-trade-label > span { transform:none; }
+@media(prefers-reduced-motion:reduce) {
+  html[data-sdice] .trade-buttons > button { transition:none; }
+  html[data-sdice] .trade-buttons > button:is(:hover,:focus-visible,:active):not(:disabled) { transform:skew(var(--trade-skew)); }
+}
+html[data-sdice] .acid-trade-label { letter-spacing:.5px; text-shadow:none; }
+html[data-sdice] .trade-buttons > button small { color:inherit; opacity:.8; }
+html[data-sdice] .trade-info { border:1px solid #877c63; border-left:3px solid #ffe144; border-radius:0; background:#24262ce8; padding:5px; }
+/* A compact illuminated badge, distinct from the large filled trade buttons.
+ * Complete state styles outrank the legacy transparent vessel hover. */
+html[data-sdice] .pool-button.acid-reactor-pool {
+  --pool-ring:linear-gradient(115deg,#729db0,#bfe6d9,#6b9890);
+  --pool-glow:#78dcca28;
+  width:100%; max-width:120px; min-height:44px; height:44px; padding:4px 7px;
+  transition:transform 180ms ease,box-shadow 180ms ease,filter 180ms ease;
+}
+html[data-sdice] .pool-button.acid-reactor-pool.has-rewards {
+  --pool-ring:linear-gradient(110deg,#ffe65c,#67f7e0,#73c8ff,#fc89ec,#ffe65c);
+  --pool-glow:#7cfbe554;
+  animation:sdice-pool-colors 5s ease-in-out infinite alternate;
+}
+html[data-sdice] .pool-button.acid-reactor-pool,
+html[data-sdice] .pool-button.acid-reactor-pool:is(:hover,:focus-visible,:active):not(:disabled) {
+  color:#eaffef; border:2px solid transparent; border-radius:999px;
+  background:linear-gradient(165deg,#20363b,#0b171e 75%) padding-box,var(--pool-ring) border-box;
+  background-size:100% 100%,300% 100%;
+  box-shadow:0 3px 0 #070e13,0 0 10px var(--pool-glow),inset 0 1px #ffffff1f;
+  overflow:visible; transform:none; filter:none;
+}
+html[data-sdice] .pool-button.acid-reactor-pool::before { content:none; }
+html[data-sdice] .pool-button.acid-reactor-pool::after {
+  content:''; position:absolute; inset:3px; border-radius:inherit;
+  border-top:1px solid #c5fff52b; pointer-events:none;
+}
+html[data-sdice] .pool-button.acid-reactor-pool .acid-pool-copy { gap:2px; transform:none; margin:0; z-index:1; }
+html[data-sdice] .pool-button.acid-reactor-pool .acid-pool-copy .pool-button-label { color:#eaffef; text-shadow:none; }
+html[data-sdice] .pool-button.acid-reactor-pool .acid-pool-copy .acid-pool-ticker { color:#95c9bd; text-shadow:none; }
+html[data-sdice] .pool-button.acid-reactor-pool.has-rewards .acid-pool-copy .acid-pool-ticker { color:#ccff7f; text-shadow:0 0 7px #bcff6866; }
+html[data-sdice] .pool-button.acid-reactor-pool .acid-pool-ticker::before { content:'◆'; margin-right:4px; font-size:7px; vertical-align:1px; }
+html[data-sdice] .pool-button.acid-reactor-pool .acid-pool-ready-dot { display:none; }
+@media(hover:hover) and (pointer:fine) {
+  html[data-sdice] .pool-button.acid-reactor-pool:hover:not(:disabled) {
+    transform:translateY(-1px); filter:brightness(1.12);
+    box-shadow:0 4px 0 #070e13,0 0 15px var(--pool-glow),inset 0 1px #ffffff36;
+  }
+}
+html[data-sdice] .pool-button.acid-reactor-pool:active:not(:disabled) { transform:translateY(1px); box-shadow:0 1px #071419,0 0 10px var(--pool-glow); }
+@keyframes sdice-pool-colors { from { background-position:0 0,0% 50%; } to { background-position:0 0,100% 50%; } }
+/* Reward-only decoration stays outside the label and does not expand the
+ * button's hitbox. A fixed CSS particle set needs no timers or render loop. */
+html[data-sdice] .sdice-pool-reward-effects { position:absolute; inset:0; border-radius:inherit; pointer-events:none; }
+html[data-sdice] .sdice-pool-reward-aura {
+  position:absolute; inset:-2px; border-radius:inherit; opacity:.85;
+  box-shadow:-5px -3px 10px #6cf0cebb,5px -3px 10px #b987ffb3,5px 4px 11px #ff87c9aa,-5px 4px 11px #ffe47599;
+  animation:sdice-pool-aura 2.8s ease-in-out infinite alternate;
+}
+html[data-sdice] .sdice-pool-reward-spark {
+  position:absolute; width:5px; height:5px; margin:-2.5px; opacity:.8;
+  background:var(--spark-color); filter:drop-shadow(0 0 3px var(--spark-color));
+  clip-path:polygon(50% 0,64% 36%,100% 50%,64% 64%,50% 100%,36% 64%,0 50%,36% 36%);
+  animation:sdice-pool-spark 1.8s ease-out infinite;
+}
+html[data-sdice] .sdice-pool-reward-spark:nth-child(3n) { width:3px; height:3px; margin:-1.5px; border-radius:50%; clip-path:none; }
+@keyframes sdice-pool-aura { from { opacity:.65; transform:scale(.99); } to { opacity:1; transform:scale(1.04,1.12); } }
+@keyframes sdice-pool-spark {
+  0% { opacity:0; transform:translate(0,0) scale(.35) rotate(0); }
+  20%,45% { opacity:1; }
+  65% { opacity:.85; transform:translate(var(--spark-x),var(--spark-y)) scale(1.05) rotate(90deg); }
+  100% { opacity:0; transform:translate(var(--spark-x),calc(var(--spark-y) + 5px)) scale(.2) rotate(140deg); }
+}
+html[data-sdice] .metrics-pool-die {
+  --dice-light:#ceffe3; --dice-face:#42ec99; --dice-deep:#119766; --dice-edge:#075b40; --beaker-color:#45ef9c;
+}
+html[data-sdice] .pool-reward-station { grid-template-columns:18% minmax(0,64%) 18%; }
+html[data-sdice] .pool-reward-station .acid-reactor-pool { padding-inline:4px; }
+html[data-sdice] .pool-reward-station .acid-pool-copy .pool-button-label { font:700 clamp(11px,6cqi,13px)/1.1 'Barlow Condensed',sans-serif; letter-spacing:.2px; text-transform:uppercase; }
+html[data-sdice] .pool-reward-station .acid-pool-copy .acid-pool-ticker { font-size:9px; font-weight:750; letter-spacing:.8px; line-height:1.1; }
+@media(prefers-reduced-motion:reduce) {
+  html[data-sdice] .pool-button.acid-reactor-pool,
+  html[data-sdice] .pool-button.acid-reactor-pool::before { animation:none; transition:none; }
+  html[data-sdice] .pool-button.acid-reactor-pool.has-rewards { background-position:0 0,45% 50%; }
+  html[data-sdice] .pool-button.acid-reactor-pool:is(:hover,:focus-visible,:active):not(:disabled) { transform:none; }
+  html[data-sdice] .sdice-pool-reward-aura,
+  html[data-sdice] .sdice-pool-reward-spark { animation:none; }
+}
+/* Keep decorative price bursts inside their column, clear of the live tape. */
+html[data-sdice] .hero-main { overflow:clip; }
+html[data-sdice] button { border-radius:3px; }
+html[data-sdice] a { color:#83e8d4; }
+html[data-sdice] button:focus-visible,html[data-sdice] a:focus-visible,html[data-sdice] input:focus-visible { outline:2px solid #ffe144; outline-offset:3px; }
+html[data-sdice] button:disabled { opacity:.45; }
+html[data-sdice] .modal,html[data-sdice] .wallet-dropdown,html[data-sdice] .wallet-adapter-modal-wrapper { border:1px solid #9b8780; border-top:3px solid #ffe144; border-radius:3px; background:#20262b; color:#fff0cb; box-shadow:4px 5px 0 #080d14a8; }
+html[data-sdice] .wallet-dropdown { max-height:calc(100dvh - 220px); }
+html[data-sdice] h2,html[data-sdice] h3,html[data-sdice] .modal h1 { font-family:'Barlow Condensed',Impact,sans-serif; text-transform:uppercase; letter-spacing:.5px; color:#ffe144; }
+html[data-sdice] .trade-activity-bar { background:#141f22ed; border-color:#638680; border-radius:1px; }
+/* Balance changes stay readable; the existing pointer tracker fades only the
+ * hovered toast and still allows clicks through to the page beneath it. */
+html[data-sdice] .toast-stack-right { margin-top:16px; }
+html[data-sdice] .toast-stack-right .wallet-change-toast {
+  background:linear-gradient(115deg,#183c24,#07170e); opacity:1;
+  animation:wallet-toast-pop .18s ease-out;
+}
+html[data-sdice] .trade-activity-marquee { animation-duration:76s; }
+@media(prefers-reduced-motion:reduce) {
+  html[data-sdice] .toast-stack-right .wallet-change-toast { animation:none; }
+}
+html[data-sdice] .wallet-mode-connect { background:#18262aec; border:1px solid #648983; border-top:3px solid #ffe144; padding:16px; box-shadow:3px 4px #0e1218; }
+html[data-sdice] .wallet-mode-connect h1 { font-family:Bangers,Impact,sans-serif; font-weight:400; font-size:28px; }
+html[data-sdice] .landing { max-width:1160px; }
+html[data-sdice] .landing-copy .sdice-brand { flex-wrap:wrap; gap:8px; }
+html[data-sdice] .landing-copy .sdice-brand img { width:clamp(28px,10cqi,44px); }
+html[data-sdice] .landing-copy .sdice-brand > b { font-size:clamp(28px,11cqi,46px); }
+html[data-sdice] .landing-copy .sdice-brand > span { font-size:clamp(16px,5cqi,22px); padding:4px 7px; }
+html[data-sdice] .landing-topline { border-bottom:1px solid #83726c; }
+html[data-sdice] .landing-promises { color:#fff0cb; }
+html[data-sdice] .landing-acid-hop { display:none; }
+html[data-sdice] .landing-trade { background:#ffe144; color:#201819; border:1px solid #fff1ae; border-radius:1px; box-shadow:5px 5px #0c1018; }
+html[data-sdice] .landing-docs { background:#213637; border:1px solid #6cf0ce; border-radius:1px; box-shadow:5px 5px #0c1018; }
+html[data-sdice] .landing-preview { border:1px solid #8e8272; border-top:5px solid #ffe144; border-radius:2px; background:#192629f5; box-shadow:9px 12px #0c1117b3; }
+html[data-sdice] .docs-header,html[data-sdice] .docs-article,html[data-sdice] .docs-sidebar { background:#1b272bee; border-color:#637573; border-radius:1px; }
+html[data-sdice] .docs-header .sdice-brand img { width:24px; }
+
+html[data-sdice] .preview-long { background:#6cf0ce; color:#102c29; }
+html[data-sdice] .preview-short { background:#bb8bf5; color:#2d173a; }
+html[data-sdice] .preview-directions > div { border:1px solid #d9e1ce; border-radius:1px; box-shadow:3px 4px #0c1118; }
+html[data-sdice] .leverage-card { background:linear-gradient(125deg,#293841,#1a262c); }
+html[data-sdice] .leverage-card::after, html[data-sdice] .trade-buttons > button::before { display:none; }
+html[data-sdice] .leverage-number { color:#ffe144; }
+html[data-sdice] .trade-buttons .acid-trade-label { font:26px/1 Bangers,Impact,sans-serif; color:inherit; }
+html[data-sdice] .trade-buttons > button small { color:inherit; }
+html[data-sdice] .landing-copy { padding:18px; background:#182226de; border-left:3px solid #ffe144; }
+
+html[data-sdice] .leverage-liquid { display:none; }
+html[data-sdice] .how-slime-label, html[data-sdice] .pool-gel-label { color:#fff0cb; text-shadow:none; -webkit-text-stroke:0; }
+html[data-sdice] .leverage-value { color:#ffe144; }
+html[data-sdice] .leverage-rail { background:#3b4a50; }
+
+/* The original narrow header uses two rows; override that structure explicitly
+ * so lazy-loaded header CSS cannot rearrange the skin at this breakpoint. */
+@media(max-width:520px) {
+  html[data-sdice] main:not(.landing):not(.docs-shell) { padding-top:12px; }
+  html[data-sdice] .top:has(.top-leaderboard) { display:grid; grid-template-columns:1fr auto; gap:6px 8px; }
+  html[data-sdice] .top:has(.top-leaderboard) .top-intro { display:contents; }
+  html[data-sdice] .top:has(.top-leaderboard) nav { gap:5px; }
+  html[data-sdice] .top .sdice-brand > b { font-size:23px; }
+  html[data-sdice] .top .sdice-brand img { width:28px; }
+  html[data-sdice] .top .sdice-brand > span { font-size:15px; }
+  html[data-sdice] .sdice-street-wall > span { opacity:.06; }
+  html[data-sdice] .landing-copy { padding:16px; }
+  html[data-sdice] .docs-header { gap:12px; padding-inline:12px; }
+}
+@media(max-width:420px) {
+  html[data-sdice] .bet-input-footer { flex-wrap:wrap; gap:2px; }
+  html[data-sdice] .bet-input-footer small { flex-basis:100%; }
+}

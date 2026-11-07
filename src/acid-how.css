@@ -1,0 +1,495 @@
+/* A single, viewport-sized tutorial. Main chapters and paged notes never scroll. */
+.modal:has(.acid-how) {
+  display: flex;
+  flex-direction: column;
+  height: min(608px, calc(100dvh - 24px));
+  max-height: calc(100dvh - 24px);
+  padding: 18px;
+  overflow: visible;
+}
+.modal:has(.acid-how) > header {
+  flex: 0 0 auto;
+  margin-bottom: 10px;
+}
+.acid-how-docs { margin-bottom: 6px; flex-shrink: 0; align-self: flex-start; display: inline-flex; align-items: center; gap: 10px; padding: 6px 12px; border: 1px solid #baff4777; border-radius: 10px 5px 10px 5px; background: #aaff4712; color: #d4ff93; text-decoration: none; font-size: 12px; font-weight: 800; }
+.acid-how-docs:hover { background: #baff4728; border-color: #caff75; }
+.acid-how {
+  --how-lime: #d8ff71;
+  --how-mint: #93edc1;
+  --how-ice: #a1dfff;
+  --how-pink: #f5afe2;
+  color: #cad4c4;
+  font-size: 13px;
+  line-height: 1.45;
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  min-height: 0;
+}
+.acid-how-tabs {
+  flex: 0 0 auto;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 3px;
+  padding: 4px;
+  background: #060b07;
+  border: 1px solid #43543480;
+  border-radius: 12px;
+  margin-bottom: 10px;
+}
+.acid-how-tabs .acid-how-tab {
+  min-width: 0;
+  padding: 7px 4px;
+  border: 0;
+  border-radius: 8px;
+  color: #9eae97;
+  background: transparent;
+  font-size: 12px;
+  font-weight: 650;
+  line-height: 1.3;
+}
+.acid-how-tabs .acid-how-tab:hover {
+  color: #e1edcf;
+  background: #1b281a;
+}
+.acid-how-tabs .acid-how-tab[aria-selected="true"] {
+  color: #e5ff9e;
+  background: linear-gradient(140deg, #334b22, #22351b);
+  box-shadow:
+    inset 0 1px 0 #d6ff672b,
+    inset 0 -1px 0 #b4ee4066,
+    0 2px 5px #0004;
+}
+.acid-how-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: visible;
+}
+.acid-how-heading {
+  flex: 0 0 auto;
+}
+.acid-how-heading h3 {
+  margin: 0 0 4px;
+  font-size: 23px;
+  font-weight: 750;
+  letter-spacing: -0.75px;
+  line-height: 1.15;
+  color: #f0f7e5;
+}
+.acid-how-heading p {
+  font-size: 13px;
+  color: #aebaab;
+  line-height: 1.4;
+  margin: 0;
+}
+.acid-how-heading .acid-how-credit {
+  font-size: 11px;
+  margin-top: 4px;
+  color: #93a787;
+}
+.acid-how-credit a {
+  color: #b5d8a0;
+  text-decoration-color: #718d586b;
+  text-underline-offset: 3px;
+}
+.acid-how .acid-tutorial-film {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  min-height: 142px;
+  padding: 6px 8px 8px;
+}
+.acid-how .tutorial-film-top,
+.acid-how .tutorial-film-caption,
+.acid-how .tutorial-film-timeline {
+  flex: 0 0 auto;
+}
+.acid-how .tutorial-film-stage {
+  flex: 1 1 auto;
+  height: 0;
+  min-height: 0;
+  width: 100%;
+}
+.acid-how .tutorial-film-caption {
+  margin: 2px 0 5px;
+  min-height: 27px;
+}
+.acid-how-points {
+  flex: 0 0 auto;
+  display: grid;
+  gap: 7px;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+.acid-how-points li {
+  position: relative;
+  padding-left: 13px;
+  margin: 0;
+  color: #becbb6;
+  font-size: 12.5px;
+  line-height: 1.4;
+}
+.acid-how-points li::before {
+  content: "";
+  position: absolute;
+  left: 1px;
+  top: 0.48em;
+  width: 5px;
+  height: 5px;
+  border-radius: 50% 50% 50% 2px;
+  transform: rotate(-40deg);
+  background: #bce76a;
+  box-shadow: 0 0 5px #b3f13c20;
+}
+.acid-how-points b {
+  color: #e5efdc;
+  font-weight: 700;
+}
+.acid-how-points .acid-how-lime {
+  color: var(--how-lime);
+}
+.acid-how-points .acid-how-mint {
+  color: var(--how-mint);
+}
+.acid-how-points .acid-how-pink {
+  color: var(--how-pink);
+}
+.acid-how-fifo .acid-how-points li::before {
+  background: var(--how-ice);
+}
+.acid-how-ownership .acid-how-points li::before {
+  background: var(--how-mint);
+}
+.acid-how-footer {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding-top: 9px;
+  margin-top: 10px;
+  border-top: 1px solid #a9ce7526;
+}
+.acid-how-step {
+  font-size: 11px;
+  color: #94a686;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.acid-how-step b {
+  color: #d3ecb1;
+  font-size: 12px;
+  font-weight: 650;
+}
+.acid-how-footer button {
+  display: flex;
+  gap: 9px;
+  align-items: center;
+  border: 1px solid #7b984d66;
+  border-radius: 8px;
+  padding: 6px 9px;
+  background: #25371b;
+  color: #dff7b7;
+  font-size: 11.5px;
+  font-weight: 650;
+  line-height: 1.35;
+}
+.acid-how-footer button:hover {
+  background: #344c23;
+  border-color: #b2d77f;
+}
+.acid-how-footer .acid-how-details-toggle {
+  color: #b9cca6;
+  border-color: #657d3c50;
+  background: transparent;
+}
+.acid-how-footer .acid-how-details-toggle[aria-pressed="true"] {
+  background: #263b20;
+  color: #d8f9b3;
+}
+.acid-how-footer .acid-how-next span {
+  font-size: 15px;
+  line-height: 1;
+}
+.acid-how-note-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: #d4f497;
+  font-size: 12px;
+  font-weight: 650;
+}
+.acid-how-note-heading span:last-child {
+  color: #9aaf8b;
+  font-size: 11px;
+  font-weight: 450;
+}
+.acid-how-note {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  flex: 1 1 auto;
+  min-height: 0;
+  padding: 20px;
+  border: 1px solid #8baa5052;
+  border-radius: 12px 20px 12px 20px;
+  background:
+    radial-gradient(ellipse at 0 0, #6f983b22, transparent 70%), #0a130d;
+}
+.acid-how-note-number {
+  display: block;
+  margin-bottom: 10px;
+  color: #ccec92;
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  font-variant-numeric: tabular-nums;
+}
+.acid-how-note h3 {
+  color: #eaf6d8;
+  font-size: 22px;
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: -0.5px;
+  margin: 0 0 10px;
+}
+.acid-how-note p {
+  font-size: 14px;
+  line-height: 1.55;
+  color: #c1ceb6;
+  margin: 0;
+}
+.acid-how-note a {
+  color: #dcff9d;
+  text-underline-offset: 3px;
+}
+.acid-how-note-controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex: 0 0 auto;
+  gap: 12px;
+}
+.acid-how-note-controls > span {
+  color: #a0b18f;
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+}
+.acid-how-note-controls button {
+  width: 35px;
+  height: 30px;
+  padding: 0;
+  font-size: 18px;
+  line-height: 1;
+  background: #293b20;
+  border: 1px solid #a4cf5b55;
+  color: #d3f798;
+}
+.acid-how-note-controls button:hover:not(:disabled) {
+  background: #344e26;
+  border-color: #c4eb7a;
+}
+.acid-how-note-controls button:disabled {
+  opacity: 0.3;
+}
+@media (max-width: 360px) {
+  .modal:has(.acid-how) {
+    padding: 14px;
+  }
+  .acid-how-tabs {
+    gap: 2px;
+    padding: 3px;
+    margin-bottom: 8px;
+  }
+  .acid-how-tabs .acid-how-tab {
+    font-size: 11px;
+    padding: 7px 2px;
+  }
+  .acid-how-panel {
+    gap: 8px;
+  }
+  .acid-how-heading h3 {
+    font-size: 21px;
+  }
+  .acid-how-heading p {
+    font-size: 12.5px;
+  }
+  .acid-how .acid-tutorial-film {
+    padding: 5px 5px 7px;
+  }
+  .acid-how-points {
+    gap: 6px;
+  }
+  .acid-how-footer {
+    margin-top: 8px;
+    padding-top: 8px;
+  }
+  .acid-how-footer button {
+    padding: 6px 7px;
+    font-size: 11px;
+  }
+  .acid-how-note {
+    padding: 14px;
+  }
+  .acid-how-note h3 {
+    font-size: 20px;
+  }
+  .acid-how-note p {
+    font-size: 13.5px;
+    line-height: 1.5;
+  }
+}
+
+/* Wide, short viewports use the spare horizontal room instead of shrinking copy. */
+@media (min-width: 500px) and (max-height: 500px) {
+  .modal:has(.acid-how) {
+    width: min(100%, 740px);
+    padding: 12px 16px;
+  }
+  .modal:has(.acid-how) > header {
+    margin-bottom: 7px;
+  }
+  .modal:has(.acid-how) > header h2 {
+    font-size: 19px;
+    line-height: 1.2;
+  }
+  .modal:has(.acid-how) > header .icon-button {
+    height: 26px;
+    width: 26px;
+  }
+  .acid-how-tabs {
+    margin-bottom: 8px;
+    padding: 3px;
+  }
+  .acid-how-tabs .acid-how-tab {
+    padding: 5px 4px;
+  }
+  .acid-how-panel:not(.is-note) {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.06fr);
+    grid-template-rows: auto minmax(0, 1fr);
+    gap: 9px 18px;
+  }
+  .acid-how-panel:not(.is-note) .acid-how-heading {
+    grid-column: 1;
+    grid-row: 1;
+  }
+  .acid-how-panel:not(.is-note) .acid-how-points {
+    grid-column: 1;
+    grid-row: 2;
+    align-self: start;
+    gap: 7px;
+  }
+  .acid-how-panel:not(.is-note) .acid-tutorial-film {
+    grid-column: 2;
+    grid-row: 1 / 3;
+    min-height: 0;
+    height: 100%;
+  }
+  .acid-how-heading h3 {
+    font-size: 21px;
+  }
+  .acid-how-footer {
+    margin-top: 8px;
+    padding-top: 7px;
+  }
+  .acid-how-footer button {
+    padding: 5px 9px;
+  }
+  .acid-how-panel.is-note {
+    gap: 7px;
+  }
+  .acid-how-note {
+    display: grid;
+    grid-template-columns: minmax(110px, 0.48fr) minmax(0, 1fr);
+    grid-template-rows: auto minmax(0, 1fr);
+    column-gap: 20px;
+    align-content: center;
+    padding: 12px 16px;
+  }
+  .acid-how-note-number {
+    grid-column: 1;
+    grid-row: 1;
+    margin-bottom: 5px;
+  }
+  .acid-how-note h3 {
+    grid-column: 1;
+    grid-row: 2;
+    font-size: 20px;
+    margin: 0;
+    align-self: start;
+  }
+  .acid-how-note p {
+    grid-column: 2;
+    grid-row: 1 / 3;
+    align-self: center;
+    font-size: 13px;
+    line-height: 1.45;
+  }
+  .acid-how-note-controls button {
+    height: 27px;
+  }
+}
+
+@media (min-width: 500px) and (max-height: 360px) {
+  .modal:has(.acid-how) {
+    padding: 9px 12px;
+  }
+  .modal:has(.acid-how) > header {
+    margin-bottom: 5px;
+  }
+  .modal:has(.acid-how) > header h2 {
+    font-size: 17px;
+  }
+  .modal:has(.acid-how) > header .icon-button {
+    width: 22px;
+    height: 22px;
+  }
+  .acid-how-tabs {
+    margin-bottom: 5px;
+  }
+  .acid-how-tabs .acid-how-tab {
+    font-size: 11.5px;
+  }
+  .acid-how-panel:not(.is-note) {
+    gap: 7px 14px;
+  }
+  .acid-how-heading h3 {
+    font-size: 20px;
+    margin-bottom: 0;
+  }
+  .acid-how-heading > p:not(.acid-how-credit) {
+    display: none;
+  }
+  .acid-how-panel:not(.is-note) .acid-how-points {
+    gap: 5px;
+  }
+  .acid-how-footer {
+    margin-top: 6px;
+    padding-top: 5px;
+  }
+  .acid-how-footer button {
+    padding: 4px 8px;
+  }
+  .acid-how-panel.is-note {
+    gap: 5px;
+  }
+  .acid-how-note-heading {
+    display: none;
+  }
+  .acid-how-note {
+    padding: 8px 10px;
+    column-gap: 14px;
+    grid-template-columns: minmax(100px, 0.36fr) minmax(0, 1fr);
+  }
+  .acid-how-note h3 {
+    font-size: 18px;
+  }
+  .acid-how-note-controls button {
+    height: 25px;
+  }
+}
+

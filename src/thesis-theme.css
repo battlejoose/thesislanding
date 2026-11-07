@@ -1,0 +1,74 @@
+/* Thesis is a presentation layer over the deployed SDICE geometry. Keep the
+   same controls, breakpoints, animation durations and financial components. */
+html[data-thesis] {
+  --acid:#ff8739; --acid-soft:#ffca9d; --accent:#ff8739; --mint:#56e5ef;
+  --ice:#70caff; --muted:#92949f; --line:#343439;
+  color:#f1f1f3; background:#08090b;
+}
+html[data-thesis] body { background:#08090b; }
+html[data-thesis] body::before { height:2px; background:linear-gradient(90deg,#ff8739, #ff8739 52%, #ff4fa2 77%, #56e5ef); }
+html[data-thesis] body::after { background:radial-gradient(ellipse at 0 65%,#0c4a5320,transparent 45%),radial-gradient(ellipse at 100% 10%,#7d234615,transparent 40%); }
+.thesis-wall { position:fixed; inset:0; pointer-events:none; z-index:-1; overflow:hidden; }
+.thesis-wall-grid { position:absolute; inset:0; background-image:linear-gradient(#ffffff03 1px,transparent 1px),linear-gradient(90deg,#ffffff03 1px,transparent 1px); background-size:64px 64px; mask-image:linear-gradient(transparent,#0006 50%,transparent); }
+.thesis-brand { display:inline-flex; align-items:center; gap:5px; white-space:nowrap; }
+.thesis-brand > img { width:29px; height:29px; object-fit:contain; border-radius:3px; }
+.thesis-brand-type { display:flex; flex-direction:column; gap:3px; }
+.thesis-brand-type > b { display:block; position:relative; width:84px; height:18px; overflow:hidden; mix-blend-mode:screen; }
+.thesis-brand-type > b img { position:absolute; max-width:none; width:127.5px; height:42.5px; left:-18.36px; top:-8.67px; }
+.thesis-brand-type > span { color:#ff8739; font:700 8px/1 ui-monospace,monospace; letter-spacing:4.4px; }
+html[data-thesis] .top { background:#111214; border-color:#343439; border-top-color:#ff8739; box-shadow:0 4px 18px #0004; }
+html[data-thesis] .top nav button,html[data-thesis] .top .top-how { color:#c6c7cd; background:#191a1d; border-color:#343439; box-shadow:0 2px #0007; font-family:ui-monospace,SFMono-Regular,Consolas,monospace; font-size:10px; }
+html[data-thesis] .top nav button:hover,html[data-thesis] .top .top-how:hover { color:#ffb57d; background:#241b15; border-color:#ff8739; }
+html[data-thesis] .top nav .top-leaderboard .pool-gel-label { color:#ffba86; text-shadow:none; -webkit-text-stroke:0; }
+html[data-thesis] .market-select,html[data-thesis] .wallet,html[data-thesis] .input-card,html[data-thesis] .backing-trigger { background:linear-gradient(145deg,#1a1b1f,#111215); border-color:#35363c; box-shadow:0 3px 0 #0008; }
+html[data-thesis] .market-select:hover,html[data-thesis] .wallet:hover { background:#202126; border-color:#74757f; }
+html[data-thesis] .market-ticker,html[data-thesis] .wallet-summary,html[data-thesis] .collateral-select { color:#f4f4f7; }
+html[data-thesis] .market-label,html[data-thesis] .input-title,html[data-thesis] .backing-trigger > span:first-child { color:#a6a7b0; font-family:ui-monospace,SFMono-Regular,Consolas,monospace; }
+html[data-thesis] .input-card { border-top-color:#ff8739; }
+html[data-thesis] .price-hero,html[data-thesis] .price-main,html[data-thesis] .price-value,html[data-thesis] .hero-value { color:#f4f4f7; text-shadow:none; }
+html[data-thesis] .hero-value strong { color:#f4f4f7; text-shadow:none; }
+html[data-thesis] .hero-value .cents,html[data-thesis] .hero-value .micro-cents { color:#a5c4cc; }
+html[data-thesis] .hero-main::before { background:radial-gradient(ellipse at 35% 65%,#56e5ef26,transparent 60%),radial-gradient(ellipse at 70% 30%,#ff4fa212,transparent 55%); }
+html[data-thesis] .hero-caption,html[data-thesis] .hero-market-status b { color:#a3b8bf; }
+html[data-thesis] .wallet .wallet-sol,html[data-thesis] .wallet-sol-balance,html[data-thesis] .backing-trigger strong { color:#83dce7; }
+html[data-thesis] .backing-trigger .backing-trigger-usage { background:#56e5ef; box-shadow:0 0 5px #56e5ef40; }
+html[data-thesis] .backing-trigger span { color:#a3b8bf; }
+html[data-thesis] .leverage-fill,html[data-thesis] .leverage-node.reached { background:#ff9b56; }
+html[data-thesis] .leverage-node.snapped { background:#ffbc8c; box-shadow:0 0 12px #ff873985; border-color:#ffd5b6; }
+html[data-thesis] .leverage-range::-webkit-slider-thumb { background:#ffb474; border-color:#ffd5b6; box-shadow:0 0 12px #ff873975; }
+html[data-thesis] .leverage-range::-moz-range-thumb { background:#ffb474; border-color:#ffd5b6; box-shadow:0 0 12px #ff873975; }
+html[data-thesis] .leverage-heading .input-title,html[data-thesis] .leverage-limits { color:#b5b7c0; }
+html[data-thesis] .input-card::after { background:#ff8739; }
+html[data-thesis] .trade-buttons > button { --trade-fill:#62e9ef; --trade-ink:#06272b; --trade-border:#a6f6ff; --trade-glow:#56e5ef55; }
+html[data-thesis] .trade-buttons > button:nth-of-type(2) { --trade-fill:#f275b3; --trade-ink:#370b25; --trade-border:#ffbbdd; --trade-glow:#ff4fa255; }
+html[data-thesis] .trade-buttons .acid-trade-label { font-family:Inter,system-ui,sans-serif; font-weight:800; font-style:italic; letter-spacing:-.7px; }
+html[data-thesis] .trade-buttons > button small { font-family:ui-monospace,monospace; font-size:10px; }
+html[data-thesis] .trade-info { background:#151619; border-color:#393a3f; border-left-color:#ff8739; }
+html[data-thesis] .trade-info .accent { color:#ffab70; }
+html[data-thesis] .trade-info .ownership-info { color:#9fdee6; }
+html[data-thesis] .pool-button.acid-reactor-pool { --pool-glow:#56e5ef60; color:#d5faff; border-color:#48727a; background:linear-gradient(145deg,#20373d,#122327); box-shadow:0 3px #050708,inset 0 1px #ffffff22; }
+html[data-thesis] .pool-button.acid-reactor-pool.has-rewards { background:linear-gradient(125deg,#124452,#44223c,#443014,#124452); background-size:280% 100%; }
+html[data-thesis] .pool-reward-station .acid-pool-copy .pool-button-label { font-family:Inter,system-ui,sans-serif; font-size:12px; }
+html[data-thesis] .leverage-number,html[data-thesis] .leverage-value { color:#ffad71; }
+html[data-thesis] .leverage-rail { background:#363139; }
+html[data-thesis] .how-slime-label,html[data-thesis] .pool-gel-label { color:inherit; }
+html[data-thesis] .trade-activity-bar { background:#101114; border-color:#323339; }
+html[data-thesis] .trade-activity-watermark { color:#ffb17b; font-family:ui-monospace,monospace; letter-spacing:2px; }
+html[data-thesis] a { color:#73dce9; }
+html[data-thesis] button:focus-visible,html[data-thesis] a:focus-visible,html[data-thesis] input:focus-visible { outline-color:#ff8739; }
+html[data-thesis] .modal,html[data-thesis] .wallet-dropdown,html[data-thesis] .wallet-adapter-modal-wrapper { color:#efeff3; background:#141518; border-color:#393a42; border-top-color:#ff8739; box-shadow:0 16px 70px #000b; }
+html[data-thesis] h2,html[data-thesis] h3,html[data-thesis] .modal h1 { color:#f7f7f9; font-family:Inter,system-ui,sans-serif; font-weight:700; letter-spacing:-.3px; text-transform:none; }
+html[data-thesis] .wallet-mode-connect { background:#151619; border-color:#393a42; border-top-color:#ff8739; box-shadow:0 12px 30px #0008; }
+html[data-thesis] .wallet-mode-connect h1 { font-family:Inter,system-ui,sans-serif; font-size:26px; font-weight:750; }
+html[data-thesis] .position { background:linear-gradient(125deg,#15191c,#101316); border-color:#354046; }
+html[data-thesis] .position.long { border-left-color:#56e5ef; }
+html[data-thesis] .position.short { border-left-color:#f275b3; }
+html[data-thesis] .active-position-acid { filter:hue-rotate(75deg); }
+html[data-thesis] .position.open:has(> .active-position-acid) { border-color:#56e5ef80; box-shadow:0 0 0 1px #56e5ef22,inset 0 0 14px #56e5ef09; }
+html[data-thesis] .docs-header,html[data-thesis] .docs-article,html[data-thesis] .docs-sidebar { background:#141518; border-color:#393a42; }
+html[data-thesis] .position-share-canvas { background:#101114; }
+.thesis-preview-notice { position:fixed; z-index:2500; bottom:14px; left:50%; transform:translateX(-50%); width:max-content; max-width:calc(100% - 24px); display:flex; align-items:center; gap:10px; padding:9px 13px; border:1px solid #60432c; border-radius:4px; background:#171412f5; color:#c0b6ad; box-shadow:0 6px 25px #0008; font:10px/1.5 ui-monospace,monospace; }
+.thesis-preview-notice strong { color:#ffab70; font-size:9px; letter-spacing:1px; white-space:nowrap; }
+html[data-thesis-preview] body { padding-bottom:55px; }
+@media(max-width:520px) { .thesis-brand-type > b { font-size:21px; } .thesis-brand > img { width:30px; height:30px; } }
+@media(max-width:380px) { .thesis-preview-notice { gap:6px; padding:8px; font-size:9px; } }

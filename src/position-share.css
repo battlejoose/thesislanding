@@ -1,0 +1,106 @@
+.position-share-button .spinner {
+  width: 12px;
+  height: 12px;
+  flex-shrink: 0;
+}
+.position-share-button .position-share-stage {
+  font-size: 10px;
+}
+.position-share-text {
+  white-space: pre-line;
+}
+.position-share-actions.position-share-footer {
+  flex-wrap: nowrap;
+  gap: 16px;
+}
+.position-share-footer > p {
+  flex: 1;
+  min-width: 0;
+  margin: 0;
+}
+.position-share-footer .share-open-x {
+  flex-shrink: 0;
+}
+.position-share-progress {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #c6ff52;
+  font-size: 13px;
+}
+.position-share-loading .spinner,
+.position-share-progress .spinner {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+}
+.position-capture,
+.position-capture *,
+.position-capture *::before,
+.position-capture *::after {
+  font-family: Arial, sans-serif !important;
+}
+.position-share-canvas {
+  position: relative;
+  width: 600px;
+  height: 315px;
+  overflow: hidden;
+  color: #edf6e9;
+  background: radial-gradient(ellipse at 50% 0%, #293c17, #101613 65%);
+  font-family: Arial, sans-serif;
+}
+.position-share-canvas-brand {
+  position: absolute;
+  top: 10px;
+  left: 24px;
+  color: #c6ff52;
+  font-size: 21px;
+  font-weight: 800;
+  letter-spacing: -0.8px;
+}
+.position-share-canvas-brand .acid-wordmark {
+  gap: 5px;
+  font-size: 21px;
+}
+.position-share-canvas-brand .acid-wordmark-symbol {
+  width: 28px;
+  flex-basis: 28px;
+}
+.position-share-canvas-brand .acidpump-mark {
+  width: 28px;
+  height: 28px;
+}
+.position-share-canvas-card {
+  position: absolute;
+  top: 52px;
+  right: 24px;
+  bottom: 42px;
+  left: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.position-share-canvas-card > .position {
+  flex-shrink: 0;
+  transform-origin: center;
+}
+.position-share-canvas-caption {
+  position: absolute;
+  bottom: 16px;
+  left: 24px;
+  color: #9db28b;
+  font-size: 9px;
+  letter-spacing: 1.1px;
+}
+.sdice-position-share {
+  background: linear-gradient(120deg,#161d25d9,#25161e9c),url('/sdice/brick.svg') repeat;
+  background-size: auto,240px 120px;
+  border-top: 4px solid #ffe144;
+  box-sizing: border-box;
+  color: #fff0cb;
+}
+.sdice-position-share .position-share-canvas-brand { top:12px; color:#81d9ff; }
+.sdice-position-share .sdice-brand > b { color:#6cf0ce; background:none; font:800 22px/1 Arial,sans-serif; }
+.sdice-position-share .sdice-brand > span { font:900 12px/1 Arial,sans-serif; }
+.sdice-position-share .position-share-canvas-caption { color:#ffe144; font-weight:700; letter-spacing:.8px; }
+.sdice-position-share .position { border-color:#81d9ff; box-shadow:3px 4px 0 #9e65de; }
