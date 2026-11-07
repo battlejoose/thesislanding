@@ -11,6 +11,7 @@
     "dev": "vite --host 127.0.0.1 --port 5300 --strictPort",
     "build": "tsc --noEmit && vite build",
     "preview": "vite preview --host 127.0.0.1 --port 5301 --strictPort",
+    "deploy": "wrangler deploy",
     "typecheck": "tsc --noEmit",
     "test": "tsx --test tests/*.test.ts"
   },
@@ -42,6 +43,7 @@
     "@vitejs/plugin-react": "4.7.0",
     "tsx": "4.23.15",
     "typescript": "5.9.3",
-    "vite": "6.4.3"
+    "vite": "6.4.3",
+    "wrangler": "4.158.0"
   }
 }

@@ -1,0 +1,4 @@
+/thesis / 301
+/thesis/ / 301
+/thesis/* /:splat 301
+/m/* / 301

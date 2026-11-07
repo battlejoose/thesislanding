@@ -38,11 +38,25 @@ application; `/docs/onchain.html` and `/llms.txt` provide generated documentatio
 
 ## Automatic deployment
 
-Pushing `main` runs the existing `.github/workflows/deploy.yml` workflow and
-deploys to Vercel production at `https://thesis.casino`. The existing
-`VERCEL_TOKEN`, `VERCEL_ORG_ID` and `VERCEL_PROJECT_ID` repository secrets remain
-the deployment configuration. `vercel.json` selects the Vite build, runs the
-hosting tests and build, and serves `dist/` with the application's security headers.
+The site uses Cloudflare Workers Static Assets (`thesis-perps`) in the owner's
+Cloudflare account. Connect this repository's `main` branch in Workers Builds
+with build command `npm test && npm run build`, deploy command `npm run deploy`,
+root directory `/`, and `NODE_VERSION=24`. GitHub's workflow also runs the tests
+and production build. Vercel credentials are no longer used.
+
+`wrangler.jsonc` serves `dist/` with SPA fallback. `public/_headers` preserves
+the application's security and cache headers; `public/_redirects` maps the old
+`/thesis` and market links to the standalone page. Static assets have no request
+or storage charge. The existing Fly.io trading service remains the backend.
+
+For a manual deployment after authenticating to the same Cloudflare account:
+
+```sh
+npm ci
+npm test
+npm run build
+npm run deploy
+```
 
 The browser connects directly to the existing service at
 `https://acidpump-mainnet-test.fly.dev/thesis`. This retains live event streaming,
