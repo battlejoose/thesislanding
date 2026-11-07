@@ -27,6 +27,10 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 24
+      - name: Check Vercel deployment access
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+        run: node scripts/check-vercel-access.mjs
       - name: Install the Vercel CLI
         run: npm install --global vercel@latest
       - name: Deploy
