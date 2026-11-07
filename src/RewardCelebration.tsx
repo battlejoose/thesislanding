@@ -252,6 +252,7 @@ export function RewardCelebration({
                   <circle r="6" />
                   <PlatformTokenSvgImage
                     secondary={isStake}
+                    reward={!isStake}
                     x="-4.5"
                     y="-4.5"
                     width="9"

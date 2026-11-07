@@ -1969,6 +1969,7 @@ function TradingApp({initialDeployment,mode,modeControls,onModeBusy}:{initialDep
                   collateral={a}
                   collateralImageUrl={assetImage(tokenDisplays,a)}
                   poolToken={poolToken}
+                  rewardToken={isPerpsMarket(deployment) ? perpsRewardAsset(deployment) : poolToken}
                   payoutQuote={displayQuotes.find(q => q.id === poolToken?.feedId)}
                   priceNow={priceNow}
                   pnl={livePnl}

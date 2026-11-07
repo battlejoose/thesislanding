@@ -69,10 +69,11 @@ export function settlementReceiptPending(position: Record<string, any>): boolean
 
 /** Build the replay solely from the confirmed position and settlement events.
  * No current quote, contemporary fee percentage, or inferred swap rate enters it. */
-export function settlementStory({ position: x, collateral, poolToken, pnl, ownership, ownershipSymbol = "aPUMP" }: {
+export function settlementStory({ position: x, collateral, poolToken, rewardToken, pnl, ownership, ownershipSymbol = "aPUMP" }: {
   position: Row;
   collateral: AssetInfo;
   poolToken?: AssetInfo;
+  rewardToken?: Pick<AssetInfo, 'symbol' | 'decimals'>;
   pnl: bigint;
   ownership: string | bigint | null;
   ownershipSymbol?: string;
@@ -87,6 +88,7 @@ export function settlementStory({ position: x, collateral, poolToken, pnl, owner
   const margin = atoms(x.margin), loss = atoms(x.loss), returned = atoms(x.returned);
   const { profit, remaining, paid } = settlementClaimAmounts(x);
   const receipt = x.settlementReceipt;
+  const separateRewards = !!rewardToken && rewardToken.symbol !== poolToken?.symbol;
   const isLoss = loss !== null && loss > 0n;
   const coverage = atoms(x.coverageTokens) ?? 0n;
   const lossPool = atoms(receipt?.poolTokens ?? x.swappedOut);
@@ -121,10 +123,17 @@ export function settlementStory({ position: x, collateral, poolToken, pnl, owner
       id: "allocation", title: "Where those tokens went", tone: "acid",
       split: [
         pool(lossPool === null ? null : lossPool + coverage, "Payout pool"),
-        pool(receipt?.stakerTokens, "Stakers"),
-        pool(receipt?.burnedTokens, "Burned"),
+        pool(receipt?.stakerTokens, separateRewards ? "Revenue routing" : "Stakers"),
+        separateRewards ? {
+          // The close reserves USDC for batched reward, operations and burn
+          // swaps. It does not prove the PERPS output of a later transaction.
+          atoms: atoms(receipt?.stakerTokens) === 0n ? 0n : null,
+          symbol: rewardToken.symbol, decimals: rewardToken.decimals, label: "Burned",
+        } : pool(receipt?.burnedTokens, "Burned"),
       ],
-      caption: receipt ? `Actual $${poolToken?.symbol ?? "pool token"} allocation` : receiptMissing,
+      caption: receipt ? separateRewards
+        ? `USDC reserved for ${rewardToken.symbol} rewards, ${rewardToken.symbol} burns and SOL operations. Swaps execute separately; confirmed burn totals are shown in the pool overview.`
+        : `Actual $${poolToken?.symbol ?? "pool token"} allocation` : receiptMissing,
     },
     {
       id: "ownership", title: "Your share of the platform", tone: "ice",

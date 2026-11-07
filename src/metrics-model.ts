@@ -4,6 +4,7 @@ import { isFresh, sellUsd } from "./math.ts";
 import { spotUsd } from "./spot-value.ts";
 import { betVolumeTotals } from "./metrics-volume.ts";
 import { baseHistoryStartSlot } from "../server/position-history.ts";
+import { PERPS_MINT } from './perps-market.ts';
 
 export interface MetricsModel {
   ready: boolean;
@@ -17,7 +18,7 @@ export interface MetricsModel {
   payoutTokens: number;
   stakedTokens: number;
   issuedTokens: number;
-  rewardsFunded: number;
+  rewardsFunded: number | null;
   gasSolBought: number;
   queueUsd: number;
   queueCount: number;
@@ -114,6 +115,13 @@ export function platformMetrics(state: Snapshot, now = Date.now()): MetricsModel
   const quote = state.quotes.find((row) => row.id === asset?.id);
   const decimals = Number(asset?.decimals ?? 6);
   const tokens = (value: bigint) => Number(value) / 10 ** decimals;
+  const perps = pool?.perpsRewards === true;
+  const rewardAsset = perps ? state.assets.find(row => row.mint === PERPS_MINT) : asset;
+  const rewardQuote = state.quotes.find(row => row.id === rewardAsset?.id);
+  const rewardDecimals = Number(rewardAsset?.decimals);
+  const rewardTokens = (value: bigint) => rewardAsset && Number.isInteger(rewardDecimals) && rewardDecimals >= 0 && rewardDecimals <= 255
+    ? Number(value) / 10 ** rewardDecimals : null;
+  const revenue = state.perpsRevenues?.find(row => row.pool === pool?.key);
   const knownTreasury = knownAtoms(inventory?.treasury);
   const treasury = knownTreasury ?? 0n;
   const elapsed = Math.max(0, now - state.serverTime);
@@ -147,24 +155,28 @@ export function platformMetrics(state: Snapshot, now = Date.now()): MetricsModel
   const volumeComplete = tradeCount !== null && BigInt(volumes.settledTrades) === tradeCount &&
     volumes.openTrades === openPositions && volumes.valuedTrades === volumes.recordedTrades &&
     volumes.recordedTrades === volumes.settledTrades + volumes.openTrades && entryTotal !== null && leveragedTotal !== null;
-  const burnComplete = historyComplete && historical.burnValid, burnTotal = BigInt(historical.burnedAtoms);
+  const perpsBurned = knownAtoms(revenue?.perpsBurned);
+  const burnComplete = perps ? perpsBurned !== null : historyComplete && historical.burnValid;
+  const burnTotal = BigInt(historical.burnedAtoms);
   const { recordedLosses, verifiedBurnReceipts } = historical;
   // These accounts are permanent. Matching cumulative issuance proves that the
   // snapshot includes every trader before presenting their claims as a total.
   const claimedTraders = [...new Map(traders.map((row) => [row.key, row])).values()];
-  const rewardsComplete = !!(ownership && asset && state.ownershipTraders) &&
+  const rewardsComplete = !!(ownership && rewardAsset && state.ownershipTraders) &&
     knownAtoms(ownership.supply) !== null &&
     claimedTraders.every((row) => knownAtoms(row.issued) !== null && knownAtoms(row.claimed) !== null) &&
     total(claimedTraders, "issued") === knownAtoms(ownership.supply);
   const rewardsPaid = rewardsComplete ? total(claimedTraders, "claimed") : null;
-  const burned = burnComplete || verifiedBurnReceipts > 0 ? burnTotal : null;
+  // PERPS burns happen in a separate swap/burn transaction. The close receipt
+  // describes USDC funding, while this permanent counter records actual PERPS.
+  const burned = perps ? perpsBurned : burnComplete || verifiedBurnReceipts > 0 ? burnTotal : null;
   // Cumulative token totals get a current-price equivalent, not a hypothetical
   // sale of every historical reward/burn or an invented historical cash total.
   const currentUsd = (amount: bigint | null): number | null => {
-    if (amount === null || !asset || stale || !Number.isInteger(decimals) || decimals < 0 || decimals > 255) return null;
+    if (amount === null || !rewardAsset || stale || !Number.isInteger(rewardDecimals) || rewardDecimals < 0 || rewardDecimals > 255) return null;
     try {
-      if (!isFresh(quote, now)) return null;
-      return Number(amount * BigInt(quote!.price) / 10n ** BigInt(decimals)) / 1e12;
+      if (!isFresh(rewardQuote, now)) return null;
+      return Number(amount * BigInt(rewardQuote!.price) / 10n ** BigInt(rewardDecimals)) / 1e12;
     } catch { return null; }
   };
   const head = atoms(pool?.queueHead), tail = atoms(pool?.queueTail);
@@ -192,7 +204,7 @@ export function platformMetrics(state: Snapshot, now = Date.now()): MetricsModel
     stakedTokens: tokens(atoms(ownership?.totalStaked)),
     issuedTokens: tokens(atoms(ownership?.supply)),
     // Reserved rewards plus persistent actual claims: never infer revenue from loss percentages.
-    rewardsFunded: tokens(atoms(ownership?.rewardPool) + atoms(ownership?.feePending) + total(traders, "claimed")),
+    rewardsFunded: rewardTokens(atoms(ownership?.rewardPool) + atoms(ownership?.feePending) + total(traders, "claimed")),
     gasSolBought: Number(total(state.gasReserves ?? [], "solReceived")) / 1e9,
     queueUsd: Number(atoms(pool?.queueUsd)) / 1e6,
     queueCount,
@@ -202,8 +214,8 @@ export function platformMetrics(state: Snapshot, now = Date.now()): MetricsModel
     markets,
     betVolumeUsd: entryTotal !== null && (volumes.valuedTrades > 0 || volumeComplete) ? Number(entryTotal) / 1e6 : null,
     leveragedVolumeUsd: leveragedTotal !== null && (volumes.valuedTrades > 0 || volumeComplete) ? Number(leveragedTotal) / 1e6 : null,
-    rewardsPaidTokens: rewardsPaid !== null ? tokens(rewardsPaid) : null,
-    burnedTokens: burned !== null ? tokens(burned) : null,
+    rewardsPaidTokens: rewardsPaid !== null ? rewardTokens(rewardsPaid) : null,
+    burnedTokens: burned !== null ? rewardTokens(burned) : null,
     rewardsPaidUsd: currentUsd(rewardsPaid),
     burnedUsd: currentUsd(burned),
     volumeComplete,

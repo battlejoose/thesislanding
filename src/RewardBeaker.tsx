@@ -98,6 +98,7 @@ export const RewardBeaker = memo(function RewardBeaker({ tone, active, onClick, 
             x="11" y="48" width="29" height="24" /> : sdiceSkin && !tokens.venueMint ? <RewardDie id={id} /> : <PlatformTokenSvgImage
             className="reward-beaker-logo"
             secondary={tone === "teal"}
+            reward={tone !== "teal"}
             x="11"
             y="48"
             width="29"

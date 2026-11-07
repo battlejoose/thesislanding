@@ -6,7 +6,7 @@ import {MAINNET_USDC} from './deployment-profile.ts';
 import {isPerpsMarket,perpsRewardAsset} from './perps-market.ts';
 
 export const SDICE_PRIMARY_MINT = '4nCmpwne7hCoWTSpAd54uENmCgHJrHTyn4DMPCEMpump';
-export type PlatformTokens = Readonly<{ primary: string; secondary: string; primaryLogo: string; secondaryLogo: string; venueMint?: string; reward?:string }>;
+export type PlatformTokens = Readonly<{ primary: string; secondary: string; primaryLogo: string; secondaryLogo: string; venueMint?: string; reward?:string; rewardLogo?:string }>;
 export const UNKNOWN_TOKEN_LOGO = '/tokens/market.svg';
 export const DEVNET_TOKENS: PlatformTokens = Object.freeze({ primary: 'ACIDPUMP', secondary: 'aPUMP',
   primaryLogo: '/acidpump.svg', secondaryLogo: '/acidpump-teal.svg' });
@@ -24,9 +24,9 @@ export function platformTokens(deployment: Pick<Deployment, 'cluster' | 'assets'
     const nativeLogo=core.mint===NATIVE_MINT.toBase58()?'/tokens/sol.svg':core.mint===MAINNET_USDC?'/tokens/usdc.svg':undefined;
     const logo = nativeLogo ?? assetImage(displays, core) ?? tokenImageUrl(deployment.venue.logo) ?? UNKNOWN_TOKEN_LOGO;
     if(isPerpsMarket(deployment)) {
-      const reward=perpsRewardAsset(deployment as Deployment);
+      perpsRewardAsset(deployment as Deployment);
       return {primary:'USDC',secondary:'pPERPS',reward:'PERPS',venueMint:core.mint,primaryLogo:logo,
-        secondaryLogo:assetImage(displays,reward)??'/thesis-brand/mark.png'};
+        secondaryLogo:'/thesis-brand/mark.png',rewardLogo:'/thesis-brand/mark.png'};
     }
     return { primary: core.symbol, secondary: `p${core.symbol}`, venueMint: core.mint,
       primaryLogo: logo, secondaryLogo: logo };

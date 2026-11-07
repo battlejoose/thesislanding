@@ -7,7 +7,8 @@ import {usePlatformTokens} from './PlatformTokens.tsx';
 export function useTokenImage(symbol: string, imageUrl?: string) {
   const tokens = usePlatformTokens();
   const [failed, setFailed] = React.useState<ReadonlySet<string>>(() => new Set());
-  const platform = symbol === tokens.primary ? tokens.primaryLogo : symbol === tokens.secondary ? tokens.secondaryLogo : undefined;
+  const platform = symbol === tokens.primary ? tokens.primaryLogo : symbol === tokens.secondary ? tokens.secondaryLogo
+    : symbol === tokens.reward ? tokens.rewardLogo ?? tokens.primaryLogo : undefined;
   const known = ({ACIDPUMP:'/acidpump.svg',SDICE:'/tokens/sdice.png',pSDICE:'/acidpump-teal.svg',aPUMP:'/acidpump-teal.svg',FARTCOIN:'/tokens/fartcoin.png'} as Record<string,string>)[symbol];
   // A venue's token wins over the static symbol map, including ticker collisions.
   const image = [tokenImageUrl(imageUrl), platform ?? known].map(url => url ? appPath(url) : undefined).find(url => url && !failed.has(url));

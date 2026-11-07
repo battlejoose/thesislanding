@@ -50,16 +50,17 @@ function Transfer({ path, start, symbol, imageUrl, liquid = false, enabled, redu
     })}
   </g>;
 }
-function Destination({ x, kind, label, amount, at, tone = 'acid', children, ticker = true, signatures, cluster, tokenAmount, estimated = false, legacyAmount }: {
+function Destination({ x, kind, label, amount, at, tone = 'acid', children, ticker = true, signatures, cluster, tokenAmount, estimated = false, legacyAmount, description }: {
   tokenAmount?: StoryAmount; estimated?: boolean; legacyAmount?: StoryAmount;
   x: number; kind: SettlementIconKind; label: string; amount: StoryAmount; at: number; tone?: string; children?: ReactNode; ticker?: boolean;
   signatures?: string[]; cluster: string;
+  description?: string;
 }) {
   const tokens = usePlatformTokens();
   return <div className={'journey-destination destination-' + kind + ' tone-' + tone + (positive(amount) ? ' journey-receives' : ' journey-empty')}
-    style={{ left: x + '%', '--at': at + 's', '--label-chars': label.length } as CSSProperties}>
+    title={description} style={{ left: x + '%', '--at': at + 's', '--label-chars': label.length } as CSSProperties}>
     <div className="journey-destination-art"><SettlementIcon kind={kind} size={38} />
-      {['pool', 'stakers', 'burn'].includes(kind) && <PlatformTokenImage className={'journey-acid-emblem emblem-' + kind} alt="" aria-hidden="true"/>}
+      {['pool', 'stakers', 'burn'].includes(kind) && <PlatformTokenImage reward={kind !== 'pool'} className={'journey-acid-emblem emblem-' + kind} alt="" aria-hidden="true"/>}
       {['payout', 'queue'].includes(kind) && <span className={'journey-token-emblem token-emblem-' + kind}><Coin symbol={tokenAmount?.symbol ?? amount.symbol}/></span>}
       {children}<i className="journey-arrival" aria-hidden="true" /></div>
     <span className="journey-label">{label}</span><Amount value={amount} />
@@ -108,15 +109,16 @@ function PlayerProceeds({ returned, ownership, payout, legacyPayout, queued, tra
   </div>;
 }
 /** Illustrated settlement: original coins split, transform, then visibly arrive. */
-export function SettlementReceipt({ position, collateral, collateralImageUrl, poolToken, payoutQuote, priceNow = Date.now(), pnl, ownership, cluster = 'devnet', onDismiss, onComplete, onInteract, onPayoutUpdate, onStake }: {
+export function SettlementReceipt({ position, collateral, collateralImageUrl, poolToken, rewardToken, payoutQuote, priceNow = Date.now(), pnl, ownership, cluster = 'devnet', onDismiss, onComplete, onInteract, onPayoutUpdate, onStake }: {
   position: Row; collateral: AssetInfo; poolToken?: AssetInfo; payoutQuote?: Row; priceNow?: number; pnl: bigint;
+  rewardToken?: AssetInfo;
   collateralImageUrl?: string;
   cluster?: string;
   onStake?: () => void;
   ownership: string | bigint | null; onDismiss: () => void; onComplete?: () => void; onInteract?: () => void; onPayoutUpdate?: () => void;
 }) {
   const tokens = usePlatformTokens();
-  const stages = settlementStory({ position, collateral, poolToken, pnl, ownership, ownershipSymbol: tokens.secondary });
+  const stages = settlementStory({ position, collateral, poolToken, rewardToken, pnl, ownership, ownershipSymbol: tokens.secondary });
   const byId = Object.fromEntries(stages.map(stage => [stage.id, stage]));
   const [run, setRun] = useState(0), [paused, setPaused] = useState(false);
   const [reduced, setReduced] = useState(() => typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
@@ -261,8 +263,8 @@ export function SettlementReceipt({ position, collateral, collateralImageUrl, po
           </div>
         </Destination>
         <Destination x={59} kind="pool" label="Payout pool" amount={allocations[0]} at={4.4} signatures={transactions.close} cluster={cluster}/>
-        <Destination x={76} kind="stakers" label="Stakers" amount={allocations[1]} at={5.3} tone="ice" signatures={transactions.close} cluster={cluster}/>
-        <Destination x={91} kind="burn" label="Burned" amount={allocations[2]} at={6.1} tone="burn" signatures={transactions.close} cluster={cluster}/>
+        <Destination x={76} kind="stakers" label={allocations[1].label ?? 'Stakers'} amount={allocations[1]} at={5.3} tone="ice" signatures={transactions.close} cluster={cluster} description={byId.allocation.caption}/>
+        <Destination x={91} kind="burn" label="Burned" amount={allocations[2]} at={6.1} tone="burn" signatures={transactions.close} cluster={cluster} description={byId.allocation.caption}/>
       </> : <>
         <Destination x={32} kind="payout" label="Profit claim" amount={profitAmount} tokenAmount={claimTokenAmount} estimated={profitTokens.estimated} legacyAmount={pureLegacy ? undefined : oldPayment} at={1.6} tone="ice" signatures={transactions.close} cluster={cluster}/>
         <Destination x={64} kind="payout" label="Claim settled" amount={paidAmount} tokenAmount={paidTokenAmount} legacyAmount={pureLegacy ? undefined : oldPayment} at={3.8} tone="ice" signatures={transactions.payouts} cluster={cluster}/>

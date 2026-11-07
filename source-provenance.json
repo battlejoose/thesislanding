@@ -113,9 +113,10 @@
     },
     {
       "path": "src/ui.tsx",
-      "sourceSha256": "94f37f862239fcd7fc9083bb89a4d2cee2deacae3ee25d973bc1ca7f87297a15",
-      "sha256": "94f37f862239fcd7fc9083bb89a4d2cee2deacae3ee25d973bc1ca7f87297a15",
-      "adapted": false
+      "sourceSha256": "3b6d6d98f495217c440c3849ff3c65cd74470746b2d8e4db23c9150db1806d5d",
+      "sha256": "3b6d6d98f495217c440c3849ff3c65cd74470746b2d8e4db23c9150db1806d5d",
+      "adapted": false,
+      "sourceCommit": "f9c557c33ed1cad15dddab61c740b137d79c7cbf"
     },
     {
       "path": "src/BlinkApp.tsx",
@@ -131,15 +132,17 @@
     },
     {
       "path": "src/PlatformTokens.tsx",
-      "sourceSha256": "38e4e8f713c493f8baf601ce8afbe4939dec0d25b936e69eecf110426afb0361",
-      "sha256": "38e4e8f713c493f8baf601ce8afbe4939dec0d25b936e69eecf110426afb0361",
-      "adapted": false
+      "sourceSha256": "03a3ca91e4294e0e0ae995e6f252c6349b193f9ca73fa698679d427aee02dd9e",
+      "sha256": "03a3ca91e4294e0e0ae995e6f252c6349b193f9ca73fa698679d427aee02dd9e",
+      "adapted": false,
+      "sourceCommit": "f9c557c33ed1cad15dddab61c740b137d79c7cbf"
     },
     {
       "path": "src/platform-tokens.ts",
-      "sourceSha256": "d2d7bdf25c77867e4b67f763e7d92391ab8eb2c51ac5aeba10c0b4549cec15e2",
-      "sha256": "d2d7bdf25c77867e4b67f763e7d92391ab8eb2c51ac5aeba10c0b4549cec15e2",
-      "adapted": false
+      "sourceSha256": "0da261b965321847a2ee3e730e811a8ff6bf3bb6ef5e679eb1597a33336b80d0",
+      "sha256": "0da261b965321847a2ee3e730e811a8ff6bf3bb6ef5e679eb1597a33336b80d0",
+      "adapted": false,
+      "sourceCommit": "f9c557c33ed1cad15dddab61c740b137d79c7cbf"
     },
     {
       "path": "src/perps-market.ts",
@@ -383,9 +386,10 @@
     },
     {
       "path": "src/RewardBeaker.tsx",
-      "sourceSha256": "62679eb4af576d95b54367b3c01c3f19c0313d63203e37313c2693e305c357d2",
-      "sha256": "62679eb4af576d95b54367b3c01c3f19c0313d63203e37313c2693e305c357d2",
-      "adapted": false
+      "sourceSha256": "cd9012fec43d26e5b1c24b9305c85f6cdf044cc8b3604517ab0291b432cf0b9d",
+      "sha256": "cd9012fec43d26e5b1c24b9305c85f6cdf044cc8b3604517ab0291b432cf0b9d",
+      "adapted": false,
+      "sourceCommit": "f9c557c33ed1cad15dddab61c740b137d79c7cbf"
     },
     {
       "path": "src/ActivePositionAcid.tsx",
@@ -407,15 +411,17 @@
     },
     {
       "path": "src/AcidMetrics.tsx",
-      "sourceSha256": "86ee71458f62a86eca9eb519a63ebabfc5dd7eb8b663ee10f314cda8d6d2b50c",
-      "sha256": "86ee71458f62a86eca9eb519a63ebabfc5dd7eb8b663ee10f314cda8d6d2b50c",
-      "adapted": false
+      "sourceSha256": "3d73312327e4a2708c7883c8c116c947b39892aaef7aa82225e2e91b5ec03902",
+      "sha256": "3d73312327e4a2708c7883c8c116c947b39892aaef7aa82225e2e91b5ec03902",
+      "adapted": false,
+      "sourceCommit": "f9c557c33ed1cad15dddab61c740b137d79c7cbf"
     },
     {
       "path": "src/metrics-model.ts",
-      "sourceSha256": "bb966c621851e929de6c4d4bfc3381c1e15c9c9ed3d4eedb1550556a9b05c580",
-      "sha256": "bb966c621851e929de6c4d4bfc3381c1e15c9c9ed3d4eedb1550556a9b05c580",
-      "adapted": false
+      "sourceSha256": "0a0cd76ae5054af8ca0544895b8e1773144ee0d76ba794f7387d821f12a05e0a",
+      "sha256": "0a0cd76ae5054af8ca0544895b8e1773144ee0d76ba794f7387d821f12a05e0a",
+      "adapted": false,
+      "sourceCommit": "f9c557c33ed1cad15dddab61c740b137d79c7cbf"
     },
     {
       "path": "src/display-clock.ts",
@@ -461,9 +467,10 @@
     },
     {
       "path": "src/components.tsx",
-      "sourceSha256": "ffcdbe824c29b7e55c36185e57a6cf9a3051ddbea822411a16ef4faf3a519943",
-      "sha256": "ffcdbe824c29b7e55c36185e57a6cf9a3051ddbea822411a16ef4faf3a519943",
-      "adapted": false
+      "sourceSha256": "c18894a9f91d562ee0bbf989b48dc4197159cd39e8cc64abe13a4da4d4ef4fba",
+      "sha256": "c18894a9f91d562ee0bbf989b48dc4197159cd39e8cc64abe13a4da4d4ef4fba",
+      "adapted": false,
+      "sourceCommit": "f9c557c33ed1cad15dddab61c740b137d79c7cbf"
     },
     {
       "path": "src/core-markets.ts",
@@ -653,9 +660,10 @@
     },
     {
       "path": "src/SettlementReceipt.tsx",
-      "sourceSha256": "bad5b33daa8883dfe5b0969c62afe529ef14079014fbda95bdae6cfc29c2d643",
-      "sha256": "bad5b33daa8883dfe5b0969c62afe529ef14079014fbda95bdae6cfc29c2d643",
-      "adapted": false
+      "sourceSha256": "1b263511855e36282aa257662a8a35c5d99a25833013677393c01771c972a6c3",
+      "sha256": "1b263511855e36282aa257662a8a35c5d99a25833013677393c01771c972a6c3",
+      "adapted": false,
+      "sourceCommit": "f9c557c33ed1cad15dddab61c740b137d79c7cbf"
     },
     {
       "path": "src/settlement-transactions.ts",
@@ -983,9 +991,10 @@
     },
     {
       "path": "src/settlement-story.ts",
-      "sourceSha256": "4c4ffb6edf33f5a45c7075d7b37392e1ae13f4e618e39f2f7ff8ced1b74f17f5",
-      "sha256": "4c4ffb6edf33f5a45c7075d7b37392e1ae13f4e618e39f2f7ff8ced1b74f17f5",
-      "adapted": false
+      "sourceSha256": "cdc7e15c7fcf7e5e3dfa4fbf044e46878333eede554f68ce54fdce26b01bf778",
+      "sha256": "cdc7e15c7fcf7e5e3dfa4fbf044e46878333eede554f68ce54fdce26b01bf778",
+      "adapted": false,
+      "sourceCommit": "f9c557c33ed1cad15dddab61c740b137d79c7cbf"
     },
     {
       "path": "src/position-close-button.css",
@@ -1001,9 +1010,10 @@
     },
     {
       "path": "src/PlatformTokenImage.tsx",
-      "sourceSha256": "217837a4cc7e01f100809ea5ceb8da79f907b9e695f0d3b5dbcb6fb117743a95",
-      "sha256": "217837a4cc7e01f100809ea5ceb8da79f907b9e695f0d3b5dbcb6fb117743a95",
-      "adapted": false
+      "sourceSha256": "f5df6f526c5f61488691e27ddada976f071267cd0ebdb2cbc93f44e4bfb162db",
+      "sha256": "f5df6f526c5f61488691e27ddada976f071267cd0ebdb2cbc93f44e4bfb162db",
+      "adapted": false,
+      "sourceCommit": "f9c557c33ed1cad15dddab61c740b137d79c7cbf"
     },
     {
       "path": "src/reward-beaker.css",
@@ -1265,9 +1275,10 @@
     },
     {
       "path": "src/RewardCelebration.tsx",
-      "sourceSha256": "8a9f1eaec3c184eff31f1630d4199516fb699c851235984aa6c4b488cbeb731c",
-      "sha256": "8a9f1eaec3c184eff31f1630d4199516fb699c851235984aa6c4b488cbeb731c",
-      "adapted": false
+      "sourceSha256": "06cde27b0ba7f6084440cb3730f93640f886051f801637f5a39108fd723fd152",
+      "sha256": "06cde27b0ba7f6084440cb3730f93640f886051f801637f5a39108fd723fd152",
+      "adapted": false,
+      "sourceCommit": "f9c557c33ed1cad15dddab61c740b137d79c7cbf"
     },
     {
       "path": "src/acid-rewards.css",
@@ -1436,6 +1447,14 @@
       "sourceSha256": "b98d842cfea3b713e5faddf63cae57b55e94b7e6ebbc90013a43c1a7bee1f9a9",
       "sha256": "b98d842cfea3b713e5faddf63cae57b55e94b7e6ebbc90013a43c1a7bee1f9a9",
       "adapted": false
+    },
+    {
+      "path": "tests/perps-display.test.ts",
+      "sourcePath": "projects/acidpump-er/src/perps-display.test.ts",
+      "sourceCommit": "f9c557c33ed1cad15dddab61c740b137d79c7cbf",
+      "sourceSha256": "7272519c98d01ee45900b0c9eba264aecd689921c405eecf6987ad8049427d55",
+      "sha256": "894213a50f7a795a3bb536a52d79e4d4cabc06fad1b1240aaa2e14d3e311cfc6",
+      "adapted": true
     }
   ]
 }

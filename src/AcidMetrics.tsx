@@ -444,26 +444,26 @@ export function AcidMetrics({ model, cluster = 'devnet', onLeaderboard }: { mode
           />
           <Fact
             label="Rewards paid"
-            unit={`$${tokens.primary}`}
+            unit={`$${tokens.reward ?? tokens.primary}`}
             value={number(model.rewardsPaidTokens, model.ready)}
             usdValue={number(model.rewardsPaidUsd, model.ready, true)}
             usdLabel="current USD"
             usdDescription="Estimated value of claimed reward tokens at the current token price, not their historical USD payout value."
             tone="metrics-lime"
             icon="rewards"
-            description={`Confirmed ${tokens.primary} rewards claimed by stakers; excludes unclaimed or reserved rewards.`}
+            description={`Confirmed ${tokens.reward ?? tokens.primary} rewards claimed by stakers; excludes unclaimed or reserved rewards.`}
           />
           <Fact
             label="Tokens burned"
             compactLabel="Burned"
-            unit={`$${tokens.primary}`}
+            unit={`$${tokens.reward ?? tokens.primary}`}
             value={number(model.burnedTokens, model.ready)}
             usdValue={number(model.burnedUsd, model.ready, true)}
             usdLabel="current USD"
             usdDescription="Estimated value of verified burned tokens at the current token price, not their historical USD value."
             tone="metrics-ember"
             icon="burn"
-            description={`Actual burned ${tokens.primary} amounts from recorded settlement receipts, never inferred from today's allocation percentage.`}
+            description={`Actual burned ${tokens.reward ?? tokens.primary} amounts from confirmed on-chain records, never inferred from today's allocation percentage.`}
             note={burnPartial ? "Partial history" : undefined}
           />
         </dl>
