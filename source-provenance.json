@@ -522,9 +522,10 @@
     },
     {
       "path": "src/PositionShare.tsx",
-      "sourceSha256": "d61c81bdc238c3f74e575bb7ecc1edcbbad53401d76950c5aa926740be5d3ad3",
-      "sha256": "d61c81bdc238c3f74e575bb7ecc1edcbbad53401d76950c5aa926740be5d3ad3",
-      "adapted": false
+      "sourceSha256": "b80656a19ca84a081a09d57927c13b078c1955e5618f4f341e53fd9972a6aca6",
+      "sha256": "b80656a19ca84a081a09d57927c13b078c1955e5618f4f341e53fd9972a6aca6",
+      "adapted": false,
+      "sourceCommit": "64cafa97f7ed2fb7a7202420afda73ad2146f979"
     },
     {
       "path": "src/LeverageSlider.tsx",
@@ -1131,9 +1132,10 @@
     },
     {
       "path": "src/position-share.ts",
-      "sourceSha256": "b9348e188a0e2972a1323cc6fc70410c9b8590328f50443bc294da23ef8ca2db",
-      "sha256": "b9348e188a0e2972a1323cc6fc70410c9b8590328f50443bc294da23ef8ca2db",
-      "adapted": false
+      "sourceSha256": "5d3f2e49c37e9402aff919693e08d95879a0c4ec1f1c30e385c41e76c2ba0946",
+      "sha256": "5d3f2e49c37e9402aff919693e08d95879a0c4ec1f1c30e385c41e76c2ba0946",
+      "adapted": false,
+      "sourceCommit": "64cafa97f7ed2fb7a7202420afda73ad2146f979"
     },
     {
       "path": "src/position-share.css",
@@ -1455,6 +1457,21 @@
       "sourceSha256": "7272519c98d01ee45900b0c9eba264aecd689921c405eecf6987ad8049427d55",
       "sha256": "894213a50f7a795a3bb536a52d79e4d4cabc06fad1b1240aaa2e14d3e311cfc6",
       "adapted": true
+    },
+    {
+      "path": "src/thesis-share.ts",
+      "sourceSha256": "99a4046fde1cd9483024bba5ef24a96905f74367b0505fc81f3456f0ee30f3e2",
+      "sha256": "99a4046fde1cd9483024bba5ef24a96905f74367b0505fc81f3456f0ee30f3e2",
+      "adapted": false,
+      "sourceCommit": "64cafa97f7ed2fb7a7202420afda73ad2146f979"
+    },
+    {
+      "path": "tests/thesis-share.test.ts",
+      "sourceSha256": "1b81215aab36c66348a0d00d8a9c26320e6c8e5c46a39756548fe26542f22b74",
+      "sha256": "4ae35c5a2778ac23626a34cc18b1680cc7355a955c1782ebe9397e6916ae200e",
+      "adapted": true,
+      "sourceCommit": "64cafa97f7ed2fb7a7202420afda73ad2146f979",
+      "sourcePath": "projects/acidpump-er/src/thesis-share.test.ts"
     }
   ]
 }

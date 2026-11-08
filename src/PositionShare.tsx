@@ -14,6 +14,7 @@ import "./position-share.css";
 import { rasterizePositionSvg } from "./position-raster.ts";
 import { embedPositionImages } from "./position-share-images.ts";
 import { sdiceSkin, thesisSkin, appName } from "./app-url.ts";
+import { THESIS_X_PROFILE, THESIS_X_HANDLE } from './thesis-share.ts';
 
 function XIcon() {
   return (
@@ -74,7 +75,7 @@ async function capturePosition(
   caption.textContent = cluster === "mainnet-beta" ? "POSITION SNAPSHOT · MAINNET" : "POSITION SNAPSHOT · DEVNET / TEST TOKENS";
   if (sdiceSkin) {
     canvas.classList.add('sdice-position-share');
-    caption.textContent += thesisSkin ? ' · Thesis PERPS' : ' · soltoshidice.wtf/perps';
+    caption.textContent += thesisSkin ? ' · thesis.casino · @ThesisPMF' : ' · soltoshidice.wtf/perps';
   }
   content.append(snapshot);
   canvas.append(heading, content, caption);
@@ -252,6 +253,7 @@ function PositionSharePreview({
     <Modal title="Share on X" close={close}>
       <div className="position-share-preview" aria-busy={!!stage}>
         <p className="position-share-text">{preview.text}</p>
+        {thesisSkin && <a href={THESIS_X_PROFILE} target="_blank" rel="noopener noreferrer">@{THESIS_X_HANDLE}</a>}
         {image ? (
           <img
             className="position-share-image"

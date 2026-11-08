@@ -1,4 +1,5 @@
-import { appFetch as fetch, sdiceSkin } from "./app-url.ts";
+import { appFetch as fetch, sdiceSkin, thesisSkin } from "./app-url.ts";
+import { THESIS_SHARE_ORIGIN, THESIS_X_HANDLE } from './thesis-share.ts';
 export type PositionShareDetails = {
   state: number;
   long: boolean;
@@ -26,14 +27,14 @@ function amount(atoms: bigint, decimals: number, fixed = false, grouped = true) 
   return whole + (tail ? "." + tail : "");
 }
 
-export function positionShareText(p: PositionShareDetails, sdice = sdiceSkin) {
+export function positionShareText(p: PositionShareDetails, sdice = sdiceSkin, thesis = thesisSkin) {
   const entry = BigInt(p.entryValue);
   const pnl = p.pnl === null ? null : BigInt(p.pnl);
-  if (sdice) {
+  if (sdice || thesis) {
     const value = pnl === null ? 'pending' : `${pnl < 0n ? '-' : '+'}$${amount(pnl < 0n ? -pnl : pnl, 6, true)}`;
     const rewards = pnl !== null && pnl < 0n && p.poolTokens !== null && p.ownershipTokens !== null
       ? `\n${p.state === 0 ? 'Est. pool / ownership' : 'Pool / ownership'}: ${amount(BigInt(p.poolTokens), p.platformDecimals)} $${p.platformToken} → ${amount(BigInt(p.ownershipTokens), p.platformDecimals)} $${p.ownershipToken}` : '';
-    return `${p.market.toUpperCase()} ${p.long ? 'Long' : 'Short'} · ${p.state === 0 ? 'OPEN' : 'CLOSED'} · ${p.leverage}×\nPosition size: $${amount(entry * BigInt(p.leverage), 6, true)}\nCollateral: ${amount(BigInt(p.margin), p.decimals)} $${p.collateral} ($${amount(entry, 6, true)})\n${p.state === 0 ? 'Unrealized P&L' : 'PnL'}: ${value}${rewards}\n@SoltoshiDice`;
+    return `${p.market.toUpperCase()} ${p.long ? 'Long' : 'Short'} · ${p.state === 0 ? 'OPEN' : 'CLOSED'} · ${p.leverage}×\nPosition size: $${amount(entry * BigInt(p.leverage), 6, true)}\nCollateral: ${amount(BigInt(p.margin), p.decimals)} $${p.collateral} ($${amount(entry, 6, true)})\n${p.state === 0 ? 'Unrealized P&L' : 'PnL'}: ${value}${rewards}\n@${thesis ? THESIS_X_HANDLE : 'SoltoshiDice'}`;
   }
   let profit = pnl === null ? "PnL pending" : `${pnl < 0n ? "-" : "+"}$${amount(pnl < 0n ? -pnl : pnl, 6, true)} USDC`;
   if (pnl !== null && pnl < 0n) {
@@ -58,6 +59,7 @@ export function hostedPositionShare(
   value: unknown,
   origin: string,
   sdice = sdiceSkin,
+  thesis = thesisSkin,
 ): HostedPositionShare {
   if (!value || typeof value !== "object")
     throw new Error("Invalid share response");
@@ -71,7 +73,7 @@ export function hostedPositionShare(
       ["localhost", "127.0.0.1", "[::1]"].includes(local.hostname);
     const trusted =
       url.protocol === "https:" &&
-      ["acidpump-er-devnet.fly.dev", "acidpump-mainnet-test.fly.dev", "acidpump.fun", "www.acidpump.fun"].includes(
+      ["acidpump-er-devnet.fly.dev", "acidpump-mainnet-test.fly.dev", "acidpump.fun", "www.acidpump.fun", ...(thesis ? ['thesis.casino','www.thesis.casino'] : [])].includes(
         url.hostname,
       ) &&
       !url.port;
@@ -88,13 +90,17 @@ export function hostedPositionShare(
   const url = validate(fields.url);
   const imageUrl = validate(fields.imageUrl);
   if (
-    !/^(?:\/m\/[A-Z0-9]{2,12})?\/share\/[a-f0-9]{64}$/.test(url.pathname) ||
+    !(thesis ? /^(?:\/(?:m\/USDC|thesis(?:\/m\/USDC)?))?\/share\/[a-f0-9]{64}$/ : /^(?:\/m\/[A-Z0-9]{2,12})?\/share\/[a-f0-9]{64}$/).test(url.pathname) ||
     imageUrl.origin !== url.origin ||
     imageUrl.pathname !== `${url.pathname}.png`
   )
     throw new Error("Invalid share URL");
   // Validate the service's original pair before translating it; arbitrary URLs
-  // must never become trusted merely because the app is using the SDICE skin.
+  // must never become trusted merely because the app is using a branded skin.
+  if (thesis) {
+    const canonical = `${THESIS_SHARE_ORIGIN}/share/${url.pathname.split('/').at(-1)}`;
+    return {url: canonical, imageUrl: canonical + '.png'};
+  }
   if (sdice) return { url: `https://soltoshidice.wtf/perps${url.pathname}`, imageUrl: `https://soltoshidice.wtf/perps${imageUrl.pathname}` };
   return { url: url.href, imageUrl: imageUrl.href };
 }
