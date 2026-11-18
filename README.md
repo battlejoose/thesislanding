@@ -69,6 +69,24 @@ service's origin without the namespace path.
 
 ## Source and assets
 
+### KOL PERPS coming soon
+
+`https://thesis.casino/kolperps/` serves the Jack Duval interactive mockup.
+The independently built static release is pinned in `public/kolperps/`; Vite
+copies it to `dist/kolperps/`. It has its own HTML entry and does not mount the
+mainnet application or connect to its API. The price and position activity are
+simulated. Cloudflare resolves `/kolperps` to this directory's index page.
+
+The editable source is `projects/acidpump-er/landing` on the
+`codex/jack-duval-coming-soon` branch of `battlejoose/perpderp`.
+`kolperps-provenance.json` pins the source revision and the exact asset hashes.
+To update it, run `npm --prefix projects/acidpump-er run build:coming-soon` in
+that repository, copy the output into `public/kolperps/`, and update the
+provenance manifest. Keep the `/kolperps/` build base. Run the tests and build
+before publishing through the existing `main` deployment.
+
+### Trading application
+
 `source-provenance.json` records the source revision and exported browser files.
 The `server/` directory contains only shared quote/account helpers and request
 type definitions used by the browser. It contains no hosted server or signing

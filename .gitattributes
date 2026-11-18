@@ -1,2 +1,4 @@
 # Auto detect text files and perform LF normalization
 * text=auto
+# Pinned landing release: keep build bytes and provenance hashes identical.
+public/kolperps/** -text

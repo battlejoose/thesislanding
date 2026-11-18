@@ -1,0 +1,41 @@
+{
+  "sourceRepository": "https://github.com/battlejoose/perpderp",
+  "sourceCommit": "4cb204ca2a8cbe32fc06bf3e1b6dd19f532474ad",
+  "sourceBranch": "codex/jack-duval-coming-soon",
+  "sourcePath": "projects/acidpump-er/landing",
+  "mountPath": "/kolperps/",
+  "files": [
+    {
+      "path": "kolperps/assets/index-B7FsKdNF.js",
+      "sha256": "8b73727e1b1c201b4e2407f082d91228fdd5a6d205db98ef0c7aad5b84161316"
+    },
+    {
+      "path": "kolperps/assets/index-DFqRkUxx.css",
+      "sha256": "a3e021f9d3c27ac86a41688b440946279d7b9080d64d09e63d320be0968d41ca"
+    },
+    {
+      "path": "kolperps/index.html",
+      "sha256": "d34762271b4768885065522bcbe68730be7e3549cf473c7e5d562500d13feb37"
+    },
+    {
+      "path": "kolperps/jack-duval.jpg",
+      "sha256": "6762d5a841187eb8d434ce85fc45cf75ce5218becb5778fadfac3f186bbd13b4"
+    },
+    {
+      "path": "kolperps/perps/sdice/brick.svg",
+      "sha256": "ee51ff648aa5811a87c0a2cd6e95af996a3d709f160fc384d17270a0267523d1"
+    },
+    {
+      "path": "kolperps/thesis-brand/mark.png",
+      "sha256": "87253555b4411a4b9db3745117c6659ba9b7cd7e3a3f12091b17be377d355879"
+    },
+    {
+      "path": "kolperps/thesis-brand/wordmark.png",
+      "sha256": "2a1e8dd8bd216d24e13c704641d38925019e1620825d0ea2767fae79828193fb"
+    },
+    {
+      "path": "kolperps/tokens/usdc.svg",
+      "sha256": "cd34693c73b57756ae1ec66db6e4efeef07cb84653f87cdce5de878960b5f817"
+    }
+  ]
+}
