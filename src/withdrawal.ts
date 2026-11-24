@@ -39,7 +39,7 @@ export function withdrawalInstructions(
   recipient: PublicKey,
   asset: WithdrawalAsset,
   amount: bigint,
-  payer: PublicKey,
+  _payer: PublicKey,
   unwrapSol = false,
   sources?: { address: PublicKey; amount: bigint }[],
 ) {
@@ -64,7 +64,7 @@ export function withdrawalInstructions(
     throw Error('Invalid withdrawal sources');
   return [
     createAssociatedTokenAccountIdempotentInstruction(
-      payer,
+      owner,
       destination,
       recipient,
       mint,

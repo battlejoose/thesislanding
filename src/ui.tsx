@@ -795,10 +795,16 @@ function TradingApp({initialDeployment,mode,modeControls,onModeBusy}:{initialDep
     onProgress("preparing");
     assertTradingWallet();
     if (!owner || !deployment) throw Error("Connect a wallet");
-    if (sponsorOnly && !browserMode && !deployment.sponsorship)
+    if (intent?.kind === "withdrawCollateral") {
+      const asset = walletAssets(deployment).find(row => row.mint === intent.mint);
+      if (!asset) throw Error("Withdrawal token unavailable");
+      await ensureReturnAccount(asset);
+    }
+    const externalWithdrawal = intent?.kind === "withdraw";
+    if (!externalWithdrawal && sponsorOnly && !browserMode && !deployment.sponsorship)
       throw Error("Sponsored withdrawals are temporarily unavailable");
     const erAction = !!intent && ["releaseBrowserGas","withdrawBrowserGas","open", "close", "waiveCollateralProfit", "initializeTrading", "depositCollateral", "withdrawCollateral", "changeCoreStake"].includes(intent.kind);
-    if (useSponsorship || (!browserMode&&sponsorOnly) || erAction) {
+    if (!externalWithdrawal && (useSponsorship || (!browserMode&&sponsorOnly) || erAction)) {
       if (!intent) throw Error("Sponsored action unavailable");
       const post = (url: '/api/sponsor/prepare' | '/api/sponsor/submit', data: unknown) => tradingRequest(url, data, fetch);
       if(!browserMode)priceWindow?.assertBeforeSubmit();
@@ -822,26 +828,6 @@ function TradingApp({initialDeployment,mode,modeControls,onModeBusy}:{initialDep
       if ((prepared.executionLayer ?? "base") !== layer) throw Error("Unexpected transaction execution layer");
       if (!tx.message.staticAccountKeys[0].equals(browserMode?owner:sponsoredPayer(deployment, layer)))
         throw Error("Unexpected fee payer");
-      if (intent.kind === "withdraw") {
-        const a = walletAssets(deployment).find((a) => a.mint === intent.mint);
-        const withdrawalPlan = await planWalletWithdrawal(connection, owner, intent.mint,
-          BigInt(intent.amount), intent.recipient, sponsoredPayer(deployment, 'base'), a);
-        const expected = new TransactionMessage({
-          payerKey: sponsoredPayer(deployment, "base"),
-          recentBlockhash: tx.message.recentBlockhash,
-          instructions: [
-            ComputeBudgetProgram.requestHeapFrame({ bytes: 128 * 1024 }),
-            ComputeBudgetProgram.setComputeUnitLimit({ units: 800000 }),
-            ...withdrawalPlan.ixs,
-          ],
-        }).compileToV0Message();
-        if (
-          !Buffer.from(expected.serialize()).equals(
-            Buffer.from(tx.message.serialize()),
-          )
-        )
-          throw Error("Withdrawal details changed; nothing was signed");
-      }
       if (active.current !== owner.toBase58())
         throw Error("Wallet changed; please retry");
       if(!browserMode)priceWindow?.assertBeforeSubmit();
@@ -856,15 +842,17 @@ function TradingApp({initialDeployment,mode,modeControls,onModeBusy}:{initialDep
       return confirm(result.signature, onProgress, true, layer);
     }
     await client.assertNetwork();
-    if(browserMode&&intent?.kind==='withdraw') {
+    if (externalWithdrawal) {
       const plan=await planWalletWithdrawal(connection,owner,intent.mint,BigInt(intent.amount),intent.recipient,owner,
         walletAssets(deployment).find(a=>a.mint===intent.mint));
-      ixs=plan.ixs;
+      ixs = plan.ixs;
+      if (plan.ata && !await connection.getAccountInfo(plan.ata, "confirmed"))
+        accountRent = await connection.getMinimumBalanceForRentExemption(plan.accountSize);
     }
     if(!ixs.length)throw Error('No wallet operation was prepared');
     const [hash, table] = await Promise.all([
       connection.getLatestBlockhash("confirmed"),
-      transactionTables(connection, deployment, ixs),
+      externalWithdrawal ? Promise.resolve([]) : transactionTables(connection, deployment, ixs),
     ]);
     if (!table.length && intent?.kind!=='withdraw') throw Error("Transaction lookup table unavailable");
     const tx = new VersionedTransaction(
@@ -1110,6 +1098,16 @@ function TradingApp({initialDeployment,mode,modeControls,onModeBusy}:{initialDep
   };
   // Both wallet modes use the same signed ER intent and verified base receipt.
   // Returning custody funds ends here; it never sends an external transfer.
+  async function ensureReturnAccount(asset: AssetInfo) {
+    if (await connection.getAccountInfo(client.ata(owner, asset), "confirmed")) return;
+    assertTradingWallet();
+    const block = await connection.getLatestBlockhash("confirmed");
+    const message = new TransactionMessage({
+      payerKey: owner, recentBlockhash: block.blockhash,
+      instructions: [client.ataIx(owner, owner, asset)],
+    }).compileToV0Message();
+    await broadcast(await approveTransaction(new VersionedTransaction(message)), () => {});
+  }
   async function restoreTradingTokens(a: AssetInfo, atoms: bigint,
     onProgress?: (step: string) => void, fullBalance = false) {
     let withdrawalBaseFloor=latestSnapshotSlot.current, withdrawalErFloor=state.erContextSlot??0;
@@ -1138,6 +1136,9 @@ function TradingApp({initialDeployment,mode,modeControls,onModeBusy}:{initialDep
       }
       const trader=snapshot.erTraders?.find(row=>row.owner===ownerKey);
       const key=assetPda(pk(a.mint)).toBase58();
+      if (!accounts.value[0] && trader?.slots.some((slot: Row) =>
+        slot.state === 2 && slot.kind === 2 && slot.asset === key))
+        await ensureReturnAccount(a);
       return {snapshot,wallet:walletAmount,available:tradingBalances(snapshot,ownerKey,{...deployment,assets:walletAssets(deployment)})[a.mint]??0n,
         pendingCredit:pendingTradingCredit(snapshot,ownerKey,a.mint),
         pendingWithdrawal:(trader?.slots??[]).filter((row:Row)=>row.state===2&&row.kind===2&&row.asset===key)
@@ -1184,7 +1185,7 @@ function TradingApp({initialDeployment,mode,modeControls,onModeBusy}:{initialDep
         setBusy("");
       }
     },
-    feeCovered:!browserMode,
+    feeCovered:false,
     cluster: deployment.cluster,
     owner: ownerKey,
     assets: deployment ? walletAssets(deployment) : [],
@@ -1221,7 +1222,7 @@ function TradingApp({initialDeployment,mode,modeControls,onModeBusy}:{initialDep
           }, 0n);
           if (atoms === 0n) return '';
         }
-        if(browserMode&&fullBalance&&a.mint===NATIVE_MINT.toBase58()) {
+        if(fullBalance&&a.mint===NATIVE_MINT.toBase58()) {
           atoms=browserWithdrawableSol(atoms);
           if(atoms===0n)return '';
         }

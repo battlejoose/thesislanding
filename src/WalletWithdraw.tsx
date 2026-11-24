@@ -84,7 +84,7 @@ export function WalletWithdraw({owner, assets, balances, ready, busy, browserAdd
     {inventoryError&&<p className="wallet-deposit-status" role="status">{inventoryError}</p>}
     <label className="wallet-recipient"><span>To Solana wallet</span><input aria-label="Withdrawal address" autoComplete="off" spellCheck={false} placeholder="Paste wallet address" value={recipient} disabled={busy||sending} onChange={e=>setRecipient(e.target.value)}/></label>
     {browserAddress!==owner&&<button className="wallet-use-browser" disabled={busy||sending} onClick={browserAddress?()=>setRecipient(browserAddress):connect}>{browserAddress?'Use connected browser wallet':'Connect browser wallet'}</button>}
-    <p className="wallet-withdraw-note">Send on Solana {cluster==='mainnet-beta'?'mainnet':'devnet'} · {feeCovered?'Network fee covered':'Approve in your wallet · you pay network fees'}</p>
+    <p className="wallet-withdraw-note">Send on Solana {cluster==='mainnet-beta'?'mainnet':'devnet'} · {feeCovered?'Network fee covered':'Your wallet pays the network fee and rent for any new token account'}</p>
     <button className="wallet-connect" disabled={busy||sending||!valid} onClick={()=>void send()}>{sending?step||'Withdrawing…':`Withdraw${asset?' $'+asset.symbol:''}`}</button>
     <button className="wallet-withdraw-all" disabled={busy||sending||!validRecipient||!all.length||!!inventoryError||!discovered} onClick={()=>void send(true)}>Withdraw all · {all.length} token balance{all.length===1?'':'s'}</button>
     <p className="wallet-withdraw-note">All available balances go to the address above. Open positions and locked bet backing stay in place.</p>
